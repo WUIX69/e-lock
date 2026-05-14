@@ -1,0 +1,11 @@
+{
+  "name": "e-lock-monorepo",
+  "private": true,
+  "scripts": {
+    "dev:web": "pnpm --filter @e-lock/web dev",
+    "build:web": "pnpm --filter @e-lock/web build",
+    "lint:web": "pnpm --filter @e-lock/web lint",
+    "typecheck:web": "pnpm --filter @e-lock/web typecheck",
+    "format:web": "pnpm --filter @e-lock/web format"
+  }
+}

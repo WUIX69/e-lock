@@ -190,7 +190,7 @@ web/
 # FIRMWARE Dir
 
 ```text
-firmware/
+firmware/ # ESP32 PlatformIO (C++)
 ├── include/                         # Global headers
 │   ├── config.h                     # Pin definitions, WiFi creds, MQTT broker
 │   ├── constants.h                  # System-wide constants (timeouts, retries)

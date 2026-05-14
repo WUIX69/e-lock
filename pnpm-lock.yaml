@@ -6,7 +6,9 @@ settings:
 
 importers:
 
-  .:
+  .: {}
+
+  web:
     dependencies:
       class-variance-authority:
         specifier: ^0.7.1
