@@ -1,14 +1,13 @@
 import { Metadata } from "next"
 import { RealtimeStats } from "@/features/dashboard/components/realtime-stats"
-import { RecentActivity } from "@/features/dashboard/components/recent-activity"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { VoltageChart } from "@/features/dashboard/components/voltage-chart"
+import { ActivePersonnelList } from "@/features/dashboard/components/active-personnel-list"
+import { MeshStatus } from "@/features/dashboard/components/mesh-status"
+import { NodeDiagnostics } from "@/features/dashboard/components/node-diagnostics"
+import { EnvironmentCard } from "@/features/dashboard/components/environment-card"
+import { LatestAlert } from "@/features/dashboard/components/latest-alert"
+import { ArrowRight, History } from "lucide-react"
+import Link from "next/link"
 
 export const metadata: Metadata = {
   title: "Dashboard | E-LOCK Management",
@@ -17,72 +16,85 @@ export const metadata: Metadata = {
 
 export default function DashboardPage() {
   return (
-    <div className="flex-1 space-y-4">
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+    <div className="space-y-12 pb-12">
+      {/* Page Header (Subtle) */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="h-8 w-1 bg-primary rounded-full" />
+          <h2 className="text-sm font-black uppercase tracking-[0.3em] text-muted-foreground">
+            System Overview
+          </h2>
+        </div>
+        <Link 
+          href="/audit" 
+          className="flex items-center gap-2 text-xs font-bold text-primary hover:underline group"
+        >
+          <History className="size-4" />
+          View Safety History
+          <ArrowRight className="size-3 transition-transform group-hover:translate-x-1" />
+        </Link>
       </div>
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="reports">Reports</TabsTrigger>
-        </TabsList>
-        <TabsContent value="overview" className="space-y-4">
-          <RealtimeStats />
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4">
-              <CardHeader>
-                <CardTitle>Activity Overview</CardTitle>
-              </CardHeader>
-              <CardContent className="pl-2">
-                {/* HACK: Placeholder for an actual chart component later */}
-                <div className="mx-4 mb-4 flex h-[350px] items-center justify-center rounded-xl border-2 border-dashed text-muted-foreground">
-                  Activity Chart Placeholder
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="col-span-3">
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>
-                  You have 1,234 access events today.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RecentActivity />
-              </CardContent>
-            </Card>
+
+      {/* Hero Section */}
+      <RealtimeStats />
+
+      {/* Bento Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <VoltageChart />
+        <ActivePersonnelList />
+        <MeshStatus />
+        <NodeDiagnostics />
+        <EnvironmentCard />
+        <LatestAlert />
+      </div>
+
+      {/* Footer Insight Section */}
+      <div className="rounded-3xl bg-sidebar p-12 text-sidebar-foreground relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5">
+           <div className="absolute top-0 right-0 size-96 rounded-full bg-sidebar-accent-foreground blur-[100px]" />
+        </div>
+        
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-6">
+            <h3 className="text-4xl font-black tracking-tighter text-white">
+              Compliance Reporting
+            </h3>
+            <p className="text-lg text-sidebar-foreground/60 leading-relaxed max-w-xl">
+              Automatic generation of LOTO audit trails ready for ISO-45001 review.
+              All biometric verification logs are immutable and timestamped via 
+              ESP-NOW secure transmission.
+            </p>
+            <div className="flex gap-4">
+              <button className="rounded-xl bg-primary px-8 py-4 text-sm font-black uppercase tracking-widest text-primary-foreground shadow-lg shadow-primary/20 hover:scale-105 transition-transform">
+                Generate Report
+              </button>
+              <button className="rounded-xl border border-white/10 px-8 py-4 text-sm font-black uppercase tracking-widest text-white hover:bg-white/5 transition-colors">
+                Export Data
+              </button>
+            </div>
           </div>
-        </TabsContent>
-        <TabsContent value="analytics" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Analytics</CardTitle>
-              <CardDescription>
-                Detailed analytics will appear here.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="mx-6 mb-6 flex h-[400px] items-center justify-center rounded-xl border-2 border-dashed">
-              <span className="text-muted-foreground">
-                Analytics under construction
-              </span>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="reports" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Reports</CardTitle>
-              <CardDescription>Generate and download reports.</CardDescription>
-            </CardHeader>
-            <CardContent className="mx-6 mb-6 flex h-[400px] items-center justify-center rounded-xl border-2 border-dashed">
-              <span className="text-muted-foreground">
-                Reports under construction
-              </span>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+          
+          <div className="hidden lg:block">
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { label: "Audit Score", value: "98/100" },
+                { label: "Compliance", value: "100%" },
+                { label: "Active Nodes", value: "12/12" },
+                { label: "Last Sync", value: "Now" },
+              ].map((stat) => (
+                <div key={stat.label} className="rounded-2xl bg-white/5 border border-white/10 p-6">
+                  <p className="text-[10px] font-bold text-sidebar-foreground/40 uppercase tracking-widest">
+                    {stat.label}
+                  </p>
+                  <p className="mt-2 text-2xl font-black text-white">
+                    {stat.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

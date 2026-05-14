@@ -10,96 +10,170 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import {
+  Fingerprint,
+  ShieldCheck,
+  ShieldAlert,
+  ChevronLeft,
+  ChevronRight,
+  Zap,
+} from "lucide-react"
+import { cn } from "@/lib/utils"
 
-const auditLogs = [
+const logs = [
   {
-    id: "LOG-1029",
-    timestamp: "2024-05-14T08:45:00Z",
-    user: "John Doe",
-    action: "ACCESS_GRANTED",
-    resource: "Main Server Room",
-    status: "success",
-    ip: "192.168.1.105",
+    id: "LOG-001",
+    person: { name: "Alex Thompson", role: "Sr. Electrician", initials: "AT" },
+    machineId: "MC-402",
+    isolation: "Electrical",
+    verification: "Biometric",
+    time: "2024-05-14 08:41:22",
+    status: "Secured",
   },
   {
-    id: "LOG-1028",
-    timestamp: "2024-05-14T08:32:00Z",
-    user: "Jane Smith",
-    action: "ACCESS_DENIED",
-    resource: "Executive Office",
-    status: "failure",
-    ip: "192.168.1.202",
+    id: "LOG-002",
+    person: { name: "Sarah Jenkins", role: "Safety Lead", initials: "SJ" },
+    machineId: "CONV-12",
+    isolation: "Mechanical",
+    verification: "PIN + Tag",
+    time: "2024-05-14 09:12:05",
+    status: "Active",
   },
   {
-    id: "LOG-1027",
-    timestamp: "2024-05-14T07:15:00Z",
-    user: "System",
-    action: "FIRMWARE_UPDATE",
-    resource: "Warehouse Entry B",
-    status: "success",
-    ip: "10.0.0.1",
+    id: "LOG-003",
+    person: { name: "Unrecognized", role: "Unauthorized", initials: "??", error: true },
+    machineId: "PUMP-04",
+    isolation: "Fluid",
+    verification: "Failed Attempt",
+    time: "2024-05-14 10:05:41",
+    status: "Blocked",
   },
   {
-    id: "LOG-1026",
-    timestamp: "2024-05-14T06:50:00Z",
-    user: "Mike Johnson",
-    action: "LOCK_RESTART",
-    resource: "Warehouse Entry B",
-    status: "success",
-    ip: "192.168.1.118",
-  },
-  {
-    id: "LOG-1025",
-    timestamp: "2024-05-13T18:30:00Z",
-    user: "Sarah Williams",
-    action: "ACCESS_GRANTED",
-    resource: "Server Room B",
-    status: "success",
-    ip: "192.168.1.109",
+    id: "LOG-004",
+    person: { name: "Michael Zhao", role: "Maintenance", initials: "MZ" },
+    machineId: "GEN-01",
+    isolation: "Multiple",
+    verification: "Biometric",
+    time: "2024-05-14 10:45:18",
+    status: "Secured",
   },
 ]
 
 export function AuditTable() {
   return (
-    <div className="rounded-md border">
+    <div className="rounded-[2rem] border border-border bg-card shadow-sm overflow-hidden">
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">Log ID</TableHead>
-            <TableHead>Timestamp</TableHead>
-            <TableHead>User</TableHead>
-            <TableHead>Action</TableHead>
-            <TableHead>Resource</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">IP Address</TableHead>
+        <TableHeader className="bg-muted/50">
+          <TableRow className="border-border hover:bg-transparent">
+            <TableHead className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground pl-8">
+              Personnel
+            </TableHead>
+            <TableHead className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+              Machine ID
+            </TableHead>
+            <TableHead className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+              Isolation Type
+            </TableHead>
+            <TableHead className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+              Verification
+            </TableHead>
+            <TableHead className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+              Timestamp
+            </TableHead>
+            <TableHead className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground pr-8 text-right">
+              Status
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {auditLogs.map((log) => (
-            <TableRow key={log.id}>
-              <TableCell className="font-medium">{log.id}</TableCell>
-              <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
-              <TableCell>{log.user}</TableCell>
+          {logs.map((log) => (
+            <TableRow
+              key={log.id}
+              className={cn(
+                "group border-border transition-colors h-20",
+                log.status === "Blocked"
+                  ? "bg-destructive/5 hover:bg-destructive/10"
+                  : "hover:bg-muted/30"
+              )}
+            >
+              <TableCell className="pl-8">
+                <div className="flex items-center gap-4">
+                  <div className={cn(
+                    "flex size-10 items-center justify-center rounded-full text-xs font-black ring-4 ring-background shadow-sm",
+                    log.person.error ? "bg-destructive text-destructive-foreground" : "bg-muted text-primary"
+                  )}>
+                    {log.person.initials}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className={cn(
+                      "text-sm font-bold",
+                      log.person.error ? "text-destructive" : "text-foreground"
+                    )}>
+                      {log.person.name}
+                    </span>
+                    <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                      {log.person.role}
+                    </span>
+                  </div>
+                </div>
+              </TableCell>
               <TableCell>
-                <Badge variant="outline" className="font-mono text-xs">
-                  {log.action}
+                <Badge variant="outline" className="rounded-lg bg-muted border-border text-[10px] font-black tracking-widest px-3 py-1">
+                  {log.machineId}
                 </Badge>
               </TableCell>
-              <TableCell>{log.resource}</TableCell>
               <TableCell>
+                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                  <Zap className="size-3.5" />
+                  {log.isolation}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2 text-xs font-bold text-foreground">
+                  {log.verification === "Biometric" ? (
+                    <Fingerprint className="size-4 text-primary" />
+                  ) : log.status === "Blocked" ? (
+                    <ShieldAlert className="size-4 text-destructive" />
+                  ) : (
+                    <ShieldCheck className="size-4 text-muted-foreground" />
+                  )}
+                  {log.verification}
+                </div>
+              </TableCell>
+              <TableCell className="text-xs font-mono font-medium text-muted-foreground">
+                {log.time}
+              </TableCell>
+              <TableCell className="pr-8 text-right">
                 <Badge
-                  variant={log.status === "success" ? "default" : "destructive"}
+                  className={cn(
+                    "rounded-full px-4 py-1 text-[10px] font-black uppercase tracking-widest shadow-sm",
+                    log.status === "Secured" && "bg-accent text-accent-foreground",
+                    log.status === "Active" && "bg-secondary text-secondary-foreground",
+                    log.status === "Blocked" && "bg-destructive text-destructive-foreground"
+                  )}
                 >
-                  {log.status === "success" ? "Success" : "Failure"}
+                  {log.status}
                 </Badge>
-              </TableCell>
-              <TableCell className="text-right font-mono text-sm text-muted-foreground">
-                {log.ip}
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+
+      {/* Pagination Row */}
+      <div className="flex items-center justify-between border-t border-border bg-muted/20 px-8 py-4">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          Showing 1 - 24 of 1,234 Records
+        </p>
+        <div className="flex items-center gap-2">
+          <button className="flex size-10 items-center justify-center rounded-xl border border-border bg-background transition-colors hover:bg-muted disabled:opacity-50" disabled>
+            <ChevronLeft className="size-5" />
+          </button>
+          <button className="flex size-10 items-center justify-center rounded-xl border border-border bg-background transition-colors hover:bg-muted">
+            <ChevronRight className="size-5" />
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

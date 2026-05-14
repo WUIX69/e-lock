@@ -1,61 +1,70 @@
 "use client"
 
 import * as React from "react"
+import { Search, ListFilter, BadgeCheck } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Search, Download, Filter } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 export function AuditFilters() {
+  const [activeRange, setActiveRange] = React.useState("Today")
+
   return (
-    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-      <div className="flex flex-1 items-center space-x-2">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search by User, Action, or Resource..."
-            className="pl-8"
-          />
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      {/* Main Filter Panel */}
+      <div className="lg:col-span-3 rounded-3xl border border-border bg-card p-8 shadow-sm">
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          <div className="relative flex-1 w-full">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
+            <Input
+              placeholder="Search personnel, machine IDs, or isolation types..."
+              className="h-14 w-full rounded-2xl border-border bg-muted pl-12 text-sm focus-visible:ring-primary"
+            />
+          </div>
+          
+          <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-muted w-full md:w-auto">
+            {["Today", "Last 7 Days", "Isolation Type"].map((range) => (
+              <button
+                key={range}
+                onClick={() => setActiveRange(range)}
+                className={cn(
+                  "flex-1 md:flex-none px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                  activeRange === range
+                    ? "bg-secondary text-secondary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                )}
+              >
+                {range === "Isolation Type" ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <ListFilter className="size-3" />
+                    {range}
+                  </div>
+                ) : range}
+              </button>
+            ))}
+          </div>
         </div>
-        <Select defaultValue="all">
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Action Type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Actions</SelectItem>
-            <SelectItem value="access_granted">Access Granted</SelectItem>
-            <SelectItem value="access_denied">Access Denied</SelectItem>
-            <SelectItem value="firmware_update">Firmware Update</SelectItem>
-            <SelectItem value="lock_restart">Lock Restart</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select defaultValue="7d">
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Time Range" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="24h">Last 24 Hours</SelectItem>
-            <SelectItem value="7d">Last 7 Days</SelectItem>
-            <SelectItem value="30d">Last 30 Days</SelectItem>
-            <SelectItem value="all">All Time</SelectItem>
-          </SelectContent>
-        </Select>
-        <Button variant="outline" size="icon">
-          <Filter className="h-4 w-4" />
-        </Button>
       </div>
-      <div className="flex items-center space-x-2">
-        <Button variant="outline">
-          <Download className="mr-2 h-4 w-4" />
-          Export CSV
-        </Button>
+
+      {/* Active Lockouts Status Card */}
+      <div className="lg:col-span-1 rounded-3xl bg-primary p-8 text-primary-foreground shadow-lg shadow-primary/20 relative overflow-hidden group">
+        <div className="relative z-10 flex flex-col justify-between h-full">
+          <div className="flex items-center justify-between">
+            <h4 className="text-[10px] font-black uppercase tracking-widest opacity-60">
+              Active Lockouts
+            </h4>
+            <BadgeCheck className="size-5 text-primary-foreground/40" />
+          </div>
+          
+          <div className="mt-4 flex items-baseline gap-2">
+            <span className="text-5xl font-black tracking-tighter">24</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest opacity-60 pb-1">
+              Valid Logs
+            </span>
+          </div>
+        </div>
+        
+        {/* Subtle Watermark Decoration */}
+        <BadgeCheck className="absolute -bottom-6 -right-6 size-32 text-white/10 -rotate-12 transition-transform group-hover:scale-110 duration-700" />
       </div>
     </div>
   )

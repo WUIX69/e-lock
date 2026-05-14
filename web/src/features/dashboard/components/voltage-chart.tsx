@@ -1,0 +1,62 @@
+"use client"
+
+import * as React from "react"
+import { TrendingUp, AlertCircle } from "lucide-react"
+
+export const VoltageChart = () => {
+  // Static mock data for the visual chart
+  const bars = [
+    40, 60, 45, 80, 55, 90, 70, 85, 40, 65, 50, 75, 45
+  ]
+
+  return (
+    <div className="col-span-1 lg:col-span-2 rounded-3xl border border-border bg-card p-8 shadow-sm">
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground">
+              ZMPT101B Voltage
+            </h4>
+            <div className="flex items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-bold text-destructive">
+              <AlertCircle className="size-3" />
+              0.2V RMS
+            </div>
+          </div>
+          <p className="text-2xl font-black text-foreground">Live Monitoring</p>
+        </div>
+        <div className="flex items-center gap-2 text-primary">
+          <TrendingUp className="size-5" />
+          <span className="text-sm font-bold">+2.4%</span>
+        </div>
+      </div>
+
+      <div className="mt-8 flex h-48 items-end gap-3">
+        {bars.map((height, i) => (
+          <div
+            key={i}
+            className="group relative flex-1"
+          >
+            <div 
+              className="w-full rounded-t-lg bg-primary transition-all duration-500 group-hover:bg-primary/80"
+              style={{ height: `${height}%` }}
+            />
+            {/* Tooltip placeholder */}
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="rounded bg-foreground px-2 py-1 text-[10px] font-bold text-background">
+                {height}V
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 flex items-center justify-between border-t border-border pt-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">
+        <span>08:00 AM</span>
+        <span>09:00 AM</span>
+        <span>10:00 AM</span>
+        <span>11:00 AM</span>
+        <span>12:00 PM</span>
+      </div>
+    </div>
+  )
+}

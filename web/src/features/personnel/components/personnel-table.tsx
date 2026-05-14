@@ -1,144 +1,140 @@
 "use client"
 
 import * as React from "react"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { MoreHorizontal, Edit, Trash, Key } from "lucide-react"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { Search, Filter, MoreHorizontal, UserCircle, ShieldCheck, Clock } from "lucide-react"
 
-const personnelData = [
+const personnel = [
   {
-    id: "EMP-001",
-    name: "John Doe",
-    email: "john.doe@example.com",
-    role: "Administrator",
-    department: "IT Security",
-    status: "active",
-    accessLevel: "Level 5 (All Areas)",
-    initials: "JD",
+    id: "P-101",
+    name: "Alex Thompson",
+    role: "Senior Electrician",
+    clearance: "Level 4 (LOTO)",
+    status: "Active",
+    lastAccess: "02m ago",
+    node: "Node 04"
   },
   {
-    id: "EMP-002",
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    role: "Manager",
-    department: "Operations",
-    status: "active",
-    accessLevel: "Level 3 (Building A & B)",
-    initials: "JS",
+    id: "P-102",
+    name: "Maria Rodriguez",
+    role: "Safety Supervisor",
+    clearance: "Level 5 (Admin)",
+    status: "Active",
+    lastAccess: "15m ago",
+    node: "Control Room"
   },
   {
-    id: "EMP-003",
-    name: "Mike Johnson",
-    email: "mike.johnson@example.com",
-    role: "Staff",
-    department: "Warehouse",
-    status: "suspended",
-    accessLevel: "Level 1 (Warehouse Only)",
-    initials: "MJ",
+    id: "P-103",
+    name: "Ken Chen",
+    role: "Maintenance Engineer",
+    clearance: "Level 3",
+    status: "Off-Site",
+    lastAccess: "2h ago",
+    node: "N/A"
   },
   {
-    id: "EMP-004",
-    name: "Sarah Williams",
-    email: "sarah.williams@example.com",
-    role: "Contractor",
-    department: "Maintenance",
-    status: "active",
-    accessLevel: "Level 2 (Maintenance Areas)",
-    initials: "SW",
+    id: "P-104",
+    name: "Sarah Jenkins",
+    role: "System Admin",
+    clearance: "Level 5 (Admin)",
+    status: "Active",
+    lastAccess: "Now",
+    node: "Node 01"
   },
+  {
+    id: "P-105",
+    name: "Robert Miller",
+    role: "Junior Technician",
+    clearance: "Level 2",
+    status: "Active",
+    lastAccess: "45m ago",
+    node: "Node 02"
+  }
 ]
 
-export function PersonnelTable() {
+export const PersonnelTable = () => {
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Employee</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Department</TableHead>
-            <TableHead>Access Level</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {personnelData.map((person) => (
-            <TableRow key={person.id}>
-              <TableCell>
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-9 w-9">
-                    <AvatarFallback>{person.initials}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="font-medium">{person.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {person.email}
-                    </span>
+    <div className="space-y-6">
+      {/* Table Controls */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search personnel by name or ID..."
+            className="w-full rounded-2xl border border-border bg-card pl-11 pr-4 py-3 text-sm transition-shadow focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
+        </div>
+        <div className="flex items-center gap-3">
+          <button className="flex items-center gap-2 rounded-2xl border border-border bg-card px-5 py-3 text-sm font-bold transition-colors hover:bg-muted">
+            <Filter className="size-4" />
+            Filter
+          </button>
+          <span className="text-xs font-bold text-muted-foreground ml-2">
+            Showing 5 of 142 personnel
+          </span>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-muted/50 border-bottom border-border">
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Personnel</th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Clearance</th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Status</th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Last Access</th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Location</th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {personnel.map((person) => (
+              <tr key={person.id} className="group transition-colors hover:bg-muted/30">
+                <td className="px-6 py-5">
+                  <div className="flex items-center gap-4">
+                    <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:scale-110 transition-transform">
+                      <UserCircle className="size-6" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-black text-foreground">{person.name}</p>
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase">{person.id} • {person.role}</p>
+                    </div>
                   </div>
-                </div>
-              </TableCell>
-              <TableCell>{person.role}</TableCell>
-              <TableCell>{person.department}</TableCell>
-              <TableCell>
-                <Badge variant="outline" className="font-normal">
-                  {person.accessLevel}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <Badge
-                  variant={
-                    person.status === "active" ? "default" : "destructive"
-                  }
-                >
-                  {person.status.charAt(0).toUpperCase() +
-                    person.status.slice(1)}
-                </Badge>
-              </TableCell>
-              <TableCell className="text-right">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <span className="sr-only">Open menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem>
-                      <Edit className="mr-2 h-4 w-4" /> Edit Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Key className="mr-2 h-4 w-4" /> Manage Access
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-destructive focus:text-destructive">
-                      <Trash className="mr-2 h-4 w-4" /> Suspend User
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+                </td>
+                <td className="px-6 py-5">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className={`size-4 ${person.clearance.includes('Admin') ? 'text-primary' : 'text-muted-foreground'}`} />
+                    <span className="text-xs font-bold text-foreground">{person.clearance}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-5">
+                  <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
+                    person.status === 'Active' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
+                  }`}>
+                    <span className={`size-1.5 rounded-full ${person.status === 'Active' ? 'bg-primary animate-pulse' : 'bg-muted-foreground'}`} />
+                    {person.status}
+                  </span>
+                </td>
+                <td className="px-6 py-5">
+                  <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                    <Clock className="size-3" />
+                    {person.lastAccess}
+                  </div>
+                </td>
+                <td className="px-6 py-5">
+                  <span className="text-xs font-bold text-foreground">{person.node}</span>
+                </td>
+                <td className="px-6 py-5 text-right">
+                  <button className="rounded-xl p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                    <MoreHorizontal className="size-5" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

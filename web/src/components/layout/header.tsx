@@ -1,7 +1,7 @@
 "use client"
 
-import { Bell, Search } from "lucide-react"
-import { Input } from "@/components/ui/input"
+import * as React from "react"
+import { Bell, ShieldCheck, CreditCard, User } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -11,54 +11,107 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { cn } from "@/lib/utils"
+import Link from "next/link"
+
+const breadcrumbs = [
+  { name: "Facility Alpha", href: "#" },
+  { name: "Zone 4", href: "#" },
+  { name: "Main Grid", href: "/" },
+]
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b bg-background px-6 shadow-sm">
-      <div className="flex flex-1 items-center gap-4">
-        <form className="relative w-full max-w-md">
-          <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search locks, users, or audit logs..."
-            className="w-full appearance-none border-muted bg-background pl-8 shadow-none"
-          />
-        </form>
+    <header className="sticky top-0 z-40 flex h-20 w-full items-center justify-between border-b border-border bg-background/80 px-8 backdrop-blur-md">
+      <div className="flex items-center gap-8">
+        <div className="flex flex-col">
+          <h1 className="text-xl font-black tracking-tight text-primary">
+            E-LOCK Industrial
+          </h1>
+          <nav className="mt-1 flex items-center gap-4">
+            {breadcrumbs.map((crumb, index) => (
+              <React.Fragment key={crumb.name}>
+                <Link
+                  href={crumb.href}
+                  className={cn(
+                    "text-[10px] font-bold uppercase tracking-widest transition-colors",
+                    index === breadcrumbs.length - 1
+                      ? "text-primary border-b-2 border-primary pb-0.5"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {crumb.name}
+                </Link>
+                {index < breadcrumbs.length - 1 && (
+                  <span className="text-[10px] text-muted-foreground/30">/</span>
+                )}
+              </React.Fragment>
+            ))}
+          </nav>
+        </div>
       </div>
-      <div className="flex items-center gap-4">
-        <button className="relative flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted">
-          <Bell className="h-5 w-5" />
-          <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-destructive" />
+
+      <div className="flex items-center gap-6">
+        {/* System Status Badge */}
+        <div className="flex items-center gap-3 rounded-2xl bg-accent px-4 py-2 text-accent-foreground shadow-sm">
+          <div className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
+          </div>
+          <span className="text-[10px] font-black uppercase tracking-widest">
+            System Isolated
+          </span>
+        </div>
+
+        {/* Scan Badge Button */}
+        <button className="flex items-center gap-2 rounded-2xl border border-border bg-background px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-colors hover:bg-muted">
+          <CreditCard className="size-4" />
+          Scan Badge
         </button>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2 outline-none">
-              <Avatar className="h-9 w-9 border border-border">
-                <AvatarImage src="https://github.com/shadcn.png" alt="@admin" />
-                <AvatarFallback>AD</AvatarFallback>
-              </Avatar>
-              <div className="hidden flex-col items-start text-sm sm:flex">
-                <span className="leading-none font-medium text-foreground">
-                  Admin User
-                </span>
-                <span className="mt-1 text-xs text-muted-foreground">
-                  Administrator
-                </span>
-              </div>
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
-              Log out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center gap-4 border-l border-border pl-6">
+          <button className="relative flex h-10 w-10 items-center justify-center rounded-2xl text-muted-foreground transition-colors hover:bg-muted">
+            <Bell className="size-5" />
+            <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-destructive shadow-sm" />
+          </button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-3 outline-none group">
+                <div className="flex flex-col items-end">
+                  <span className="text-xs font-bold text-foreground">
+                    Admin User
+                  </span>
+                  <span className="text-[10px] font-medium text-muted-foreground">
+                    Administrator
+                  </span>
+                </div>
+                <Avatar className="h-10 w-10 rounded-2xl border-2 border-border transition-transform group-hover:scale-105">
+                  <AvatarImage src="https://github.com/shadcn.png" alt="@admin" />
+                  <AvatarFallback>AD</AvatarFallback>
+                </Avatar>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2">
+              <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-muted-foreground">
+                Management Account
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="rounded-xl px-2 py-2 text-sm font-medium">
+                <User className="mr-2 size-4" />
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem className="rounded-xl px-2 py-2 text-sm font-medium">
+                <ShieldCheck className="mr-2 size-4" />
+                Security
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="rounded-xl px-2 py-2 text-sm font-medium text-destructive focus:bg-destructive/10 focus:text-destructive">
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </header>
   )
