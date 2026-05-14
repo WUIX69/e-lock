@@ -2,9 +2,31 @@
 
 import * as React from "react"
 import { TrendingUp, AlertCircle } from "lucide-react"
+import { Area, AreaChart, XAxis } from "recharts"
 import { MOCK_VOLTAGE_BARS } from "@/data/mock/dashboard"
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart"
+
+const chartConfig = {
+  voltage: {
+    label: "Voltage",
+    color: "var(--primary)",
+  },
+} satisfies ChartConfig
 
 export const VoltageChart = () => {
+  // Transform flat mock data into chart-ready format
+  const chartData = React.useMemo(() => {
+    return MOCK_VOLTAGE_BARS.map((value, index) => ({
+      time: index,
+      voltage: value,
+    }))
+  }, [])
+
   return (
     <div className="col-span-1 rounded-3xl border border-border bg-card p-8 shadow-sm lg:col-span-2">
       <div className="flex items-center justify-between">
@@ -26,21 +48,45 @@ export const VoltageChart = () => {
         </div>
       </div>
 
-      <div className="mt-8 flex h-48 items-end gap-3">
-        {MOCK_VOLTAGE_BARS.map((height, i) => (
-          <div key={i} className="group relative flex-1">
-            <div
-              className="w-full rounded-t-lg bg-primary transition-all duration-500 group-hover:bg-primary/80"
-              style={{ height: `${height}%` }}
+      <div className="mt-8">
+        <ChartContainer config={chartConfig} className="h-48 w-full">
+          <AreaChart accessibilityLayer data={chartData}>
+            <defs>
+              <linearGradient id="fillVoltage" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-voltage)"
+                  stopOpacity={0.4}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-voltage)"
+                  stopOpacity={0}
+                />
+              </linearGradient>
+            </defs>
+            <XAxis
+              dataKey="time"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value) => `${value}s`}
+              hide
             />
-            {/* Tooltip placeholder */}
-            <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 transition-opacity group-hover:opacity-100">
-              <div className="rounded bg-foreground px-2 py-1 text-[10px] font-bold text-background">
-                {height}V
-              </div>
-            </div>
-          </div>
-        ))}
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Area
+              dataKey="voltage"
+              type="monotone"
+              fill="url(#fillVoltage)"
+              stroke="var(--color-voltage)"
+              strokeWidth={4}
+              animationDuration={1500}
+            />
+          </AreaChart>
+        </ChartContainer>
       </div>
 
       <div className="mt-4 flex items-center justify-between border-t border-border pt-4 text-[10px] font-bold tracking-widest text-muted-foreground/40 uppercase">
