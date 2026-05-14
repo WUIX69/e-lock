@@ -2,8 +2,11 @@
 
 import * as React from "react"
 import { BellRing } from "lucide-react"
+import { MOCK_SYSTEM_DIAGNOSTICS } from "@/data/mock/dashboard"
 
 export const LatestAlert = () => {
+  const { latestAlert } = MOCK_SYSTEM_DIAGNOSTICS
+  
   return (
     <div className="rounded-3xl border border-border bg-card p-8 shadow-sm flex flex-col justify-between">
       <div className="flex items-center justify-between">
@@ -20,10 +23,10 @@ export const LatestAlert = () => {
 
       <div className="mt-4 space-y-2">
         <p className="text-xs font-medium italic text-muted-foreground leading-relaxed">
-          &quot;RFID tag verification requested at Node 04. Access granted to Alex T.&quot;
+          &quot;{latestAlert.message}&quot;
         </p>
         <p className="text-[10px] font-bold text-primary uppercase tracking-widest">
-          12m ago
+          {latestAlert.time}
         </p>
       </div>
     </div>

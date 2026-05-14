@@ -2,27 +2,7 @@
 
 import * as React from "react"
 import { Fingerprint, MoreHorizontal } from "lucide-react"
-
-const personnel = [
-  {
-    name: "Alex Thompson",
-    role: "Senior Electrician",
-    time: "02:41:00",
-    status: "Secured",
-  },
-  {
-    name: "Sarah Jenkins",
-    role: "Safety Inspector",
-    time: "01:15:32",
-    status: "Secured",
-  },
-  {
-    name: "Michael Zhao",
-    role: "Machine Op",
-    time: "00:45:10",
-    status: "Active",
-  },
-]
+import { MOCK_ACTIVE_PERSONNEL } from "@/data/mock/personnel"
 
 export const ActivePersonnelList = () => {
   return (
@@ -33,7 +13,7 @@ export const ActivePersonnelList = () => {
             Active Personnel
           </h4>
           <span className="rounded-full bg-secondary px-3 py-0.5 text-[10px] font-black uppercase tracking-widest text-secondary-foreground">
-            4 Secured
+            {MOCK_ACTIVE_PERSONNEL.length} Secured
           </span>
         </div>
         <button className="text-muted-foreground hover:text-foreground">
@@ -42,7 +22,7 @@ export const ActivePersonnelList = () => {
       </div>
 
       <div className="mt-8 space-y-4">
-        {personnel.map((person) => (
+        {MOCK_ACTIVE_PERSONNEL.map((person) => (
           <div
             key={person.name}
             className="flex items-center justify-between rounded-2xl border border-border bg-muted/30 p-4 transition-colors hover:bg-muted"

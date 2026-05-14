@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { AlertTriangle, Clock, ShieldCheck, Cpu } from "lucide-react"
+import { MOCK_DASHBOARD_HERO } from "@/data/mock/dashboard"
 
 export function RealtimeStats() {
   return (
@@ -21,12 +22,11 @@ export function RealtimeStats() {
             </div>
             
             <div className="space-y-2">
-              <h2 className="text-6xl font-black tracking-tighter text-foreground leading-none">
-                Main Crusher <span className="text-primary">#402</span>
+              <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground leading-none">
+                {MOCK_DASHBOARD_HERO.unitName} <span className="text-primary">{MOCK_DASHBOARD_HERO.unitId}</span>
               </h2>
-              <p className="text-lg text-muted-foreground font-medium max-w-xl leading-relaxed">
-                Unit is currently in isolated safety mode. All power sources have
-                been verified as offline by administrative staff.
+              <p className="text-base md:text-lg text-muted-foreground font-medium max-w-xl leading-relaxed">
+                {MOCK_DASHBOARD_HERO.description}
               </p>
             </div>
           </div>
@@ -38,7 +38,7 @@ export function RealtimeStats() {
                 <span className="text-[10px] font-black uppercase tracking-widest opacity-60">
                   Safety State
                 </span>
-                <span className="text-lg font-black uppercase">Isolated</span>
+                <span className="text-lg font-black uppercase">{MOCK_DASHBOARD_HERO.status}</span>
               </div>
             </div>
 
@@ -48,7 +48,7 @@ export function RealtimeStats() {
                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                   Time in State
                 </span>
-                <span className="text-lg font-black tracking-tight">02h 41m</span>
+                <span className="text-lg font-black tracking-tight">{MOCK_DASHBOARD_HERO.timeInState}</span>
               </div>
             </div>
           </div>

@@ -17,6 +17,8 @@ import {
   ChevronRight,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useSidebar } from "@/context/sidebar-context"
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -27,11 +29,12 @@ const navigation = [
   { name: "System Settings", href: "/settings", icon: Settings },
 ]
 
-export function Sidebar() {
+function SidebarContent() {
   const pathname = usePathname()
+  const { setIsOpen } = useSidebar()
 
   return (
-    <div className="flex h-screen w-72 flex-col bg-sidebar text-sidebar-foreground shadow-2xl">
+    <>
       {/* Brand Header */}
       <div className="flex h-24 shrink-0 flex-col justify-center px-8">
         <div className="flex items-center gap-3">
@@ -50,13 +53,14 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-4 py-6">
+      <nav className="flex-1 space-y-1 px-4 py-6 overflow-y-auto">
         {navigation.map((item) => {
           const isActive = pathname === item.href
           return (
             <Link
               key={item.name}
               href={item.href}
+              onClick={() => setIsOpen(false)}
               className={cn(
                 "group flex items-center justify-between rounded-xl px-4 py-3.5 text-sm font-bold transition-all duration-200",
                 isActive
@@ -82,7 +86,7 @@ export function Sidebar() {
       </nav>
 
       {/* Bottom Actions */}
-      <div className="space-y-4 p-6">
+      <div className="space-y-4 p-6 shrink-0">
         {/* Emergency Stop Button */}
         <button className="flex w-full items-center justify-center gap-3 rounded-2xl bg-destructive px-4 py-4 text-sm font-black uppercase tracking-widest text-destructive-foreground shadow-lg shadow-destructive/20 transition-transform hover:scale-[1.02] active:scale-[0.98]">
           <AlertTriangle className="size-5" />
@@ -114,6 +118,29 @@ export function Sidebar() {
           Sign Out
         </Link>
       </div>
-    </div>
+    </>
+  )
+}
+
+export function Sidebar() {
+  const { isOpen, setIsOpen } = useSidebar()
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:flex flex-col h-screen w-72 shrink-0 bg-sidebar text-sidebar-foreground shadow-2xl z-20">
+        <SidebarContent />
+      </div>
+
+      {/* Mobile Sidebar */}
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetContent side="left" className="w-[85vw] max-w-sm p-0 bg-sidebar border-r-sidebar-border text-sidebar-foreground flex flex-col h-full">
+          <div className="sr-only">
+            <SheetTitle>Navigation Menu</SheetTitle>
+          </div>
+          <SidebarContent />
+        </SheetContent>
+      </Sheet>
+    </>
   )
 }

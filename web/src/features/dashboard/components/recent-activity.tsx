@@ -1,49 +1,8 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { MOCK_RECENT_ACTIVITY } from "@/data/mock/dashboard"
 
 export function RecentActivity() {
-  const activities = [
-    {
-      id: "1",
-      user: "John Doe",
-      action: "Access Granted",
-      target: "Main Server Room",
-      time: "2 minutes ago",
-      initials: "JD",
-    },
-    {
-      id: "2",
-      user: "Jane Smith",
-      action: "Access Denied",
-      target: "Executive Office",
-      time: "15 minutes ago",
-      initials: "JS",
-      isAlert: true,
-    },
-    {
-      id: "3",
-      user: "Mike Johnson",
-      action: "Lock Restarted",
-      target: "Warehouse Entry B",
-      time: "1 hour ago",
-      initials: "MJ",
-    },
-    {
-      id: "4",
-      user: "System",
-      action: "Firmware Updated",
-      target: "All 1st Floor Locks",
-      time: "3 hours ago",
-      initials: "SY",
-    },
-    {
-      id: "5",
-      user: "Sarah Williams",
-      action: "Access Granted",
-      target: "Server Room B",
-      time: "5 hours ago",
-      initials: "SW",
-    },
-  ]
+  const activities = MOCK_RECENT_ACTIVITY
 
   return (
     <div className="space-y-8">

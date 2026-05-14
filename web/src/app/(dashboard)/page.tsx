@@ -9,6 +9,8 @@ import { LatestAlert } from "@/features/dashboard/components/latest-alert"
 import { ArrowRight, History } from "lucide-react"
 import Link from "next/link"
 
+import { MOCK_COMPLIANCE_STATS } from "@/data/mock/dashboard"
+
 export const metadata: Metadata = {
   title: "Dashboard | E-LOCK Management",
   description: "E-LOCK Management Portal Dashboard overview",
@@ -37,7 +39,7 @@ export default function DashboardPage() {
 
       {/* Hero Section */}
       <RealtimeStats />
-
+      
       {/* Bento Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <VoltageChart />
@@ -76,12 +78,7 @@ export default function DashboardPage() {
           
           <div className="hidden lg:block">
             <div className="grid grid-cols-2 gap-4">
-              {[
-                { label: "Audit Score", value: "98/100" },
-                { label: "Compliance", value: "100%" },
-                { label: "Active Nodes", value: "12/12" },
-                { label: "Last Sync", value: "Now" },
-              ].map((stat) => (
+              {MOCK_COMPLIANCE_STATS.map((stat) => (
                 <div key={stat.label} className="rounded-2xl bg-white/5 border border-white/10 p-6">
                   <p className="text-[10px] font-bold text-sidebar-foreground/40 uppercase tracking-widest">
                     {stat.label}

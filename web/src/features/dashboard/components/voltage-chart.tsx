@@ -2,13 +2,9 @@
 
 import * as React from "react"
 import { TrendingUp, AlertCircle } from "lucide-react"
+import { MOCK_VOLTAGE_BARS } from "@/data/mock/dashboard"
 
 export const VoltageChart = () => {
-  // Static mock data for the visual chart
-  const bars = [
-    40, 60, 45, 80, 55, 90, 70, 85, 40, 65, 50, 75, 45
-  ]
-
   return (
     <div className="col-span-1 lg:col-span-2 rounded-3xl border border-border bg-card p-8 shadow-sm">
       <div className="flex items-center justify-between">
@@ -31,7 +27,7 @@ export const VoltageChart = () => {
       </div>
 
       <div className="mt-8 flex h-48 items-end gap-3">
-        {bars.map((height, i) => (
+        {MOCK_VOLTAGE_BARS.map((height, i) => (
           <div
             key={i}
             className="group relative flex-1"
