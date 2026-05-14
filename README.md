@@ -25,7 +25,7 @@ e-lock/
 
 ## Architecture
 
-The system follows **Feature-Sliced Design (FSD)** on the web side and **modular library architecture** on the firmware side. See [docs/FSD.md](docs/FSD.md) and [docs/architecture/system-overview.md](docs/architecture/system-overview.md) for details.
+The system follows **Feature-Sliced Design (FSD)** on the web side and **modular library architecture** on the firmware side. See [docs/architecture/system-overview.md](docs/architecture/system-overview.md) for details.
 
 ## Getting Started
 
