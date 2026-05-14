@@ -34,3 +34,9 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# others
+.agent
+/everything-claude-code
+/everything-claude-code/yaml.lock
+everything-claude-code
