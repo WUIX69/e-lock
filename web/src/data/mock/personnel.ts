@@ -1,4 +1,4 @@
-import { PersonnelMember, ActivePersonnel } from "@/types/personnel";
+import { PersonnelMember, ActivePersonnel } from "@/types/personnel"
 
 export const MOCK_PERSONNEL: PersonnelMember[] = [
   {
@@ -8,7 +8,7 @@ export const MOCK_PERSONNEL: PersonnelMember[] = [
     clearance: "Level 4 (LOTO)",
     status: "Active",
     lastAccess: "02m ago",
-    node: "Node 04"
+    node: "Node 04",
   },
   {
     id: "P-102",
@@ -17,7 +17,7 @@ export const MOCK_PERSONNEL: PersonnelMember[] = [
     clearance: "Level 5 (Admin)",
     status: "Active",
     lastAccess: "15m ago",
-    node: "Control Room"
+    node: "Control Room",
   },
   {
     id: "P-103",
@@ -26,7 +26,7 @@ export const MOCK_PERSONNEL: PersonnelMember[] = [
     clearance: "Level 3",
     status: "Off-Site",
     lastAccess: "2h ago",
-    node: "N/A"
+    node: "N/A",
   },
   {
     id: "P-104",
@@ -35,7 +35,7 @@ export const MOCK_PERSONNEL: PersonnelMember[] = [
     clearance: "Level 5 (Admin)",
     status: "Active",
     lastAccess: "Now",
-    node: "Node 01"
+    node: "Node 01",
   },
   {
     id: "P-105",
@@ -44,9 +44,9 @@ export const MOCK_PERSONNEL: PersonnelMember[] = [
     clearance: "Level 2",
     status: "Active",
     lastAccess: "45m ago",
-    node: "Node 02"
-  }
-];
+    node: "Node 02",
+  },
+]
 
 export const MOCK_ACTIVE_PERSONNEL: ActivePersonnel[] = [
   {
@@ -67,4 +67,4 @@ export const MOCK_ACTIVE_PERSONNEL: ActivePersonnel[] = [
     time: "00:45:10",
     status: "Active",
   },
-];
+]

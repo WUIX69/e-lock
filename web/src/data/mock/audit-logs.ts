@@ -1,4 +1,4 @@
-import { AuditLog } from "@/types/audit";
+import { AuditLog } from "@/types/audit"
 
 export const MOCK_AUDIT_LOGS: AuditLog[] = [
   {
@@ -21,7 +21,12 @@ export const MOCK_AUDIT_LOGS: AuditLog[] = [
   },
   {
     id: "LOG-003",
-    person: { name: "Unrecognized", role: "Unauthorized", initials: "??", error: true },
+    person: {
+      name: "Unrecognized",
+      role: "Unauthorized",
+      initials: "??",
+      error: true,
+    },
     machineId: "PUMP-04",
     isolation: "Fluid",
     verification: "Failed Attempt",
@@ -37,4 +42,4 @@ export const MOCK_AUDIT_LOGS: AuditLog[] = [
     time: "2024-05-14 10:45:18",
     status: "Secured",
   },
-];
+]

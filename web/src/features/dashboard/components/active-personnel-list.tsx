@@ -6,13 +6,13 @@ import { MOCK_ACTIVE_PERSONNEL } from "@/data/mock/personnel"
 
 export const ActivePersonnelList = () => {
   return (
-    <div className="col-span-1 lg:col-span-2 rounded-3xl border border-border bg-card p-8 shadow-sm">
+    <div className="col-span-1 rounded-3xl border border-border bg-card p-8 shadow-sm lg:col-span-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h4 className="text-sm font-black uppercase tracking-widest text-foreground">
+          <h4 className="text-sm font-black tracking-widest text-foreground uppercase">
             Active Personnel
           </h4>
-          <span className="rounded-full bg-secondary px-3 py-0.5 text-[10px] font-black uppercase tracking-widest text-secondary-foreground">
+          <span className="rounded-full bg-secondary px-3 py-0.5 text-[10px] font-black tracking-widest text-secondary-foreground uppercase">
             {MOCK_ACTIVE_PERSONNEL.length} Secured
           </span>
         </div>
@@ -32,14 +32,16 @@ export const ActivePersonnelList = () => {
                 <Fingerprint className="size-5" />
               </div>
               <div>
-                <p className="text-sm font-bold text-foreground">{person.name}</p>
-                <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                <p className="text-sm font-bold text-foreground">
+                  {person.name}
+                </p>
+                <p className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
                   {person.role}
                 </p>
               </div>
             </div>
             <div className="flex flex-col items-end">
-              <p className="text-xs font-mono font-bold text-primary">
+              <p className="font-mono text-xs font-bold text-primary">
                 {person.time}
               </p>
               <p className="text-[10px] font-bold text-muted-foreground/40 uppercase">
@@ -50,7 +52,7 @@ export const ActivePersonnelList = () => {
         ))}
       </div>
 
-      <button className="mt-6 w-full rounded-xl border border-dashed border-border py-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:bg-muted hover:text-foreground">
+      <button className="mt-6 w-full rounded-xl border border-dashed border-border py-3 text-[10px] font-black tracking-widest text-muted-foreground uppercase hover:bg-muted hover:text-foreground">
         View All Shift Activity
       </button>
     </div>

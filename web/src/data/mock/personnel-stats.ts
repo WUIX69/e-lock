@@ -1,5 +1,5 @@
-import { PersonnelStat } from "@/types/dashboard";
-import { Users, UserCheck, ShieldAlert, Activity } from "lucide-react";
+import { PersonnelStat } from "@/types/dashboard"
+import { Users, UserCheck, ShieldAlert, Activity } from "lucide-react"
 
 export const MOCK_PERSONNEL_STATS: PersonnelStat[] = [
   {
@@ -26,4 +26,4 @@ export const MOCK_PERSONNEL_STATS: PersonnelStat[] = [
     icon: ShieldAlert,
     color: "bg-destructive",
   },
-];
+]

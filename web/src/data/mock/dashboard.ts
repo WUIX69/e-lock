@@ -1,8 +1,8 @@
-import { RecentActivityItem, ComplianceStat } from "@/types/dashboard";
+import { RecentActivityItem, ComplianceStat } from "@/types/dashboard"
 
 export const MOCK_VOLTAGE_BARS: number[] = [
-  40, 60, 45, 80, 55, 90, 70, 85, 40, 65, 50, 75, 45
-];
+  40, 60, 45, 80, 55, 90, 70, 85, 40, 65, 50, 75, 45,
+]
 
 export const MOCK_RECENT_ACTIVITY: RecentActivityItem[] = [
   {
@@ -46,22 +46,23 @@ export const MOCK_RECENT_ACTIVITY: RecentActivityItem[] = [
     time: "5 hours ago",
     initials: "SW",
   },
-];
+]
 
 export const MOCK_COMPLIANCE_STATS: ComplianceStat[] = [
   { label: "Audit Score", value: "98/100" },
   { label: "Compliance", value: "100%" },
   { label: "Active Nodes", value: "12/12" },
   { label: "Last Sync", value: "Now" },
-];
+]
 
 export const MOCK_DASHBOARD_HERO = {
   unitName: "Main Crusher",
   unitId: "#402",
   status: "Isolated",
-  description: "Unit is currently in isolated safety mode. All power sources have been verified as offline by administrative staff.",
+  description:
+    "Unit is currently in isolated safety mode. All power sources have been verified as offline by administrative staff.",
   timeInState: "02h 41m",
-};
+}
 
 export const MOCK_SYSTEM_DIAGNOSTICS = {
   mesh: {
@@ -74,10 +75,11 @@ export const MOCK_SYSTEM_DIAGNOSTICS = {
     status: "Within Specs",
   },
   latestAlert: {
-    message: "RFID tag verification requested at Node 04. Access granted to Alex T.",
+    message:
+      "RFID tag verification requested at Node 04. Access granted to Alex T.",
     time: "12m ago",
   },
   integrity: {
     status: "100% hardware fidelity",
-  }
-};
+  },
+}

@@ -49,7 +49,7 @@ export function LoginForm() {
         </div>
 
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 rounded-full bg-muted px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+          <div className="flex items-center gap-2 rounded-full bg-muted px-4 py-1.5 text-[10px] font-black tracking-widest text-muted-foreground uppercase">
             <div className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
@@ -62,10 +62,10 @@ export function LoginForm() {
         </div>
       </header>
 
-      <main className="flex-1 container mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main className="container mx-auto flex-1 px-6 py-12">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* Left Column: Form */}
-          <div className="lg:col-span-5 flex flex-col justify-center">
+          <div className="flex flex-col justify-center lg:col-span-5">
             <div className="space-y-8 rounded-3xl border border-border bg-card p-12 shadow-2xl shadow-primary/5">
               <div className="space-y-2">
                 <h2 className="text-4xl font-black tracking-tighter text-primary">
@@ -81,12 +81,12 @@ export function LoginForm() {
                   <div className="space-y-2">
                     <label
                       htmlFor="worker-id"
-                      className="text-[10px] font-black uppercase tracking-widest text-muted-foreground"
+                      className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
                     >
                       Worker ID
                     </label>
-                    <div className="relative group">
-                      <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                    <div className="group relative">
+                      <CreditCard className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
                       <Input
                         id="worker-id"
                         placeholder="ID-000-000-000"
@@ -100,19 +100,19 @@ export function LoginForm() {
                     <div className="flex items-center justify-between">
                       <label
                         htmlFor="pin"
-                        className="text-[10px] font-black uppercase tracking-widest text-muted-foreground"
+                        className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
                       >
                         Security PIN
                       </label>
                       <button
                         type="button"
-                        className="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline"
+                        className="text-[10px] font-bold tracking-widest text-primary uppercase hover:underline"
                       >
                         Reset PIN
                       </button>
                     </div>
-                    <div className="relative group">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                    <div className="group relative">
+                      <Lock className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
                       <Input
                         id="pin"
                         type="password"
@@ -131,7 +131,7 @@ export function LoginForm() {
                   />
                   <label
                     htmlFor="remember"
-                    className="text-xs font-bold text-muted-foreground cursor-pointer select-none"
+                    className="cursor-pointer text-xs font-bold text-muted-foreground select-none"
                   >
                     Trust this workstation for 24 hours
                   </label>
@@ -140,7 +140,7 @@ export function LoginForm() {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="group relative h-16 w-full rounded-2xl bg-primary text-sm font-black uppercase tracking-widest text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
+                  className="group relative h-16 w-full rounded-2xl bg-primary text-sm font-black tracking-widest text-primary-foreground uppercase shadow-lg shadow-primary/20 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
                 >
                   <span className="relative z-10 flex items-center justify-center gap-3">
                     {isLoading ? "Authenticating..." : "Initiate Protocol"}
@@ -150,7 +150,7 @@ export function LoginForm() {
               </form>
 
               <div className="pt-4 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                   Protocol: AES-256 / Biometric Handshake
                 </p>
               </div>
@@ -162,20 +162,20 @@ export function LoginForm() {
             <div className="relative h-full min-h-[600px] overflow-hidden rounded-3xl bg-sidebar p-12 text-sidebar-foreground shadow-2xl">
               {/* Background Decoration */}
               <div className="absolute inset-0 opacity-10">
-                <div className="absolute -left-20 -top-20 size-80 rounded-full bg-primary blur-[100px]" />
-                <div className="absolute -bottom-20 -right-20 size-80 rounded-full bg-sidebar-accent-foreground blur-[100px]" />
+                <div className="absolute -top-20 -left-20 size-80 rounded-full bg-primary blur-[100px]" />
+                <div className="absolute -right-20 -bottom-20 size-80 rounded-full bg-sidebar-accent-foreground blur-[100px]" />
               </div>
 
               <div className="relative flex h-full flex-col justify-between">
                 <div>
-                  <div className="inline-flex items-center gap-2 rounded-full bg-primary/20 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-sidebar-accent-foreground border border-primary/20">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/20 px-4 py-1.5 text-[10px] font-black tracking-widest text-sidebar-accent-foreground uppercase">
                     <Wifi className="size-3" />
                     Biometric Handshake Pending
                   </div>
                   <h3 className="mt-6 text-4xl font-black tracking-tighter text-white">
                     Biometric Verification Required
                   </h3>
-                  <p className="mt-2 max-w-md text-sidebar-foreground/60 leading-relaxed">
+                  <p className="mt-2 max-w-md leading-relaxed text-sidebar-foreground/60">
                     Once Worker ID is recognized, please place your registered
                     fingerprint on the AS608 sensor attached to this workstation
                     hub.
@@ -183,14 +183,14 @@ export function LoginForm() {
                 </div>
 
                 <div className="flex flex-1 items-center justify-center py-12">
-                  <div className="relative group">
+                  <div className="group relative">
                     {/* Scanner Visual */}
                     <div className="absolute -inset-8 animate-pulse rounded-full bg-primary/10" />
                     <div className="absolute -inset-4 animate-pulse rounded-full bg-primary/20" />
-                    <div className="relative flex size-48 items-center justify-center rounded-full border-2 border-primary/50 bg-sidebar-accent/20 backdrop-blur-sm shadow-[0_0_50px_-12px_rgba(var(--primary),0.5)] transition-transform group-hover:scale-105">
+                    <div className="relative flex size-48 items-center justify-center rounded-full border-2 border-primary/50 bg-sidebar-accent/20 shadow-[0_0_50px_-12px_rgba(var(--primary),0.5)] backdrop-blur-sm transition-transform group-hover:scale-105">
                       <Fingerprint className="size-24 text-sidebar-accent-foreground" />
                       {/* Scanning Line */}
-                      <div className="absolute left-0 top-0 h-1 w-full animate-[scan_3s_ease-in-out_infinite] bg-sidebar-accent-foreground shadow-[0_0_15px_rgba(var(--sidebar-accent-foreground),0.8)]" />
+                      <div className="absolute top-0 left-0 h-1 w-full animate-[scan_3s_ease-in-out_infinite] bg-sidebar-accent-foreground shadow-[0_0_15px_rgba(var(--sidebar-accent-foreground),0.8)]" />
                     </div>
                   </div>
                 </div>
@@ -201,14 +201,14 @@ export function LoginForm() {
                       <div className="rounded-lg bg-white/10 p-2">
                         <Cpu className="size-4 text-sidebar-accent-foreground" />
                       </div>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                      <span className="text-[10px] font-black tracking-widest text-white/40 uppercase">
                         Node Identity
                       </span>
                     </div>
                     <p className="mt-4 text-xl font-bold text-white">
                       ESP32-WROOM-32
                     </p>
-                    <p className="text-[10px] font-medium text-white/30 uppercase tracking-tighter mt-1">
+                    <p className="mt-1 text-[10px] font-medium tracking-tighter text-white/30 uppercase">
                       MAC: 24:6F:28:AE:D3:8C
                     </p>
                   </div>
@@ -218,7 +218,7 @@ export function LoginForm() {
                       <div className="rounded-lg bg-white/10 p-2">
                         <Network className="size-4 text-sidebar-accent-foreground" />
                       </div>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                      <span className="text-[10px] font-black tracking-widest text-white/40 uppercase">
                         Gateway Status
                       </span>
                     </div>
@@ -239,16 +239,16 @@ export function LoginForm() {
         </div>
 
         {/* Security Info Cards */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
           <div className="flex items-start gap-6 rounded-3xl border border-border bg-muted/50 p-8 transition-colors hover:bg-muted">
             <div className="rounded-2xl bg-background p-4 shadow-sm">
               <Shield className="size-8 text-primary" />
             </div>
             <div className="space-y-2">
-              <h4 className="text-sm font-black uppercase tracking-widest">
+              <h4 className="text-sm font-black tracking-widest uppercase">
                 Encrypted Tunnel
               </h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-xs leading-relaxed text-muted-foreground">
                 All data transmission between gateway and portal is secured via
                 ECC-256 encryption.
               </p>
@@ -260,10 +260,10 @@ export function LoginForm() {
               <ShieldAlert className="size-8 text-destructive" />
             </div>
             <div className="space-y-2">
-              <h4 className="text-sm font-black uppercase tracking-widest">
+              <h4 className="text-sm font-black tracking-widest uppercase">
                 Automatic Lockout
               </h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-xs leading-relaxed text-muted-foreground">
                 3 failed biometric attempts will trigger an immediate IP-level
                 administrative lockout.
               </p>
@@ -275,10 +275,10 @@ export function LoginForm() {
               <Scale className="size-8 text-primary" />
             </div>
             <div className="space-y-2">
-              <h4 className="text-sm font-black uppercase tracking-widest">
+              <h4 className="text-sm font-black tracking-widest uppercase">
                 Compliance Ready
               </h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-xs leading-relaxed text-muted-foreground">
                 System architecture adheres to ISO-45001 safety and data
                 integrity standards.
               </p>

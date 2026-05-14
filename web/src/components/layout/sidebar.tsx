@@ -45,7 +45,7 @@ function SidebarContent() {
             <span className="text-2xl font-black tracking-tighter text-sidebar-accent-foreground">
               E-LOCK
             </span>
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-sidebar-foreground/40">
+            <span className="text-[10px] font-bold tracking-[0.2em] text-sidebar-foreground/40 uppercase">
               Admin Panel
             </span>
           </div>
@@ -53,7 +53,7 @@ function SidebarContent() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-4 py-6 overflow-y-auto">
+      <nav className="flex-1 space-y-1 overflow-y-auto px-4 py-6">
         {navigation.map((item) => {
           const isActive = pathname === item.href
           return (
@@ -86,9 +86,9 @@ function SidebarContent() {
       </nav>
 
       {/* Bottom Actions */}
-      <div className="space-y-4 p-6 shrink-0">
+      <div className="shrink-0 space-y-4 p-6">
         {/* Emergency Stop Button */}
-        <button className="flex w-full items-center justify-center gap-3 rounded-2xl bg-destructive px-4 py-4 text-sm font-black uppercase tracking-widest text-destructive-foreground shadow-lg shadow-destructive/20 transition-transform hover:scale-[1.02] active:scale-[0.98]">
+        <button className="flex w-full items-center justify-center gap-3 rounded-2xl bg-destructive px-4 py-4 text-sm font-black tracking-widest text-destructive-foreground uppercase shadow-lg shadow-destructive/20 transition-transform hover:scale-[1.02] active:scale-[0.98]">
           <AlertTriangle className="size-5" />
           Emergency Stop
         </button>
@@ -96,14 +96,14 @@ function SidebarContent() {
         <div className="grid grid-cols-2 gap-2">
           <Link
             href="#"
-            className="flex flex-col items-center justify-center gap-2 rounded-xl bg-sidebar-accent/5 py-4 text-[10px] font-bold uppercase tracking-wider text-sidebar-foreground/40 transition-colors hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
+            className="flex flex-col items-center justify-center gap-2 rounded-xl bg-sidebar-accent/5 py-4 text-[10px] font-bold tracking-wider text-sidebar-foreground/40 uppercase transition-colors hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
           >
             <Bell className="size-4" />
             Alerts
           </Link>
           <Link
             href="#"
-            className="flex flex-col items-center justify-center gap-2 rounded-xl bg-sidebar-accent/5 py-4 text-[10px] font-bold uppercase tracking-wider text-sidebar-foreground/40 transition-colors hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
+            className="flex flex-col items-center justify-center gap-2 rounded-xl bg-sidebar-accent/5 py-4 text-[10px] font-bold tracking-wider text-sidebar-foreground/40 uppercase transition-colors hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
           >
             <HelpCircle className="size-4" />
             Support
@@ -128,13 +128,16 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex flex-col h-screen w-72 shrink-0 bg-sidebar text-sidebar-foreground shadow-2xl z-20">
+      <div className="z-20 hidden h-screen w-72 shrink-0 flex-col bg-sidebar text-sidebar-foreground shadow-2xl lg:flex">
         <SidebarContent />
       </div>
 
       {/* Mobile Sidebar */}
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetContent side="left" className="w-[85vw] max-w-sm p-0 bg-sidebar border-r-sidebar-border text-sidebar-foreground flex flex-col h-full">
+        <SheetContent
+          side="left"
+          className="flex h-full w-[85vw] max-w-sm flex-col border-r-sidebar-border bg-sidebar p-0 text-sidebar-foreground"
+        >
           <div className="sr-only">
             <SheetTitle>Navigation Menu</SheetTitle>
           </div>

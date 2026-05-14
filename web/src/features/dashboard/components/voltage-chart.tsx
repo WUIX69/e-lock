@@ -6,11 +6,11 @@ import { MOCK_VOLTAGE_BARS } from "@/data/mock/dashboard"
 
 export const VoltageChart = () => {
   return (
-    <div className="col-span-1 lg:col-span-2 rounded-3xl border border-border bg-card p-8 shadow-sm">
+    <div className="col-span-1 rounded-3xl border border-border bg-card p-8 shadow-sm lg:col-span-2">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground">
+            <h4 className="text-xs font-black tracking-widest text-muted-foreground uppercase">
               ZMPT101B Voltage
             </h4>
             <div className="flex items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-bold text-destructive">
@@ -28,11 +28,8 @@ export const VoltageChart = () => {
 
       <div className="mt-8 flex h-48 items-end gap-3">
         {MOCK_VOLTAGE_BARS.map((height, i) => (
-          <div
-            key={i}
-            className="group relative flex-1"
-          >
-            <div 
+          <div key={i} className="group relative flex-1">
+            <div
               className="w-full rounded-t-lg bg-primary transition-all duration-500 group-hover:bg-primary/80"
               style={{ height: `${height}%` }}
             />
@@ -46,7 +43,7 @@ export const VoltageChart = () => {
         ))}
       </div>
 
-      <div className="mt-4 flex items-center justify-between border-t border-border pt-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">
+      <div className="mt-4 flex items-center justify-between border-t border-border pt-4 text-[10px] font-bold tracking-widest text-muted-foreground/40 uppercase">
         <span>08:00 AM</span>
         <span>09:00 AM</span>
         <span>10:00 AM</span>

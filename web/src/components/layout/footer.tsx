@@ -46,7 +46,7 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="mb-6 text-sm font-bold uppercase tracking-widest text-foreground">
+            <h4 className="mb-6 text-sm font-bold tracking-widest text-foreground uppercase">
               Product
             </h4>
             <ul className="flex flex-col gap-4 text-sm text-muted-foreground">
@@ -74,7 +74,7 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="mb-6 text-sm font-bold uppercase tracking-widest text-foreground">
+            <h4 className="mb-6 text-sm font-bold tracking-widest text-foreground uppercase">
               Resources
             </h4>
             <ul className="flex flex-col gap-4 text-sm text-muted-foreground">
@@ -102,7 +102,7 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="mb-6 text-sm font-bold uppercase tracking-widest text-foreground">
+            <h4 className="mb-6 text-sm font-bold tracking-widest text-foreground uppercase">
               Legal
             </h4>
             <ul className="flex flex-col gap-4 text-sm text-muted-foreground">

@@ -1,25 +1,25 @@
 export interface PersonnelMember {
-  id: string;
-  name: string;
-  role: string;
-  clearance: string;
-  status: "Active" | "Off-Site" | "Locked";
-  lastAccess: string;
-  node: string;
+  id: string
+  name: string
+  role: string
+  clearance: string
+  status: "Active" | "Off-Site" | "Locked"
+  lastAccess: string
+  node: string
 }
 
 export interface ActivePersonnel {
-  name: string;
-  role: string;
-  time: string;
-  status: string;
+  name: string
+  role: string
+  time: string
+  status: string
 }
 
-import { LucideIcon } from "lucide-react";
+import { LucideIcon } from "lucide-react"
 
 export interface AccessProtocol {
-  label: string;
-  icon: LucideIcon;
-  desc: string;
-  color?: string;
+  label: string
+  icon: LucideIcon
+  desc: string
+  color?: string
 }

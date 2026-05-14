@@ -23,28 +23,28 @@ import { MOCK_AUDIT_LOGS } from "@/data/mock/audit-logs"
 
 export function AuditTable() {
   return (
-    <div className="rounded-[2rem] border border-border bg-card shadow-sm overflow-hidden">
+    <div className="overflow-hidden rounded-[2rem] border border-border bg-card shadow-sm">
       <div className="overflow-x-auto">
         <div className="min-w-[1000px]">
           <Table>
             <TableHeader className="bg-muted/50">
               <TableRow className="border-border hover:bg-transparent">
-                <TableHead className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground pl-8">
+                <TableHead className="h-14 pl-8 text-[10px] font-black tracking-[0.2em] text-muted-foreground uppercase">
                   Personnel
                 </TableHead>
-                <TableHead className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                <TableHead className="h-14 text-[10px] font-black tracking-[0.2em] text-muted-foreground uppercase">
                   Machine ID
                 </TableHead>
-                <TableHead className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                <TableHead className="h-14 text-[10px] font-black tracking-[0.2em] text-muted-foreground uppercase">
                   Isolation Type
                 </TableHead>
-                <TableHead className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                <TableHead className="h-14 text-[10px] font-black tracking-[0.2em] text-muted-foreground uppercase">
                   Verification
                 </TableHead>
-                <TableHead className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                <TableHead className="h-14 text-[10px] font-black tracking-[0.2em] text-muted-foreground uppercase">
                   Timestamp
                 </TableHead>
-                <TableHead className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground pr-8 text-right">
+                <TableHead className="h-14 pr-8 text-right text-[10px] font-black tracking-[0.2em] text-muted-foreground uppercase">
                   Status
                 </TableHead>
               </TableRow>
@@ -54,7 +54,7 @@ export function AuditTable() {
                 <TableRow
                   key={log.id}
                   className={cn(
-                    "group border-border transition-colors h-20",
+                    "group h-20 border-border transition-colors",
                     log.status === "Blocked"
                       ? "bg-destructive/5 hover:bg-destructive/10"
                       : "hover:bg-muted/30"
@@ -62,27 +62,38 @@ export function AuditTable() {
                 >
                   <TableCell className="pl-8">
                     <div className="flex items-center gap-4">
-                      <div className={cn(
-                        "flex size-10 items-center justify-center rounded-full text-xs font-black ring-4 ring-background shadow-sm",
-                        log.person.error ? "bg-destructive text-destructive-foreground" : "bg-muted text-primary"
-                      )}>
+                      <div
+                        className={cn(
+                          "flex size-10 items-center justify-center rounded-full text-xs font-black shadow-sm ring-4 ring-background",
+                          log.person.error
+                            ? "bg-destructive text-destructive-foreground"
+                            : "bg-muted text-primary"
+                        )}
+                      >
                         {log.person.initials}
                       </div>
                       <div className="flex flex-col">
-                        <span className={cn(
-                          "text-sm font-bold",
-                          log.person.error ? "text-destructive" : "text-foreground"
-                        )}>
+                        <span
+                          className={cn(
+                            "text-sm font-bold",
+                            log.person.error
+                              ? "text-destructive"
+                              : "text-foreground"
+                          )}
+                        >
                           {log.person.name}
                         </span>
-                        <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                        <span className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
                           {log.person.role}
                         </span>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline" className="rounded-lg bg-muted border-border text-[10px] font-black tracking-widest px-3 py-1">
+                    <Badge
+                      variant="outline"
+                      className="rounded-lg border-border bg-muted px-3 py-1 text-[10px] font-black tracking-widest"
+                    >
                       {log.machineId}
                     </Badge>
                   </TableCell>
@@ -104,16 +115,19 @@ export function AuditTable() {
                       {log.verification}
                     </div>
                   </TableCell>
-                  <TableCell className="text-xs font-mono font-medium text-muted-foreground">
+                  <TableCell className="font-mono text-xs font-medium text-muted-foreground">
                     {log.time}
                   </TableCell>
                   <TableCell className="pr-8 text-right">
                     <Badge
                       className={cn(
-                        "rounded-full px-4 py-1 text-[10px] font-black uppercase tracking-widest shadow-sm",
-                        log.status === "Secured" && "bg-accent text-accent-foreground",
-                        log.status === "Active" && "bg-secondary text-secondary-foreground",
-                        log.status === "Blocked" && "bg-destructive text-destructive-foreground"
+                        "rounded-full px-4 py-1 text-[10px] font-black tracking-widest uppercase shadow-sm",
+                        log.status === "Secured" &&
+                          "bg-accent text-accent-foreground",
+                        log.status === "Active" &&
+                          "bg-secondary text-secondary-foreground",
+                        log.status === "Blocked" &&
+                          "bg-destructive text-destructive-foreground"
                       )}
                     >
                       {log.status}
@@ -128,11 +142,14 @@ export function AuditTable() {
 
       {/* Pagination Row */}
       <div className="flex items-center justify-between border-t border-border bg-muted/20 px-8 py-4">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+        <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
           Showing 1 - {MOCK_AUDIT_LOGS.length} of 1,234 Records
         </p>
         <div className="flex items-center gap-2">
-          <button className="flex size-10 items-center justify-center rounded-xl border border-border bg-background transition-colors hover:bg-muted disabled:opacity-50" disabled>
+          <button
+            className="flex size-10 items-center justify-center rounded-xl border border-border bg-background transition-colors hover:bg-muted disabled:opacity-50"
+            disabled
+          >
             <ChevronLeft className="size-5" />
           </button>
           <button className="flex size-10 items-center justify-center rounded-xl border border-border bg-background transition-colors hover:bg-muted">
