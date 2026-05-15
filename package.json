@@ -2,17 +2,20 @@
   "name": "e-lock-monorepo",
   "private": true,
   "scripts": {
-    "dev:web": "pnpm --filter @e-lock/web dev",
-    "build:web": "pnpm --filter @e-lock/web build",
-    "lint:web": "pnpm --filter @e-lock/web lint",
-    "typecheck:web": "pnpm --filter @e-lock/web typecheck",
-    "format:web": "pnpm --filter @e-lock/web format",
-    "infra:up": "docker compose up -d",
-    "infra:down": "docker compose down",
-    "infra:logs": "docker compose logs -f",
-    "infra:reset": "docker compose down -v",
+    "dev": "pnpm --filter @e-lock/web dev",
+    "build": "pnpm --filter @e-lock/web build",
+    "lint": "pnpm --filter @e-lock/web lint",
+    "typecheck": "pnpm --filter @e-lock/web typecheck",
+    "format": "pnpm --filter @e-lock/web format",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:reset": "docker compose down -v",
     "db:push": "pnpm --filter @e-lock/web run db:push",
+    "db:generate": "pnpm --filter @e-lock/web run db:generate",
     "db:migrate": "pnpm --filter @e-lock/web run db:migrate",
-    "db:studio": "pnpm --filter @e-lock/web run db:studio"
+    "db:check": "pnpm --filter @e-lock/web run db:check",
+    "db:studio": "pnpm --filter @e-lock/web run db:studio",
+    "validate": "pnpm --filter @e-lock/web run validate"
   }
 }

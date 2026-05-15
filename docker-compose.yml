@@ -4,7 +4,7 @@ services:
     image: postgres:15-alpine
     container_name: elock-db
     restart: always
-    env_file: ./infra/.env
+    env_file: ./.env
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
@@ -22,7 +22,7 @@ services:
     image: eclipse-mosquitto:2.0
     container_name: elock-mqtt-broker
     restart: always
-    env_file: ./infra/.env
+    env_file: ./.env
     command: >
       sh -c "mosquitto_passwd -c -b /mosquitto/data/passwd $${MQTT_USERNAME} $${MQTT_PASSWORD} && 
       exec mosquitto -c /mosquitto/config/mosquitto.conf"
