@@ -29,6 +29,8 @@ const navigation = [
   { name: "System Settings", href: "/settings", icon: Settings },
 ]
 
+import { RoleSwitcher } from "@/components/layout/role-switcher"
+
 function SidebarContent() {
   const pathname = usePathname()
   const { setIsOpen } = useSidebar()
@@ -84,6 +86,9 @@ function SidebarContent() {
           )
         })}
       </nav>
+
+      {/* Session/Role Switcher (Dev Only) */}
+      <RoleSwitcher />
 
       {/* Bottom Actions */}
       <div className="shrink-0 space-y-4 p-6">
