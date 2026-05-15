@@ -27,6 +27,8 @@ E-LOCK/
 │   ├── src/                         # ESP32 Source Code (Gateway & Field Controller)
 │   ├── lib/                         # Hardware libraries (AS608, ZMPT101B)
 │   └── platformio.ini               # PlatformIO build configuration
+├── infra/                           # Global Environment/DB config
+├── mosquitto/                       # Global Broker config
 └── docs/                            # Design, CAD & Thesis Documentation
 
 ```
