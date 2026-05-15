@@ -42,3 +42,8 @@ firmware/.vscode/
 
 # other
 everything-claude-code/
+
+# Docker / Infra
+infra/.env
+mosquitto/data/
+mosquitto/log/

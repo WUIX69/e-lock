@@ -1,0 +1,46 @@
+services:
+  # --- DATABASE: PostgreSQL 15 ---
+  db:
+    image: postgres:15-alpine
+    container_name: elock-db
+    restart: always
+    env_file: ./infra/.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - elock-net
+
+  # --- MQTT BROKER: Eclipse Mosquitto ---
+  mqtt:
+    image: eclipse-mosquitto:2.0
+    container_name: elock-mqtt-broker
+    restart: always
+    env_file: ./infra/.env
+    command: >
+      sh -c "mosquitto_passwd -c -b /mosquitto/data/passwd $${MQTT_USERNAME} $${MQTT_PASSWORD} && 
+      exec mosquitto -c /mosquitto/config/mosquitto.conf"
+    ports:
+      - "${MQTT_PORT:-1883}:1883"
+      - "${MQTT_WS_PORT:-9001}:9001"
+    volumes:
+      - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+    networks:
+      - elock-net
+
+networks:
+  elock-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mosquitto_data:
+  mosquitto_log:

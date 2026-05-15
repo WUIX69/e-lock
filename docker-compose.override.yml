@@ -1,0 +1,13 @@
+services:
+  # --- DATABASE GUI: Adminer (dev only) ---
+  adminer:
+    image: adminer:latest
+    container_name: elock-db-gui
+    restart: unless-stopped
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - elock-net

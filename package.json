@@ -6,6 +6,13 @@
     "build:web": "pnpm --filter @e-lock/web build",
     "lint:web": "pnpm --filter @e-lock/web lint",
     "typecheck:web": "pnpm --filter @e-lock/web typecheck",
-    "format:web": "pnpm --filter @e-lock/web format"
+    "format:web": "pnpm --filter @e-lock/web format",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "infra:logs": "docker compose logs -f",
+    "infra:reset": "docker compose down -v",
+    "db:push": "pnpm --filter @e-lock/web run db:push",
+    "db:migrate": "pnpm --filter @e-lock/web run db:migrate",
+    "db:studio": "pnpm --filter @e-lock/web run db:studio"
   }
 }
