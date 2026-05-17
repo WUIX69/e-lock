@@ -19,6 +19,7 @@
     "validate": "pnpm --filter @e-lock/web run validate"
   },
   "dependencies": {
-    "ecc-universal": "^1.10.0"
+    "ecc-universal": "^1.10.0",
+    "pdf-parse": "^2.4.5"
   }
 }
