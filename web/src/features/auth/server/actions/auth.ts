@@ -85,13 +85,19 @@ export async function refreshSession(): Promise<SessionUser | null> {
   })
 
   const accessAge = parseExpiresInToSeconds(env.JWT_EXPIRES_IN)
-  cookieStore.set("elock_access_token", newAccessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: accessAge,
-    path: "/",
-  })
+  try {
+    cookieStore.set("elock_access_token", newAccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: accessAge,
+      path: "/",
+    })
+  } catch (error) {
+    // HACK: Ignore error when called from Server Components during render.
+    // The session is valid for this request, but the cookie won't persist
+    // until a Server Action or Middleware updates it.
+  }
 
   return payload
 }
