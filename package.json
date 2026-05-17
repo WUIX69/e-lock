@@ -17,5 +17,8 @@
     "db:check": "pnpm --filter @e-lock/web run db:check",
     "db:studio": "pnpm --filter @e-lock/web run db:studio",
     "validate": "pnpm --filter @e-lock/web run validate"
+  },
+  "dependencies": {
+    "ecc-universal": "^1.10.0"
   }
 }
