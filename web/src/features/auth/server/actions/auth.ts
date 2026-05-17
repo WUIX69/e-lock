@@ -93,7 +93,7 @@ export async function refreshSession(): Promise<SessionUser | null> {
       maxAge: accessAge,
       path: "/",
     })
-  } catch (error) {
+  } catch {
     // HACK: Ignore error when called from Server Components during render.
     // The session is valid for this request, but the cookie won't persist
     // until a Server Action or Middleware updates it.
