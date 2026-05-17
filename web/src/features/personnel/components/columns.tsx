@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
-import { EditPersonnelDialog } from "./edit-personnel-dialog"
+import { PersonnelDialog } from "./personnel-dialog"
 
 export type PersonnelRow = {
   id: string
@@ -174,7 +174,8 @@ export const columns: ColumnDef<PersonnelRow>[] = [
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <EditPersonnelDialog
+          <PersonnelDialog
+            mode="edit"
             isOpen={isEditDialogOpen}
             onOpenChange={setIsEditDialogOpen}
             personnel={personnel}

@@ -2,7 +2,7 @@ import { db } from "@/drizzle/db"
 import { UserTable } from "@/drizzle/schema"
 import { eq } from "drizzle-orm"
 import * as bcrypt from "bcryptjs"
-import { AddPersonnelSchema } from "../../schemas/add-personnel-schema"
+import { AddPersonnelSchema, EditPersonnelSchema } from "../../schemas/personnel"
 
 export async function getUserByEmail(email: string) {
   const users = await db.select().from(UserTable).where(eq(UserTable.email, email)).limit(1)
@@ -30,7 +30,7 @@ export async function getAllPersonnel() {
   return await db.select().from(UserTable).orderBy(UserTable.createdAt)
 }
 
-export async function updatePersonnel(id: string, data: Omit<import("../../schemas/edit-personnel-schema").EditPersonnelSchema, "id">) {
+export async function updatePersonnel(id: string, data: Omit<EditPersonnelSchema, "id">) {
   const updateData: {
     name: string
     email: string

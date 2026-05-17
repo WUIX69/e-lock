@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { UserPlus, Download } from "lucide-react"
-import { AddPersonnelDialog } from "./add-personnel-dialog"
+import { PersonnelDialog } from "./personnel-dialog"
 import { AddPersonnelFab } from "./add-personnel-fab"
 
 export const PersonnelPageActions = () => {
@@ -24,7 +24,7 @@ export const PersonnelPageActions = () => {
         </button>
       </div>
 
-      <AddPersonnelDialog isOpen={isDialogOpen} onOpenChange={setIsDialogOpen} />
+      <PersonnelDialog mode="add" isOpen={isDialogOpen} onOpenChange={setIsDialogOpen} />
       <AddPersonnelFab onClick={() => setIsDialogOpen(true)} />
     </>
   )

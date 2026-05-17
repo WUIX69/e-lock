@@ -1,6 +1,6 @@
 "use server"
 
-import { addPersonnelSchema } from "../../schemas/add-personnel-schema"
+import { addPersonnelSchema, editPersonnelSchema } from "../../schemas/personnel"
 import { getUserByEmail, insertPersonnel, updatePersonnel } from "../db"
 import { AddPersonnelResult } from "@/types/personnel"
 
@@ -57,7 +57,7 @@ export async function editPersonnelAction(formData: FormData): Promise<AddPerson
       pin: formData.get("pin"),
     }
 
-    const validatedData = (await import("../../schemas/edit-personnel-schema")).editPersonnelSchema.safeParse(data)
+    const validatedData = editPersonnelSchema.safeParse(data)
 
     if (!validatedData.success) {
       console.error("Zod Edit Validation Errors:", validatedData.error.format())

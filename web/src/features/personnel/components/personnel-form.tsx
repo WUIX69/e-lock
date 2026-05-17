@@ -13,36 +13,57 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import { editPersonnelAction } from "../server/actions"
+import { addPersonnelAction, editPersonnelAction } from "../server/actions"
 import { BiometricEnrollmentSection } from "./biometric-enrollment-section"
 import { PersonnelRow } from "./columns"
 
-interface EditPersonnelFormProps {
+interface PersonnelFormAddProps {
+  mode: "add"
+  personnel?: never
+  onSuccess: () => void
+  onCancel: () => void
+}
+
+interface PersonnelFormEditProps {
+  mode: "edit"
   personnel: PersonnelRow
   onSuccess: () => void
   onCancel: () => void
 }
 
-export const EditPersonnelForm = ({
+type PersonnelFormProps = PersonnelFormAddProps | PersonnelFormEditProps
+
+export const PersonnelForm = ({
+  mode,
   personnel,
   onSuccess,
   onCancel,
-}: EditPersonnelFormProps) => {
+}: PersonnelFormProps) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [error, setError] = React.useState<string | null>(null)
   const [showPin, setShowPin] = React.useState<boolean>(false)
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const isEditMode = mode === "edit"
+  const [employeeId] = React.useState<string>(
+    () => personnel?.employeeId ?? `EL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
+  )
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
     setIsLoading(true)
     setError(null)
 
-    const formData = new FormData(e.currentTarget)
-    formData.append("id", personnel.id)
+    const formData = new FormData(event.currentTarget)
+
+    if (isEditMode && personnel) {
+      formData.append("id", personnel.id)
+    }
+
+    const serverAction = isEditMode ? editPersonnelAction : addPersonnelAction
 
     try {
-      const result = await editPersonnelAction(formData)
+      const result = await serverAction(formData)
 
       if (result.error) {
         setError(result.error)
@@ -51,8 +72,8 @@ export const EditPersonnelForm = ({
         router.refresh()
         onSuccess()
       }
-    } catch (err) {
-      console.error("Form submission error:", err)
+    } catch (submissionError) {
+      console.error("Form submission error:", submissionError)
       setError("An unexpected error occurred.")
       setIsLoading(false)
     }
@@ -75,7 +96,7 @@ export const EditPersonnelForm = ({
           <Input
             id="fullName"
             name="fullName"
-            defaultValue={personnel.name}
+            defaultValue={isEditMode ? personnel?.name : undefined}
             placeholder="Sarah Jenkins"
             className="h-14 rounded-2xl border-border bg-muted pl-12 font-mono text-sm focus-visible:ring-primary"
             required
@@ -94,7 +115,7 @@ export const EditPersonnelForm = ({
             id="email"
             name="email"
             type="email"
-            defaultValue={personnel.email}
+            defaultValue={isEditMode ? personnel?.email : undefined}
             placeholder="sarah@elock.dev"
             className="h-14 rounded-2xl border-border bg-muted pl-12 font-mono text-sm focus-visible:ring-primary"
             required
@@ -106,12 +127,12 @@ export const EditPersonnelForm = ({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="grid gap-2">
           <Label htmlFor="employeeId" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
-            Employee ID (Auto)
+            Employee ID {!isEditMode && "(Auto)"}
           </Label>
           <Input
             id="employeeId"
             name="employeeId"
-            value={personnel.employeeId}
+            value={employeeId}
             readOnly
             className="h-14 rounded-2xl border-border bg-muted/50 font-mono text-sm opacity-70"
           />
@@ -121,7 +142,7 @@ export const EditPersonnelForm = ({
           <Label htmlFor="role" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
             System Role
           </Label>
-          <Select name="role" defaultValue={personnel.role} disabled={isLoading}>
+          <Select name="role" defaultValue={isEditMode ? personnel?.role : "user"} disabled={isLoading}>
             <SelectTrigger className="h-14 rounded-2xl border-border bg-muted font-mono text-sm focus:ring-primary">
               <SelectValue placeholder="Select role" />
             </SelectTrigger>
@@ -140,7 +161,7 @@ export const EditPersonnelForm = ({
         <Input
           id="position"
           name="position"
-          defaultValue={personnel.position}
+          defaultValue={isEditMode ? personnel?.position : undefined}
           placeholder="e.g. SENIOR ELECTRICIAN"
           className="h-14 rounded-2xl border-border bg-muted font-mono text-sm focus-visible:ring-primary uppercase"
           required
@@ -153,7 +174,7 @@ export const EditPersonnelForm = ({
           <Label htmlFor="securityLevel" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
             Security Level
           </Label>
-          <Select name="securityLevel" defaultValue={personnel.securityLevel} disabled={isLoading}>
+          <Select name="securityLevel" defaultValue={isEditMode ? personnel?.securityLevel : "Level 2"} disabled={isLoading}>
             <SelectTrigger className="h-14 rounded-2xl border-border bg-muted font-mono text-sm focus:ring-primary">
               <SelectValue placeholder="Select level" />
             </SelectTrigger>
@@ -171,7 +192,7 @@ export const EditPersonnelForm = ({
           <Label htmlFor="status" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
             Current Status
           </Label>
-          <Select name="status" defaultValue={personnel.status} disabled={isLoading}>
+          <Select name="status" defaultValue={isEditMode ? personnel?.status : "active"} disabled={isLoading}>
             <SelectTrigger className="h-14 rounded-2xl border-border bg-muted font-mono text-sm focus:ring-primary">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
@@ -187,7 +208,7 @@ export const EditPersonnelForm = ({
 
       <div className="grid gap-2">
         <Label htmlFor="pin" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
-          Update Secure PIN (Optional)
+          {isEditMode ? "Update Secure PIN (Optional)" : "Secure PIN"}
         </Label>
         <div className="group relative">
           <Lock className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
@@ -195,11 +216,12 @@ export const EditPersonnelForm = ({
             id="pin"
             name="pin"
             type={showPin ? "text" : "password"}
-            placeholder="Leave blank to keep current PIN"
+            placeholder={isEditMode ? "Leave blank to keep current PIN" : "••••"}
             maxLength={4}
             pattern="\d{4}"
             title="PIN must be exactly 4 digits"
             className="h-14 rounded-2xl border-border bg-muted px-12 font-mono text-sm focus-visible:ring-primary tracking-widest"
+            required={!isEditMode}
             disabled={isLoading}
           />
           <button
@@ -207,6 +229,7 @@ export const EditPersonnelForm = ({
             onClick={() => setShowPin(!showPin)}
             className="absolute top-1/2 right-4 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             tabIndex={-1}
+            aria-label={showPin ? "Hide PIN" : "Show PIN"}
             disabled={isLoading}
           >
             {showPin ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
@@ -234,7 +257,7 @@ export const EditPersonnelForm = ({
           )}
         >
           {isLoading && <Loader2 className="size-4 animate-spin" />}
-          Save Changes
+          {isEditMode ? "Save Changes" : "Confirm Registration"}
         </button>
       </div>
     </form>
