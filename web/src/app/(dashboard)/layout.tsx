@@ -2,14 +2,17 @@ import { Sidebar } from "@/components/layout/sidebar"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { SidebarProvider } from "@/context/sidebar-context"
-
 import { SessionProvider } from "@/context/session-context"
+import { requireAuth } from "@/features/auth/server/actions/auth"
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  // Enforce server-side authentication for the entire dashboard
+  await requireAuth()
+
   return (
     <SessionProvider>
       <SidebarProvider>
@@ -27,3 +30,4 @@ export default function DashboardLayout({
     </SessionProvider>
   )
 }
+
