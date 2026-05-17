@@ -1,15 +1,19 @@
 import { Metadata } from "next"
-import { PersonnelTable } from "@/features/personnel/components/personnel-table"
 import { PersonnelStats } from "@/features/personnel/components/personnel-stats"
 import { AccessControlPanel } from "@/features/personnel/components/access-control-panel"
-import { UserPlus, Download } from "lucide-react"
+import { PersonnelPageActions } from "@/features/personnel/components/personnel-page-actions"
+import { DataTable } from "@/features/personnel/components/data-table"
+import { columns } from "@/features/personnel/components/columns"
+import { getAllPersonnel } from "@/features/personnel/server/db"
 
 export const metadata: Metadata = {
   title: "Personnel | E-LOCK Management",
   description: "Manage facility personnel and biometric access clearance",
 }
 
-export default function PersonnelPage() {
+export default async function PersonnelPage() {
+  const personnel = await getAllPersonnel()
+  
   return (
     <div className="space-y-8 pb-12">
       {/* Page Header */}
@@ -27,23 +31,17 @@ export default function PersonnelPage() {
           </p>
         </div>
 
-        <div className="ml-4 flex items-center gap-3 md:ml-0">
-          <button className="flex items-center gap-2 rounded-2xl border border-border bg-card px-6 py-3 text-sm font-bold transition-colors hover:bg-muted">
-            <Download className="size-4" />
-            Export List
-          </button>
-          <button className="flex items-center gap-2 rounded-2xl bg-sidebar px-6 py-3 text-sm font-black tracking-widest text-sidebar-foreground uppercase shadow-lg transition-transform hover:scale-105 active:scale-95">
-            <UserPlus className="size-4 text-sidebar-accent" />
-            Enroll New Personnel
-          </button>
-        </div>
+        <PersonnelPageActions />
       </div>
 
       <PersonnelStats />
 
       <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
         <div className="xl:col-span-2">
-          <PersonnelTable />
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold tracking-tight">Active Personnel Roster</h3>
+            <DataTable columns={columns} data={personnel} />
+          </div>
         </div>
         <div>
           <AccessControlPanel />

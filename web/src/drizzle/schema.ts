@@ -24,6 +24,7 @@ const updatedAt = timestamp("updated_at", { withTimezone: true })
 
 export const LockStatusEnum = pgEnum("lock_status", ["locked", "unlocked", "unknown"])
 export const UserRoleEnum = pgEnum("user_role", ["admin", "user"])
+export const UserStatusEnum = pgEnum("user_status", ["active", "inactive", "off-site", "on-leave"])
 
 // ─── Tables ──────────────────────────────────────────────────────────────────
 
@@ -31,14 +32,20 @@ export const UserTable = pgTable(
   "users",
   {
     id: uuid("id").primaryKey().defaultRandom(),
+    employeeId: text("employee_id").notNull().unique(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     passwordHash: text("password_hash").notNull(),
     role: UserRoleEnum("role").notNull().default("user"),
+    position: text("position").notNull(),
+    securityLevel: text("security_level").notNull(),
+    status: UserStatusEnum("status").notNull().default("active"),
+    lastLocation: text("last_location").default("N/A"),
+    lastActiveAt: timestamp("last_active_at", { withTimezone: true }).defaultNow(),
     createdAt,
     updatedAt,
   },
-  (table) => [index("users.email_index").on(table.email)]
+  (table) => [index("users.email_index").on(table.email), index("users.employee_id_index").on(table.employeeId)]
 )
 
 export const LockTable = pgTable("locks", {

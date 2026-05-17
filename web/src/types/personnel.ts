@@ -23,3 +23,15 @@ export interface AccessProtocol {
   desc: string
   color?: string
 }
+
+export interface AddPersonnelFormData {
+  fullName: string
+  email: string
+  role: "admin" | "user"
+  pin: string
+}
+
+export interface AddPersonnelResult {
+  success?: boolean
+  error?: string
+}
