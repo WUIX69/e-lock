@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useSidebar } from "@/context/sidebar-context"
+import { useSession } from "@/context/session-context"
 
 const breadcrumbs = [
   { name: "Facility Alpha", href: "#" },
@@ -24,6 +25,7 @@ const breadcrumbs = [
 
 export function Header() {
   const { setIsOpen } = useSidebar()
+  const { currentUser } = useSession()
 
   return (
     <header className="sticky top-0 z-40 flex h-20 w-full shrink-0 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-md md:px-8">
@@ -94,18 +96,18 @@ export function Header() {
               <button className="group flex items-center gap-3 outline-none">
                 <div className="hidden flex-col items-end lg:flex">
                   <span className="text-xs font-bold text-foreground">
-                    Admin User
+                    {currentUser?.name || "Loading..."}
                   </span>
-                  <span className="text-[10px] font-medium text-muted-foreground">
-                    Administrator
+                  <span className="text-[10px] font-medium text-muted-foreground capitalize">
+                    {currentUser?.role || "User"}
                   </span>
                 </div>
                 <Avatar className="h-10 w-10 shrink-0 rounded-2xl border-2 border-border transition-transform group-hover:scale-105">
                   <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@admin"
+                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser?.email}`}
+                    alt={currentUser?.name || "User"}
                   />
-                  <AvatarFallback>AD</AvatarFallback>
+                  <AvatarFallback>{currentUser?.name?.charAt(0) || "U"}</AvatarFallback>
                 </Avatar>
               </button>
             </DropdownMenuTrigger>
@@ -123,7 +125,14 @@ export function Header() {
                 Security
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="rounded-xl px-2 py-2 text-sm font-medium text-destructive focus:bg-destructive/10 focus:text-destructive">
+              <DropdownMenuItem 
+                onClick={async () => {
+                  const { logoutAction } = await import("@/features/auth/server/actions");
+                  await logoutAction();
+                  window.location.href = "/login";
+                }}
+                className="rounded-xl px-2 py-2 text-sm font-medium text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer"
+              >
                 Log out
               </DropdownMenuItem>
             </DropdownMenuContent>

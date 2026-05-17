@@ -1,26 +1,47 @@
 "use client"
 
 import * as React from "react"
-import { MOCK_ACCOUNTS, MockAccount } from "@/data/mock/accounts"
+import { getSessionAction } from "@/features/auth/server/actions"
+
+export interface SessionUser {
+  id: string
+  email: string
+  name: string
+  role: "admin" | "user"
+}
 
 interface SessionContextValue {
-  currentUser: MockAccount | null
-  setCurrentUser: (user: MockAccount) => void
+  currentUser: SessionUser | null
+  setCurrentUser: (user: SessionUser | null) => void
   isLoading: boolean
 }
 
 const SessionContext = React.createContext<SessionContextValue | undefined>(undefined)
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = React.useState<MockAccount | null>(MOCK_ACCOUNTS[0])
+  const [currentUser, setCurrentUser] = React.useState<SessionUser | null>(null)
   const [isLoading, setIsLoading] = React.useState(true)
 
   React.useEffect(() => {
-    // Simulate initial session check
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 800)
-    return () => clearTimeout(timer)
+    const fetchSession = async () => {
+      try {
+        const session = await getSessionAction()
+        if (session) {
+          setCurrentUser({
+            id: session.sub,
+            email: session.email,
+            name: session.name,
+            role: session.role,
+          })
+        }
+      } catch (error) {
+        console.error("Failed to fetch session:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchSession()
   }, [])
 
   return (

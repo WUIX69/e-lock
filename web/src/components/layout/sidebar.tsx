@@ -15,25 +15,45 @@ import {
   HelpCircle,
   AlertTriangle,
   ChevronRight,
+  Activity,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useSidebar } from "@/context/sidebar-context"
+import { useSession } from "@/context/session-context"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
+import { logoutAction } from "@/features/auth/server/actions"
+import { useRouter } from "next/navigation"
 
-const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Energy Sources", href: "/energy", icon: Zap },
-  { name: "Lockout Devices", href: "/devices", icon: Lock },
-  { name: "Safety Logs", href: "/audit", icon: History },
-  { name: "Team Access", href: "/personnel", icon: Users },
-  { name: "System Settings", href: "/settings", icon: Settings },
-]
-
-import { RoleSwitcher } from "@/components/layout/role-switcher"
+const getNavigation = (role: string | undefined) => {
+  if (role === "admin") {
+    return [
+      { name: "Dashboard", href: "/", icon: LayoutDashboard },
+      { name: "Energy Sources", href: "/energy", icon: Zap },
+      { name: "Lockout Devices", href: "/devices", icon: Lock },
+      { name: "Safety Logs", href: "/audit", icon: History },
+      { name: "Team Access", href: "/admin/personnel", icon: Users },
+      { name: "System Settings", href: "/settings", icon: Settings },
+    ]
+  }
+  
+  return [
+    { name: "Dashboard", href: "/", icon: LayoutDashboard },
+    { name: "My Activity", href: "/user/my-activity", icon: Activity },
+  ]
+}
 
 function SidebarContent() {
   const pathname = usePathname()
+  const router = useRouter()
   const { setIsOpen } = useSidebar()
+  const { currentUser } = useSession()
+
+  const navigation = getNavigation(currentUser?.role)
+  
+  const handleLogout = async () => {
+    await logoutAction()
+    router.push("/login")
+  }
 
   return (
     <>
@@ -87,8 +107,6 @@ function SidebarContent() {
         })}
       </nav>
 
-      {/* Session/Role Switcher (Dev Only) */}
-      <RoleSwitcher />
 
       {/* Bottom Actions */}
       <div className="shrink-0 space-y-4 p-6">
@@ -115,13 +133,13 @@ function SidebarContent() {
           </Link>
         </div>
 
-        <Link
-          href="/login"
-          className="flex items-center justify-center gap-3 rounded-xl border border-sidebar-border px-4 py-3 text-sm font-bold text-sidebar-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
+        <button
+          onClick={handleLogout}
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-sidebar-border px-4 py-3 text-sm font-bold text-sidebar-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
         >
           <LogOut className="size-4" />
           Sign Out
-        </Link>
+        </button>
       </div>
     </>
   )

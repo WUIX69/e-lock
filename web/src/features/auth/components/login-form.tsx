@@ -20,19 +20,27 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Footer } from "@/components/layout/footer"
 
+import { loginAction } from "@/features/auth/server/actions"
+
 export function LoginForm() {
   const router = useRouter()
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [error, setError] = React.useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
-
-    // HACK: Simulate network request for local dev without auth backend
-    setTimeout(() => {
+    setError(null)
+    
+    const formData = new FormData(e.currentTarget)
+    const result = await loginAction(formData)
+    
+    if (result.error) {
+      setError(result.error)
       setIsLoading(false)
+    } else {
       router.push("/")
-    }, 1500)
+    }
   }
 
   return (
@@ -80,16 +88,18 @@ export function LoginForm() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <label
-                      htmlFor="worker-id"
+                      htmlFor="email"
                       className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
                     >
-                      Worker ID
+                      Email Address
                     </label>
                     <div className="group relative">
                       <CreditCard className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
                       <Input
-                        id="worker-id"
-                        placeholder="ID-000-000-000"
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="admin@elock.dev"
                         className="h-14 rounded-2xl border-border bg-muted pl-12 font-mono text-sm focus-visible:ring-primary"
                         required
                       />
@@ -99,10 +109,10 @@ export function LoginForm() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <label
-                        htmlFor="pin"
+                        htmlFor="password"
                         className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
                       >
-                        Security PIN
+                        Password
                       </label>
                       <button
                         type="button"
@@ -114,7 +124,8 @@ export function LoginForm() {
                     <div className="group relative">
                       <Lock className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
                       <Input
-                        id="pin"
+                        id="password"
+                        name="password"
                         type="password"
                         placeholder="••••••••"
                         className="h-14 rounded-2xl border-border bg-muted pl-12 font-mono text-sm focus-visible:ring-primary"
@@ -123,6 +134,12 @@ export function LoginForm() {
                     </div>
                   </div>
                 </div>
+
+                {error && (
+                  <div className="rounded-xl bg-destructive/15 p-3 text-sm text-destructive font-bold text-center">
+                    {error}
+                  </div>
+                )}
 
                 <div className="flex items-center space-x-2">
                   <Checkbox
