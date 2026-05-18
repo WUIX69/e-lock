@@ -74,7 +74,10 @@ async function seed() {
 
   try {
     for (const user of users) {
-      await db.insert(UserTable).values(user).onConflictDoNothing({ target: UserTable.email })
+      await db
+        .insert(UserTable)
+        .values(user)
+        .onConflictDoNothing({ target: UserTable.email })
     }
     console.log("Seeding completed successfully!")
   } catch (error) {

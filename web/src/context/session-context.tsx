@@ -16,7 +16,9 @@ interface SessionContextValue {
   isLoading: boolean
 }
 
-const SessionContext = React.createContext<SessionContextValue | undefined>(undefined)
+const SessionContext = React.createContext<SessionContextValue | undefined>(
+  undefined
+)
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = React.useState<SessionUser | null>(null)

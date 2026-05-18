@@ -107,7 +107,9 @@ export function Header() {
                     src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser?.email}`}
                     alt={currentUser?.name || "User"}
                   />
-                  <AvatarFallback>{currentUser?.name?.charAt(0) || "U"}</AvatarFallback>
+                  <AvatarFallback>
+                    {currentUser?.name?.charAt(0) || "U"}
+                  </AvatarFallback>
                 </Avatar>
               </button>
             </DropdownMenuTrigger>
@@ -125,13 +127,14 @@ export function Header() {
                 Security
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onClick={async () => {
-                  const { logoutAction } = await import("@/features/auth/server/actions");
-                  await logoutAction();
-                  window.location.href = "/login";
+                  const { logoutAction } =
+                    await import("@/features/auth/server/actions")
+                  await logoutAction()
+                  window.location.href = "/login"
                 }}
-                className="rounded-xl px-2 py-2 text-sm font-medium text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer"
+                className="cursor-pointer rounded-xl px-2 py-2 text-sm font-medium text-destructive focus:bg-destructive/10 focus:text-destructive"
               >
                 Log out
               </DropdownMenuItem>

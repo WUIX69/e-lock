@@ -1,8 +1,8 @@
-import { 
-  AssignedMachine, 
-  FailSafeHardwareRow, 
-  TelemetrySample, 
-  MaintenanceTicket 
+import {
+  AssignedMachine,
+  FailSafeHardwareRow,
+  TelemetrySample,
+  MaintenanceTicket,
 } from "@/types/user-dashboard"
 import { Bolt, Timer } from "lucide-react"
 
@@ -15,7 +15,8 @@ export const MOCK_ASSIGNED_MACHINE: AssignedMachine = {
   isolationStatus: "ENERGIZED",
   signalLatency: "98ms",
   relayHealth: "NOMINAL",
-  imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuCKIWzr3-YUSFkkB4rN-ezfUw9h2F7sS2HfVeX2LjRli0S44XLmjE16eSVH37RmT-Xxd8H4_k73bGFNtfd9Lny0AK6DNC_hB0CD84_u1kgGc1d8DaoHSDcSq50OkVPXuNdjJyZzOgK3OjlLpJaMMUU-2TsJpLLtEXH1gGTWnY8KNWOZ1zHhBeFGGaPUBqCzhoGmieO5SNPhluCC-zKDTarqYug8QL-YjiMnoYdz4QxsiivVh_oIVI96h2r6I4LfpSuSaX5EgNHGiw",
+  imageUrl:
+    "https://lh3.googleusercontent.com/aida-public/AB6AXuCKIWzr3-YUSFkkB4rN-ezfUw9h2F7sS2HfVeX2LjRli0S44XLmjE16eSVH37RmT-Xxd8H4_k73bGFNtfd9Lny0AK6DNC_hB0CD84_u1kgGc1d8DaoHSDcSq50OkVPXuNdjJyZzOgK3OjlLpJaMMUU-2TsJpLLtEXH1gGTWnY8KNWOZ1zHhBeFGGaPUBqCzhoGmieO5SNPhluCC-zKDTarqYug8QL-YjiMnoYdz4QxsiivVh_oIVI96h2r6I4LfpSuSaX5EgNHGiw",
 }
 
 export const MOCK_FAILSAFE_HARDWARE: FailSafeHardwareRow[] = [
@@ -33,10 +34,13 @@ export const MOCK_FAILSAFE_HARDWARE: FailSafeHardwareRow[] = [
   },
 ]
 
-export const MOCK_TELEMETRY_SAMPLES: TelemetrySample[] = Array.from({ length: 24 }, (_, i) => ({
-  time: i,
-  voltage: 220 + Math.random() * 10,
-}))
+export const MOCK_TELEMETRY_SAMPLES: TelemetrySample[] = Array.from(
+  { length: 24 },
+  (_, i) => ({
+    time: i,
+    voltage: 220 + Math.random() * 10,
+  })
+)
 
 export const MOCK_MAINTENANCE_TICKET: MaintenanceTicket = {
   ticketId: "#LOTO-99201-B",

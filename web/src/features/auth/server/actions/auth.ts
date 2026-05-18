@@ -21,11 +21,16 @@ function parseExpiresInToSeconds(expiresIn: string): number {
   const value = parseInt(match[1], 10)
   const unit = match[2]
   switch (unit) {
-    case "s": return value
-    case "m": return value * 60
-    case "h": return value * 60 * 60
-    case "d": return value * 24 * 60 * 60
-    default: return 3600
+    case "s":
+      return value
+    case "m":
+      return value * 60
+    case "h":
+      return value * 60 * 60
+    case "d":
+      return value * 24 * 60 * 60
+    default:
+      return 3600
   }
 }
 
@@ -37,7 +42,9 @@ export async function createAccessToken(payload: SessionUser): Promise<string> {
     .sign(ACCESS_SECRET)
 }
 
-export async function createRefreshToken(payload: SessionUser): Promise<string> {
+export async function createRefreshToken(
+  payload: SessionUser
+): Promise<string> {
   return new SignJWT({ ...payload })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -45,7 +52,9 @@ export async function createRefreshToken(payload: SessionUser): Promise<string> 
     .sign(REFRESH_SECRET)
 }
 
-export async function verifyAccessToken(token: string): Promise<SessionUser | null> {
+export async function verifyAccessToken(
+  token: string
+): Promise<SessionUser | null> {
   try {
     const { payload } = await jwtVerify(token, ACCESS_SECRET)
     return payload as unknown as SessionUser
@@ -54,7 +63,9 @@ export async function verifyAccessToken(token: string): Promise<SessionUser | nu
   }
 }
 
-export async function verifyRefreshToken(token: string): Promise<SessionUser | null> {
+export async function verifyRefreshToken(
+  token: string
+): Promise<SessionUser | null> {
   try {
     const { payload } = await jwtVerify(token, REFRESH_SECRET)
     return payload as unknown as SessionUser
@@ -102,7 +113,9 @@ export async function refreshSession(): Promise<SessionUser | null> {
   return payload
 }
 
-export async function requireAuth(allowedRoles?: ("admin" | "user")[]): Promise<SessionUser> {
+export async function requireAuth(
+  allowedRoles?: ("admin" | "user")[]
+): Promise<SessionUser> {
   const cookieStore = await cookies()
   const accessToken = cookieStore.get("elock_access_token")?.value
   let payload: SessionUser | null = null

@@ -15,7 +15,7 @@ export const PersonnelPageActions = () => {
           <Download className="size-4" />
           Export List
         </button>
-        <button 
+        <button
           onClick={() => setIsDialogOpen(true)}
           className="flex items-center gap-2 rounded-2xl bg-sidebar px-6 py-3 text-sm font-black tracking-widest text-sidebar-foreground uppercase shadow-lg transition-transform hover:scale-105 active:scale-95"
         >
@@ -24,7 +24,11 @@ export const PersonnelPageActions = () => {
         </button>
       </div>
 
-      <PersonnelDialog mode="add" isOpen={isDialogOpen} onOpenChange={setIsDialogOpen} />
+      <PersonnelDialog
+        mode="add"
+        isOpen={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+      />
       <AddPersonnelFab onClick={() => setIsDialogOpen(true)} />
     </>
   )

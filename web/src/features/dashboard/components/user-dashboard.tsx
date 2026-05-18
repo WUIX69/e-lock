@@ -11,7 +11,7 @@ import { MOCK_USER_DASHBOARD_DATA } from "@/data/mock/user-dashboard"
 
 export function UserDashboard() {
   const { currentUser } = useSession()
-  
+
   if (!currentUser) return null
 
   // In a real app, we'd fetch data based on currentUser.id
@@ -26,7 +26,10 @@ export function UserDashboard() {
           Welcome back, {currentUser.name}
         </h1>
         <p className="text-muted-foreground">
-          You are currently assigned to <span className="font-bold text-primary">{data.assignedMachine.name}</span>
+          You are currently assigned to{" "}
+          <span className="font-bold text-primary">
+            {data.assignedMachine.name}
+          </span>
         </p>
       </div>
 

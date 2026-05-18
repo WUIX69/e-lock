@@ -34,6 +34,7 @@ export const MOCK_ACCOUNTS: MockAccount[] = [
     site: "Site-A",
     node: "Node 04",
     clearance: "Level 4 (LOTO)",
-    avatarUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuBJQr4Zk5Ajl_RWtCzxqoIf5YZaan7bSMMaQMJ08nF608h4RLNYeQSn69o5y1RFzXxgRAaNqnJqwvZkP88Bidc9fei_dX4n1Cy2v04QSVrGagK9UT0dKhO7lgbZ64ZvXrBmBw-zD5FTOBsEfvAKcuW78DyYmPwweRoHLQULCThJQIZLvEapCPzHea72ib1pqrWqD7FG7yua6SfSj1xbS9d-Fzt3w7P9xb82kNneFv4gVEnLe8difazYMyZ5q2fkHd7frx4Yt0a3fw",
+    avatarUrl:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuBJQr4Zk5Ajl_RWtCzxqoIf5YZaan7bSMMaQMJ08nF608h4RLNYeQSn69o5y1RFzXxgRAaNqnJqwvZkP88Bidc9fei_dX4n1Cy2v04QSVrGagK9UT0dKhO7lgbZ64ZvXrBmBw-zD5FTOBsEfvAKcuW78DyYmPwweRoHLQULCThJQIZLvEapCPzHea72ib1pqrWqD7FG7yua6SfSj1xbS9d-Fzt3w7P9xb82kNneFv4gVEnLe8difazYMyZ5q2fkHd7frx4Yt0a3fw",
   },
 ]

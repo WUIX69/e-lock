@@ -25,7 +25,9 @@ export default function MyActivityPage() {
             </div>
             <h3 className="text-lg font-bold">Active Lockouts</h3>
           </div>
-          <p className="text-sm text-muted-foreground">You currently have no active lockouts.</p>
+          <p className="text-sm text-muted-foreground">
+            You currently have no active lockouts.
+          </p>
         </div>
 
         <div className="flex flex-col gap-4 rounded-3xl border border-border bg-card p-8">
@@ -35,7 +37,9 @@ export default function MyActivityPage() {
             </div>
             <h3 className="text-lg font-bold">Recent History</h3>
           </div>
-          <p className="text-sm text-muted-foreground">No recent LOTO activity recorded.</p>
+          <p className="text-sm text-muted-foreground">
+            No recent LOTO activity recorded.
+          </p>
         </div>
       </div>
     </div>

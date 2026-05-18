@@ -31,10 +31,10 @@ export function LoginForm() {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
-    
+
     const formData = new FormData(e.currentTarget)
     const result = await loginAction(formData)
-    
+
     if (result.error) {
       setError(result.error)
       setIsLoading(false)
@@ -136,7 +136,7 @@ export function LoginForm() {
                 </div>
 
                 {error && (
-                  <div className="rounded-xl bg-destructive/15 p-3 text-sm text-destructive font-bold text-center">
+                  <div className="rounded-xl bg-destructive/15 p-3 text-center text-sm font-bold text-destructive">
                     {error}
                   </div>
                 )}

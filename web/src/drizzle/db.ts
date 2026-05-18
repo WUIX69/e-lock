@@ -8,4 +8,7 @@ const globalForDb = globalThis as unknown as { dbClient: postgres.Sql }
 const client = globalForDb.dbClient ?? postgres(env.DATABASE_URL)
 if (process.env.NODE_ENV !== "production") globalForDb.dbClient = client
 
-export const db = drizzle(client, { schema, logger: process.env.NODE_ENV === "development" })
+export const db = drizzle(client, {
+  schema,
+  logger: process.env.NODE_ENV === "development",
+})

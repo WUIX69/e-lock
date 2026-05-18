@@ -21,15 +21,19 @@ export const BiometricEnrollmentSection = () => {
           <Fingerprint className="size-8 text-primary" />
           <Radio className="absolute -right-2 -bottom-2 size-5 animate-pulse text-muted-foreground" />
         </div>
-        
+
         <p className="mb-4 text-center text-xs text-muted-foreground">
-          Place authorized finger on the <strong className="font-semibold text-foreground">AS608 Scanner</strong> to capture biometric template.
+          Place authorized finger on the{" "}
+          <strong className="font-semibold text-foreground">
+            AS608 Scanner
+          </strong>{" "}
+          to capture biometric template.
         </p>
 
         <button
           type="button"
           disabled
-          className="w-full rounded-xl bg-background border border-border px-4 py-2.5 text-xs font-black tracking-widest text-muted-foreground uppercase opacity-50 cursor-not-allowed"
+          className="w-full cursor-not-allowed rounded-xl border border-border bg-background px-4 py-2.5 text-xs font-black tracking-widest text-muted-foreground uppercase opacity-50"
         >
           Capture Fingerprint (Pending hardware)
         </button>

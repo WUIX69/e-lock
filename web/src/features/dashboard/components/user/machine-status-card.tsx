@@ -8,15 +8,14 @@ import { cn } from "@/lib/utils"
 import { AssignedMachine } from "@/types/user-dashboard"
 
 export function MachineStatusCard({ machine }: { machine: AssignedMachine }) {
-
   return (
-    <section className="col-span-12 lg:col-span-8 relative overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-sm">
+    <section className="relative col-span-12 overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-sm lg:col-span-8">
       {/* Background Glow */}
-      <div className="absolute top-0 right-0 h-64 w-64 -mr-20 -mt-20 rounded-full bg-primary/5 blur-3xl" />
+      <div className="absolute top-0 right-0 -mt-20 -mr-20 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
 
       <div className="relative z-10 flex flex-col gap-8">
         {/* Header */}
-        <div className="flex justify-between items-start">
+        <div className="flex items-start justify-between">
           <div>
             <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-[10px] font-black tracking-widest text-primary uppercase">
               Assigned Equipment
@@ -25,7 +24,7 @@ export function MachineStatusCard({ machine }: { machine: AssignedMachine }) {
               {machine.name} <span className="text-primary">{machine.id}</span>
             </h3>
             <p className="mt-1 flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              <MapPin className="size-4 text-primary fill-primary/20" />
+              <MapPin className="size-4 fill-primary/20 text-primary" />
               {machine.zone} — {machine.sector}
             </p>
           </div>
@@ -40,7 +39,7 @@ export function MachineStatusCard({ machine }: { machine: AssignedMachine }) {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <StatPill
             label="Isolation Status"
             value={machine.isolationStatus}
@@ -64,23 +63,24 @@ export function MachineStatusCard({ machine }: { machine: AssignedMachine }) {
         </div>
 
         {/* Footer Row */}
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="relative h-48 w-full md:w-1/2 overflow-hidden rounded-2xl border border-border shadow-inner">
-            <Image 
-              src={machine.imageUrl} 
+        <div className="flex flex-col gap-6 md:flex-row">
+          <div className="relative h-48 w-full overflow-hidden rounded-2xl border border-border shadow-inner md:w-1/2">
+            <Image
+              src={machine.imageUrl}
               alt={machine.name}
               fill
               className="object-cover transition-transform duration-500 hover:scale-105"
             />
           </div>
-          <div className="flex-1 flex flex-col justify-between rounded-2xl bg-sidebar p-6 text-sidebar-foreground">
+          <div className="flex flex-1 flex-col justify-between rounded-2xl bg-sidebar p-6 text-sidebar-foreground">
             <div>
               <h4 className="flex items-center gap-2 text-sm font-black tracking-wide">
                 <ShieldCheck className="size-4 text-secondary-foreground" />
                 Safety Directive
               </h4>
               <p className="mt-3 text-xs leading-relaxed text-sidebar-foreground/60">
-                Ensure all hydraulic lines are drained of pressure before initiating LOTO sequence for monthly blade sharpening.
+                Ensure all hydraulic lines are drained of pressure before
+                initiating LOTO sequence for monthly blade sharpening.
               </p>
             </div>
             <button className="mt-4 flex items-center gap-2 text-xs font-black tracking-widest text-secondary-foreground uppercase transition-colors hover:underline">
@@ -94,13 +94,13 @@ export function MachineStatusCard({ machine }: { machine: AssignedMachine }) {
   )
 }
 
-function StatPill({ 
-  label, 
-  value, 
-  icon: Icon, 
-  iconClass, 
-  valueClass 
-}: { 
+function StatPill({
+  label,
+  value,
+  icon: Icon,
+  iconClass,
+  valueClass,
+}: {
   label: string
   value: string
   icon: React.ElementType

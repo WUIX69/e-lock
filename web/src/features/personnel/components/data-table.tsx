@@ -34,14 +34,20 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="rounded-xl border border-border bg-card overflow-hidden">
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
       <Table>
         <TableHeader className="bg-muted/50">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="border-border hover:bg-transparent">
+            <TableRow
+              key={headerGroup.id}
+              className="border-border hover:bg-transparent"
+            >
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id} className="h-12 font-black tracking-widest text-muted-foreground uppercase text-[10px]">
+                  <TableHead
+                    key={header.id}
+                    className="h-12 text-[10px] font-black tracking-widest text-muted-foreground uppercase"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -60,7 +66,7 @@ export function DataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
-                className="border-border hover:bg-muted/30 transition-colors"
+                className="border-border transition-colors hover:bg-muted/30"
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id} className="py-4">
@@ -71,7 +77,10 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center text-muted-foreground"
+              >
                 No personnel found.
               </TableCell>
             </TableRow>

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function PersonnelPage() {
   const personnel = await getAllPersonnel()
-  
+
   return (
     <div className="space-y-8 pb-12">
       {/* Page Header */}
@@ -39,7 +39,9 @@ export default async function PersonnelPage() {
       <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
         <div className="xl:col-span-2">
           <div className="space-y-4">
-            <h3 className="text-lg font-bold tracking-tight">Active Personnel Roster</h3>
+            <h3 className="text-lg font-bold tracking-tight">
+              Active Personnel Roster
+            </h3>
             <DataTable columns={columns} data={personnel} />
           </div>
         </div>

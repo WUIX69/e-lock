@@ -2,7 +2,14 @@
 
 import * as React from "react"
 import { ColumnDef } from "@tanstack/react-table"
-import { Shield, ShieldAlert, Circle, MoreHorizontal, MapPin, Clock } from "lucide-react"
+import {
+  Shield,
+  ShieldAlert,
+  Circle,
+  MoreHorizontal,
+  MapPin,
+  Clock,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -54,12 +61,12 @@ export const columns: ColumnDef<PersonnelRow>[] = [
 
       return (
         <div className="flex items-center gap-4 py-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 border border-primary/20">
-            <span className="text-primary font-bold">{name.charAt(0)}</span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/20 bg-primary/10">
+            <span className="font-bold text-primary">{name.charAt(0)}</span>
           </div>
           <div className="flex flex-col">
             <span className="font-semibold">{name}</span>
-            <span className="text-xs text-muted-foreground font-mono">
+            <span className="font-mono text-xs text-muted-foreground">
               {employeeId} • {position}
             </span>
           </div>
@@ -82,7 +89,9 @@ export const columns: ColumnDef<PersonnelRow>[] = [
           ) : (
             <Shield className="size-4 text-muted-foreground" />
           )}
-          <span className={cn("text-sm font-medium", isAdmin && "text-primary")}>
+          <span
+            className={cn("text-sm font-medium", isAdmin && "text-primary")}
+          >
             {level}
           </span>
         </div>
@@ -97,7 +106,12 @@ export const columns: ColumnDef<PersonnelRow>[] = [
       const colors = getStatusColor(status)
 
       return (
-        <div className={cn("flex w-fit items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-black uppercase tracking-widest", colors)}>
+        <div
+          className={cn(
+            "flex w-fit items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-black tracking-widest uppercase",
+            colors
+          )}
+        >
           <Circle className="size-2 fill-current" />
           {status.replace("-", " ")}
         </div>
@@ -109,17 +123,19 @@ export const columns: ColumnDef<PersonnelRow>[] = [
     header: "Last Active",
     cell: ({ row }) => {
       const date = row.getValue("lastActiveAt") as Date | null
-      
-      if (!date) return <span className="text-muted-foreground text-sm">Unknown</span>
+
+      if (!date)
+        return <span className="text-sm text-muted-foreground">Unknown</span>
 
       // Extremely simple relative time for demonstration
       const diffMs = Date.now() - new Date(date).getTime()
       const diffMins = Math.floor(diffMs / 60000)
-      
+
       let relativeTime = ""
       if (diffMins < 1) relativeTime = "Just now"
       else if (diffMins < 60) relativeTime = `${diffMins}m ago`
-      else if (diffMins < 1440) relativeTime = `${Math.floor(diffMins / 60)}h ago`
+      else if (diffMins < 1440)
+        relativeTime = `${Math.floor(diffMins / 60)}h ago`
       else relativeTime = `${Math.floor(diffMins / 1440)}d ago`
 
       return (
@@ -137,7 +153,9 @@ export const columns: ColumnDef<PersonnelRow>[] = [
       const location = row.getValue("lastLocation") as string | null
       return (
         <div className="flex items-center gap-2 text-sm font-medium">
-          {location !== "N/A" && <MapPin className="size-4 text-muted-foreground" />}
+          {location !== "N/A" && (
+            <MapPin className="size-4 text-muted-foreground" />
+          )}
           <span>{location || "N/A"}</span>
         </div>
       )
@@ -147,7 +165,8 @@ export const columns: ColumnDef<PersonnelRow>[] = [
     id: "actions",
     cell: function ActionsCell({ row }) {
       const personnel = row.original
-      const [isEditDialogOpen, setIsEditDialogOpen] = React.useState<boolean>(false)
+      const [isEditDialogOpen, setIsEditDialogOpen] =
+        React.useState<boolean>(false)
 
       return (
         <>
@@ -161,7 +180,9 @@ export const columns: ColumnDef<PersonnelRow>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(personnel.employeeId)}
+                onClick={() =>
+                  navigator.clipboard.writeText(personnel.employeeId)
+                }
               >
                 Copy Employee ID
               </DropdownMenuItem>
@@ -170,7 +191,9 @@ export const columns: ColumnDef<PersonnelRow>[] = [
               <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
                 Edit access level
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive focus:text-destructive">Revoke access</DropdownMenuItem>
+              <DropdownMenuItem className="text-destructive focus:text-destructive">
+                Revoke access
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 

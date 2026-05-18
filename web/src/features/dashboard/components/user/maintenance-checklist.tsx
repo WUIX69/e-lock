@@ -6,10 +6,13 @@ import { cn } from "@/lib/utils"
 
 import { MaintenanceTicket } from "@/types/user-dashboard"
 
-export function MaintenanceChecklist({ ticket }: { ticket: MaintenanceTicket }) {
-
+export function MaintenanceChecklist({
+  ticket,
+}: {
+  ticket: MaintenanceTicket
+}) {
   return (
-    <section className="col-span-12 lg:col-span-5 flex flex-col rounded-3xl border border-border bg-card shadow-sm overflow-hidden">
+    <section className="col-span-12 flex flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm lg:col-span-5">
       {/* Header */}
       <div className="border-b border-border bg-muted/30 p-8">
         <h3 className="flex items-center gap-2 text-xl font-black tracking-tight text-foreground">
@@ -24,25 +27,35 @@ export function MaintenanceChecklist({ ticket }: { ticket: MaintenanceTicket }) 
       {/* Checklist */}
       <div className="flex-1 space-y-4 p-8">
         {ticket.tasks.map((task) => (
-          <div 
-            key={task.id} 
+          <div
+            key={task.id}
             className={cn(
               "flex items-center gap-4 rounded-2xl border p-4 transition-all",
-              task.state === "done" ? "border-primary/20 bg-primary/5 opacity-60" : "border-border bg-muted/20"
+              task.state === "done"
+                ? "border-primary/20 bg-primary/5 opacity-60"
+                : "border-border bg-muted/20"
             )}
           >
-            <div className={cn(
-              "flex size-6 shrink-0 items-center justify-center rounded-lg border-2",
-              task.state === "done" ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
-            )}>
+            <div
+              className={cn(
+                "flex size-6 shrink-0 items-center justify-center rounded-lg border-2",
+                task.state === "done"
+                  ? "border-primary bg-primary text-white"
+                  : "border-muted-foreground/30"
+              )}
+            >
               {task.state === "done" && <Check className="size-4" />}
             </div>
-            
-            <span className={cn(
-              "flex-1 text-sm font-bold",
-              task.state === "done" ? "text-foreground line-through" : "text-foreground",
-              task.state === "pending" && "opacity-40"
-            )}>
+
+            <span
+              className={cn(
+                "flex-1 text-sm font-bold",
+                task.state === "done"
+                  ? "text-foreground line-through"
+                  : "text-foreground",
+                task.state === "pending" && "opacity-40"
+              )}
+            >
               {task.label}
             </span>
 
@@ -51,7 +64,7 @@ export function MaintenanceChecklist({ ticket }: { ticket: MaintenanceTicket }) 
                 Next
               </span>
             )}
-            
+
             {task.timestamp && (
               <span className="text-[10px] font-black tracking-widest text-muted-foreground/40 uppercase">
                 {task.timestamp}

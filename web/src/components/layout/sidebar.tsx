@@ -35,7 +35,7 @@ const getNavigation = (role: string | undefined) => {
       { name: "System Settings", href: "/settings", icon: Settings },
     ]
   }
-  
+
   return [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
     { name: "My Activity", href: "/user/my-activity", icon: Activity },
@@ -49,7 +49,7 @@ function SidebarContent() {
   const { currentUser } = useSession()
 
   const navigation = getNavigation(currentUser?.role)
-  
+
   const handleLogout = async () => {
     await logoutAction()
     router.push("/login")
@@ -106,7 +106,6 @@ function SidebarContent() {
           )
         })}
       </nav>
-
 
       {/* Bottom Actions */}
       <div className="shrink-0 space-y-4 p-6">

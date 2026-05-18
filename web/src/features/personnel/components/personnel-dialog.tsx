@@ -40,7 +40,7 @@ export const PersonnelDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto border-border bg-background p-6">
+      <DialogContent className="max-h-[90vh] overflow-y-auto border-border bg-background p-6 sm:max-w-lg">
         <DialogHeader className="mb-4">
           <DialogTitle className="text-xl font-bold tracking-tight text-foreground">
             {DIALOG_TITLES[mode]}

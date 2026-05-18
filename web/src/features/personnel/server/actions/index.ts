@@ -1,10 +1,15 @@
 "use server"
 
-import { addPersonnelSchema, editPersonnelSchema } from "../../schemas/personnel"
+import {
+  addPersonnelSchema,
+  editPersonnelSchema,
+} from "../../schemas/personnel"
 import { getUserByEmail, insertPersonnel, updatePersonnel } from "../db"
 import { AddPersonnelResult } from "@/types/personnel"
 
-export async function addPersonnelAction(formData: FormData): Promise<AddPersonnelResult> {
+export async function addPersonnelAction(
+  formData: FormData
+): Promise<AddPersonnelResult> {
   try {
     const data = {
       employeeId: formData.get("employeeId"),
@@ -21,13 +26,13 @@ export async function addPersonnelAction(formData: FormData): Promise<AddPersonn
 
     if (!validatedData.success) {
       console.error("Zod Validation Errors:", validatedData.error.format())
-      return { 
+      return {
         error: "Validation failed. Please check the form fields.",
       }
     }
 
     const existingUser = await getUserByEmail(validatedData.data.email)
-    
+
     if (existingUser) {
       return {
         error: "A user with this email address is already registered.",
@@ -43,7 +48,9 @@ export async function addPersonnelAction(formData: FormData): Promise<AddPersonn
   }
 }
 
-export async function editPersonnelAction(formData: FormData): Promise<AddPersonnelResult> {
+export async function editPersonnelAction(
+  formData: FormData
+): Promise<AddPersonnelResult> {
   try {
     const id = formData.get("id") as string
     const data = {
@@ -61,7 +68,7 @@ export async function editPersonnelAction(formData: FormData): Promise<AddPerson
 
     if (!validatedData.success) {
       console.error("Zod Edit Validation Errors:", validatedData.error.format())
-      return { 
+      return {
         error: "Validation failed. Please check the form fields.",
       }
     }
