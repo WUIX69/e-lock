@@ -3,8 +3,8 @@
 import {
   addPersonnelSchema,
   editPersonnelSchema,
-} from "../../schemas/personnel"
-import { getUserByEmail, insertPersonnel, updatePersonnel } from "../db"
+} from "@/features/personnel/schemas/personnel"
+import { getUserByEmail, insertPersonnel, updatePersonnel } from "@/features/personnel/server/db"
 import { AddPersonnelResult } from "@/types/personnel"
 
 export async function addPersonnelAction(

@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers"
 import * as bcrypt from "bcryptjs"
-import { getUserByEmail } from "../db"
+import { getUserByEmail } from "@/features/auth/server/db"
 import {
   createAccessToken,
   createRefreshToken,

@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import { addPersonnelAction, editPersonnelAction } from "../server/actions"
+import { addPersonnelAction, editPersonnelAction } from "@/features/personnel/server/actions"
 import { BiometricEnrollmentSection } from "./biometric-enrollment-section"
 import { PersonnelRow } from "./columns"
 

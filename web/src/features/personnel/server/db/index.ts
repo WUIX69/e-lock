@@ -5,7 +5,7 @@ import * as bcrypt from "bcryptjs"
 import {
   AddPersonnelSchema,
   EditPersonnelSchema,
-} from "../../schemas/personnel"
+} from "@/features/personnel/schemas/personnel"
 
 export async function getUserByEmail(email: string) {
   const users = await db
