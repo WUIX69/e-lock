@@ -45,6 +45,7 @@ everything-claude-code/
 .opencode
 .claude
 .temp
+opencode.json
 
 # Docker / Infra
 infra/.env
