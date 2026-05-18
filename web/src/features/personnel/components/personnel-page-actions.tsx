@@ -2,8 +2,8 @@
 
 import * as React from "react"
 import { UserPlus, Download } from "lucide-react"
-import { PersonnelDialog } from "./personnel-dialog"
-import { AddPersonnelFab } from "./add-personnel-fab"
+import { PersonnelDialog } from "@/features/personnel/components/personnel-dialog"
+import { AddPersonnelFab } from "@/features/personnel/components/add-personnel-fab"
 
 export const PersonnelPageActions = () => {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)

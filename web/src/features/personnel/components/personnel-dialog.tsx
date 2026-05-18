@@ -6,8 +6,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { PersonnelForm } from "./personnel-form"
-import { PersonnelRow } from "./columns"
+import { PersonnelForm } from "@/features/personnel/components/personnel-form"
+import { PersonnelRow } from "@/features/personnel/components/columns"
 
 interface PersonnelDialogAddProps {
   mode: "add"

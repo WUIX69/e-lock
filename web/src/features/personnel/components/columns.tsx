@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
-import { PersonnelDialog } from "./personnel-dialog"
+import { PersonnelDialog } from "@/features/personnel/components/personnel-dialog"
 
 export type PersonnelRow = {
   id: string

@@ -9,7 +9,7 @@ import {
   verifyAccessToken,
   refreshSession,
   SessionUser,
-} from "./auth"
+} from "@/features/auth/server/actions/auth"
 import { env } from "@/data/env/server"
 
 // HACK: Simple parser helper for maxAge calculation in cookies

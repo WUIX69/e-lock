@@ -1,7 +1,7 @@
 import "dotenv/config"
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
-import { UserTable } from "./schema"
+import { UserTable } from "@/drizzle/schema"
 import * as bcrypt from "bcryptjs"
 
 const connectionString = process.env.DATABASE_URL

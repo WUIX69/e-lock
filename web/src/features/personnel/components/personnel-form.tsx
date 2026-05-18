@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { addPersonnelAction, editPersonnelAction } from "@/features/personnel/server/actions"
-import { BiometricEnrollmentSection } from "./biometric-enrollment-section"
-import { PersonnelRow } from "./columns"
+import { BiometricEnrollmentSection } from "@/features/personnel/components/biometric-enrollment-section"
+import { PersonnelRow } from "@/features/personnel/components/columns"
 
 interface PersonnelFormAddProps {
   mode: "add"
