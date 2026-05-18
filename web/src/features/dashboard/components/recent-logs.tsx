@@ -7,7 +7,7 @@ import { MOCK_RECENT_ACTIVITY } from "@/data/mock/dashboard"
 export const RecentLogs = () => {
   return (
     <div className="flex flex-col rounded-3xl border border-border bg-card p-8 shadow-sm md:col-span-1 lg:col-span-2">
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <History className="size-5 text-primary" />
           <h4 className="text-xs font-black tracking-widest text-foreground uppercase">
@@ -23,7 +23,7 @@ export const RecentLogs = () => {
         {MOCK_RECENT_ACTIVITY.slice(0, 4).map((log) => {
           const isAlert = log.isAlert
           const isSystem = log.user === "System"
-          
+
           return (
             <div
               key={log.id}
@@ -34,8 +34,8 @@ export const RecentLogs = () => {
                   isAlert
                     ? "bg-destructive/10 text-destructive"
                     : isSystem
-                    ? "bg-primary/10 text-primary"
-                    : "bg-emerald-500/10 text-emerald-500"
+                      ? "bg-primary/10 text-primary"
+                      : "bg-emerald-500/10 text-emerald-500"
                 }`}
               >
                 {isAlert ? (

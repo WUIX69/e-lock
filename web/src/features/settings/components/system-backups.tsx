@@ -35,35 +35,37 @@ export const SystemBackups = () => {
   }
 
   return (
-    <Card className="bg-muted/50 rounded-xl p-8 border border-border/50 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
+    <Card className="relative overflow-hidden rounded-xl border border-border/50 bg-muted/50 p-8">
+      <div className="pointer-events-none absolute top-0 right-0 -mt-32 -mr-32 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
 
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+      <div className="relative z-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
         <div className="flex items-center gap-6">
-          <div className="h-20 w-20 bg-card rounded-2xl flex items-center justify-center shadow-lg rotate-[-3deg] border border-border/50 shrink-0">
-            <div className="p-3 bg-primary/10 rounded-xl">
+          <div className="flex h-20 w-20 shrink-0 rotate-[-3deg] items-center justify-center rounded-2xl border border-border/50 bg-card shadow-lg">
+            <div className="rounded-xl bg-primary/10 p-3">
               <Download className="size-8 text-primary" />
             </div>
           </div>
           <div>
-            <h3 className="text-2xl font-black text-foreground">System Backups & Logs</h3>
-            <p className="text-muted-foreground text-sm mt-1">
+            <h3 className="text-2xl font-black text-foreground">
+              System Backups & Logs
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
               Redundant storage of worker credentials and safety audit history.
             </p>
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <Button
             variant="outline"
             disabled={isImporting || isExporting}
             onClick={handleImportDatabase}
-            className="border-primary text-primary hover:bg-primary/5 font-bold h-12 px-6 rounded-xl flex items-center gap-2"
+            className="flex h-12 items-center gap-2 rounded-xl border-primary px-6 font-bold text-primary hover:bg-primary/5"
             aria-label="Import database"
           >
             {isImporting ? (
               <>
-                <Loader2 className="size-5 animate-spin mr-2" />
+                <Loader2 className="mr-2 size-5 animate-spin" />
                 IMPORTING...
               </>
             ) : (
@@ -76,12 +78,12 @@ export const SystemBackups = () => {
           <Button
             disabled={isImporting || isExporting}
             onClick={handleExportLogs}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-12 px-8 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-xl active:scale-95 transition-all"
+            className="flex h-12 items-center gap-2 rounded-xl bg-primary px-8 font-bold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:shadow-xl active:scale-95"
             aria-label="Export audit logs as CSV"
           >
             {isExporting ? (
               <>
-                <Loader2 className="size-5 animate-spin mr-2" />
+                <Loader2 className="mr-2 size-5 animate-spin" />
                 EXPORTING...
               </>
             ) : (
@@ -95,33 +97,37 @@ export const SystemBackups = () => {
       </div>
 
       {(importMessage || exportMessage) && (
-        <div className="mt-4 text-center animate-fade-in relative z-10">
+        <div className="animate-fade-in relative z-10 mt-4 text-center">
           <p className="text-xs font-semibold text-primary">
             {importMessage || exportMessage}
           </p>
         </div>
       )}
 
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-        <div className="bg-card/60 backdrop-blur-sm p-4 rounded-xl border border-border/50">
-          <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">
+      <div className="relative z-10 mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="rounded-xl border border-border/50 bg-card/60 p-4 backdrop-blur-sm">
+          <p className="text-[10px] font-bold tracking-tighter text-muted-foreground uppercase">
             Last Backup
           </p>
-          <p className="text-sm font-bold text-foreground mt-1">{BACKUP_STATS.lastBackup}</p>
+          <p className="mt-1 text-sm font-bold text-foreground">
+            {BACKUP_STATS.lastBackup}
+          </p>
         </div>
 
-        <div className="bg-card/60 backdrop-blur-sm p-4 rounded-xl border border-border/50">
-          <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">
+        <div className="rounded-xl border border-border/50 bg-card/60 p-4 backdrop-blur-sm">
+          <p className="text-[10px] font-bold tracking-tighter text-muted-foreground uppercase">
             Archive Size
           </p>
-          <p className="text-sm font-bold text-foreground mt-1">{BACKUP_STATS.archiveSize}</p>
+          <p className="mt-1 text-sm font-bold text-foreground">
+            {BACKUP_STATS.archiveSize}
+          </p>
         </div>
 
-        <div className="bg-card/60 backdrop-blur-sm p-4 rounded-xl border border-border/50">
-          <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">
+        <div className="rounded-xl border border-border/50 bg-card/60 p-4 backdrop-blur-sm">
+          <p className="text-[10px] font-bold tracking-tighter text-muted-foreground uppercase">
             Integrity Check
           </p>
-          <p className="text-sm font-bold text-primary flex items-center gap-1.5 mt-1">
+          <p className="mt-1 flex items-center gap-1.5 text-sm font-bold text-primary">
             <CheckCircle className="size-3.5" />
             {BACKUP_STATS.integrityCheck}
           </p>

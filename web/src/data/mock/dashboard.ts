@@ -1,4 +1,8 @@
-import { RecentActivityItem, ComplianceStat, AdminDashboardStats } from "@/types/dashboard"
+import {
+  RecentActivityItem,
+  ComplianceStat,
+  AdminDashboardStats,
+} from "@/types/dashboard"
 
 export const MOCK_VOLTAGE_BARS: number[] = [
   40, 60, 45, 80, 55, 90, 70, 85, 40, 65, 50, 75, 45,
@@ -73,7 +77,6 @@ export const MOCK_ADMIN_STATS: AdminDashboardStats = {
     subtext: "11/12 nodes online",
   },
 }
-
 
 export const MOCK_SYSTEM_DIAGNOSTICS = {
   mesh: {

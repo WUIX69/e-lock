@@ -19,7 +19,7 @@ const DevicesPage = () => {
 
       <DeviceTable />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <TopologyMap />
         </div>

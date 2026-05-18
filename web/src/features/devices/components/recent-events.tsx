@@ -1,11 +1,24 @@
 "use client"
 
 import * as React from "react"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { MOCK_DEVICE_EVENTS, type DeviceEvent } from "@/data/mock/devices"
-import { Info, AlertTriangle, CheckCircle2, Loader2, ScrollText } from "lucide-react"
+import {
+  Info,
+  AlertTriangle,
+  CheckCircle2,
+  Loader2,
+  ScrollText,
+} from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const eventDotStyles = {
@@ -63,12 +76,14 @@ export const RecentEvents = () => {
   }
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden border border-border/50 shadow-sm bg-card text-card-foreground">
+    <Card className="flex h-full flex-col overflow-hidden border border-border/50 bg-card text-card-foreground shadow-sm">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
           <ScrollText className="h-5 w-5 text-muted-foreground" />
           <div>
-            <CardTitle className="text-xl font-bold tracking-tight">Recent Events</CardTitle>
+            <CardTitle className="text-xl font-bold tracking-tight">
+              Recent Events
+            </CardTitle>
             <CardDescription className="text-sm text-muted-foreground">
               Hardware-level system logs
             </CardDescription>
@@ -76,29 +91,32 @@ export const RecentEvents = () => {
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 overflow-y-auto space-y-4 pr-2">
+      <CardContent className="flex-1 space-y-4 overflow-y-auto pr-2">
         <div className="space-y-4">
           {events.map((event) => {
             const Icon = eventIcons[event.type]
             return (
               <div
                 key={event.id}
-                className="group flex gap-4 p-3 rounded-lg border border-border/30 bg-muted/20 hover:bg-muted/50 transition-all duration-200"
+                className="group flex gap-4 rounded-lg border border-border/30 bg-muted/20 p-3 transition-all duration-200 hover:bg-muted/50"
               >
                 <div
                   className={cn(
-                    "flex items-center justify-center w-8 h-8 rounded-full border shrink-0 transition-transform group-hover:scale-105",
+                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-transform group-hover:scale-105",
                     eventDotStyles[event.type]
                   )}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="h-4 w-4" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold leading-none text-foreground break-words mb-1">
+                <div className="min-w-0 flex-1">
+                  <p className="mb-1 text-sm leading-none font-semibold break-words text-foreground">
                     {event.message}
                   </p>
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 capitalize">
+                    <Badge
+                      variant="outline"
+                      className="px-1.5 py-0 text-[10px] capitalize"
+                    >
                       {event.type}
                     </Badge>
                     <span className="text-[11px] text-muted-foreground/75">
@@ -112,7 +130,7 @@ export const RecentEvents = () => {
         </div>
       </CardContent>
 
-      <CardFooter className="pt-4 border-t border-border/40">
+      <CardFooter className="border-t border-border/40 pt-4">
         <Button
           onClick={handleToggleLogs}
           variant="outline"
@@ -121,7 +139,7 @@ export const RecentEvents = () => {
         >
           {isLoading ? (
             <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Fetching logs...
             </>
           ) : isExpanded ? (

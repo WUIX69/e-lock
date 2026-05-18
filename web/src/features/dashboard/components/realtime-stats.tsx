@@ -8,7 +8,7 @@ export const RealtimeStats = () => {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       {/* Safety & Diagnostics Overview Card */}
-      <div className="group relative overflow-hidden rounded-[2rem] border border-border bg-muted p-8 shadow-sm lg:col-span-2 md:p-10">
+      <div className="group relative overflow-hidden rounded-[2rem] border border-border bg-muted p-8 shadow-sm md:p-10 lg:col-span-2">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-50" />
 
         <div className="relative z-10 flex h-full flex-col justify-between gap-8 md:gap-10">
@@ -25,14 +25,15 @@ export const RealtimeStats = () => {
                 Safety & Node Diagnostics
               </h2>
               <p className="max-w-xl text-xs leading-relaxed font-medium text-muted-foreground md:text-sm">
-                Administrative monitoring of system lockouts, communication integrity, and safety anomalies.
+                Administrative monitoring of system lockouts, communication
+                integrity, and safety anomalies.
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {/* Active Lockouts */}
-            <div className="group/stat relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-emerald-500/30 hover:shadow-md hover:shadow-emerald-500/5 flex flex-col justify-between gap-5">
+            <div className="group/stat relative flex flex-col justify-between gap-5 overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-emerald-500/30 hover:shadow-md hover:shadow-emerald-500/5">
               <span className="text-[9px] font-black tracking-widest text-muted-foreground uppercase">
                 Active Lockouts
               </span>
@@ -42,20 +43,21 @@ export const RealtimeStats = () => {
                     {MOCK_ADMIN_STATS.activeLockouts.count}
                   </span>
                   <span className="text-xs font-bold text-muted-foreground">
-                    / {MOCK_ADMIN_STATS.activeLockouts.total} {MOCK_ADMIN_STATS.activeLockouts.status}
+                    / {MOCK_ADMIN_STATS.activeLockouts.total}{" "}
+                    {MOCK_ADMIN_STATS.activeLockouts.status}
                   </span>
                 </div>
                 <p className="text-[10px] font-bold tracking-wide text-lime-600 dark:text-lime-500">
                   {MOCK_ADMIN_STATS.activeLockouts.subtext}
                 </p>
               </div>
-              <div className="flex w-full items-center justify-center rounded-xl bg-muted/60 py-3 shadow-inner border border-border/20 group-hover/stat:bg-emerald-500/5 group-hover/stat:border-emerald-500/20 transition-all duration-300">
-                <Lock className="size-4 text-emerald-600 dark:text-emerald-400 transition-transform duration-300 group-hover/stat:scale-110" />
+              <div className="flex w-full items-center justify-center rounded-xl border border-border/20 bg-muted/60 py-3 shadow-inner transition-all duration-300 group-hover/stat:border-emerald-500/20 group-hover/stat:bg-emerald-500/5">
+                <Lock className="size-4 text-emerald-600 transition-transform duration-300 group-hover/stat:scale-110 dark:text-emerald-400" />
               </div>
             </div>
 
             {/* Anomalies Detected */}
-            <div className="group/stat relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-rose-500/30 hover:shadow-md hover:shadow-rose-500/5 flex flex-col justify-between gap-5">
+            <div className="group/stat relative flex flex-col justify-between gap-5 overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-rose-500/30 hover:shadow-md hover:shadow-rose-500/5">
               <span className="text-[9px] font-black tracking-widest text-muted-foreground uppercase">
                 Anomalies Detected
               </span>
@@ -68,7 +70,7 @@ export const RealtimeStats = () => {
                     {MOCK_ADMIN_STATS.anomaliesDetected.status}
                   </span>
                 </div>
-                <p className="text-[10px] font-bold tracking-wide text-emerald-600 dark:text-emerald-500 flex items-center gap-1.5">
+                <p className="flex items-center gap-1.5 text-[10px] font-bold tracking-wide text-emerald-600 dark:text-emerald-500">
                   <span className="relative flex h-1.5 w-1.5">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
@@ -76,13 +78,13 @@ export const RealtimeStats = () => {
                   {MOCK_ADMIN_STATS.anomaliesDetected.subtext}
                 </p>
               </div>
-              <div className="flex w-full items-center justify-center rounded-xl bg-muted/60 py-3 shadow-inner border border-border/20 group-hover/stat:bg-rose-500/5 group-hover/stat:border-rose-500/20 transition-all duration-300">
-                <AlertTriangle className="size-4 text-rose-600 dark:text-rose-500 transition-transform duration-300 group-hover/stat:-rotate-12" />
+              <div className="flex w-full items-center justify-center rounded-xl border border-border/20 bg-muted/60 py-3 shadow-inner transition-all duration-300 group-hover/stat:border-rose-500/20 group-hover/stat:bg-rose-500/5">
+                <AlertTriangle className="size-4 text-rose-600 transition-transform duration-300 group-hover/stat:-rotate-12 dark:text-rose-500" />
               </div>
             </div>
 
             {/* Node Diagnostics */}
-            <div className="group/stat relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 flex flex-col justify-between gap-5">
+            <div className="group/stat relative flex flex-col justify-between gap-5 overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-primary/30 hover:shadow-md hover:shadow-primary/5">
               <span className="text-[9px] font-black tracking-widest text-muted-foreground uppercase">
                 Node Diagnostics
               </span>
@@ -99,7 +101,7 @@ export const RealtimeStats = () => {
                   {MOCK_ADMIN_STATS.nodeDiagnostics.subtext}
                 </p>
               </div>
-              <div className="flex w-full items-center justify-center rounded-xl bg-muted/60 py-3 shadow-inner border border-border/20 group-hover/stat:bg-primary/5 group-hover/stat:border-primary/20 transition-all duration-300">
+              <div className="flex w-full items-center justify-center rounded-xl border border-border/20 bg-muted/60 py-3 shadow-inner transition-all duration-300 group-hover/stat:border-primary/20 group-hover/stat:bg-primary/5">
                 <Cpu className="size-4 text-primary transition-transform duration-300 group-hover/stat:scale-110" />
               </div>
             </div>
@@ -146,4 +148,3 @@ export const RealtimeStats = () => {
     </div>
   )
 }
-

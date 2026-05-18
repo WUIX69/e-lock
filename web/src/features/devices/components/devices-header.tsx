@@ -34,38 +34,38 @@ export const DevicesHeader = () => {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <Button
             variant="outline"
             disabled={isSyncing}
             onClick={handleSyncDevices}
-            className="flex items-center gap-2 h-12 px-6 border-2 border-primary text-primary font-bold rounded-xl hover:bg-primary/5 transition-colors active:scale-95 bg-transparent shrink-0"
+            className="flex h-12 shrink-0 items-center gap-2 rounded-xl border-2 border-primary bg-transparent px-6 font-bold text-primary transition-colors hover:bg-primary/5 active:scale-95"
             aria-label="Sync mesh devices"
           >
             {isSyncing ? (
               <>
-                <Loader2 className="size-5 animate-spin mr-2" />
+                <Loader2 className="mr-2 size-5 animate-spin" />
                 Syncing...
               </>
             ) : (
               <>
-                <RefreshCcw className="size-5 mr-2" />
+                <RefreshCcw className="mr-2 size-5" />
                 Sync Device
               </>
             )}
           </Button>
           <Button
-            className="flex items-center gap-2 h-12 px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 shrink-0"
+            className="flex h-12 shrink-0 items-center gap-2 rounded-xl bg-primary px-6 font-bold text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-95"
             aria-label="Register new hardware device"
           >
-            <PlusCircle className="size-5 mr-2" />
+            <PlusCircle className="mr-2 size-5" />
             Register New Hardware
           </Button>
         </div>
       </div>
 
       {syncStatus && (
-        <div className="text-sm font-semibold text-primary animate-fade-in pl-4">
+        <div className="animate-fade-in pl-4 text-sm font-semibold text-primary">
           {syncStatus}
         </div>
       )}

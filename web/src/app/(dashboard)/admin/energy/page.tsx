@@ -27,7 +27,7 @@ const EnergyPage = () => {
           </p>
         </div>
 
-        <Button className="font-semibold transition-all duration-200 active:scale-95 shadow-sm">
+        <Button className="font-semibold shadow-sm transition-all duration-200 active:scale-95">
           <Plus className="mr-2 h-4 w-4" />
           Add New Energy Source
         </Button>
@@ -35,7 +35,7 @@ const EnergyPage = () => {
 
       <EnergyStats />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <EnergyTable />
         </div>

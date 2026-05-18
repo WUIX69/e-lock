@@ -34,4 +34,3 @@ export interface AdminDashboardStats {
   anomaliesDetected: AdminStatItem
   nodeDiagnostics: AdminStatItem
 }
-

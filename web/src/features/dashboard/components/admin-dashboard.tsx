@@ -13,7 +13,9 @@ import Link from "next/link"
 import { MOCK_COMPLIANCE_STATS } from "@/data/mock/dashboard"
 
 export const AdminDashboard = () => {
-  const [nodeDiagnosticsPosition, setNodeDiagnosticsPosition] = React.useState<"top" | "bottom">("bottom")
+  const [nodeDiagnosticsPosition, setNodeDiagnosticsPosition] = React.useState<
+    "top" | "bottom"
+  >("bottom")
 
   return (
     <div className="space-y-12 pb-12">
@@ -28,12 +30,12 @@ export const AdminDashboard = () => {
 
         <div className="flex flex-wrap items-center gap-4">
           {/* Bento Grid Layout Order Switcher */}
-          <div 
+          <div
             className="flex items-center gap-1 rounded-xl border border-border bg-card p-1 shadow-sm"
             role="radiogroup"
             aria-label="Node diagnostics layout position switcher"
           >
-            <span className="hidden pl-2.5 pr-1.5 text-[9px] font-black tracking-widest text-muted-foreground uppercase lg:inline">
+            <span className="hidden pr-1.5 pl-2.5 text-[9px] font-black tracking-widest text-muted-foreground uppercase lg:inline">
               Layout:
             </span>
             <button

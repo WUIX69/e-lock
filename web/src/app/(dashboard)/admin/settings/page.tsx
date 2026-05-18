@@ -28,7 +28,7 @@ const SettingsPage = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         <div className="lg:col-span-8">
           <HardwareConfig />
         </div>
@@ -50,13 +50,17 @@ const SettingsPage = () => {
         </div>
       </div>
 
-      <div className="pt-8 flex justify-between items-center text-muted-foreground">
-        <div className="flex gap-4 items-center">
-          <span className="text-xs font-mono">E-LOCK INDUSTRIAL FW v2.4.1-STABLE</span>
-          <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
+      <div className="flex items-center justify-between pt-8 text-muted-foreground">
+        <div className="flex items-center gap-4">
+          <span className="font-mono text-xs">
+            E-LOCK INDUSTRIAL FW v2.4.1-STABLE
+          </span>
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
           <span className="text-[10px] font-bold uppercase">System Online</span>
         </div>
-        <p className="text-xs">© 2024 E-LOCK Industrial Safety Systems. All Rights Reserved.</p>
+        <p className="text-xs">
+          © 2024 E-LOCK Industrial Safety Systems. All Rights Reserved.
+        </p>
       </div>
     </div>
   )

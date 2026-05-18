@@ -25,7 +25,8 @@ interface SignalIconProps {
 }
 
 const SignalIcon = ({ strength }: SignalIconProps) => {
-  if (strength === 0) return <Wifi className="size-4 text-primary animate-pulse" />
+  if (strength === 0)
+    return <Wifi className="size-4 animate-pulse text-primary" />
   if (strength > -60) return <SignalHigh className="size-4 text-primary" />
   if (strength > -80) return <SignalMedium className="size-4 text-secondary" />
   return <SignalLow className="size-4 text-destructive" />
@@ -33,40 +34,42 @@ const SignalIcon = ({ strength }: SignalIconProps) => {
 
 export const DeviceTable = () => {
   return (
-    <Card className="rounded-[2rem] border border-border/50 overflow-hidden shadow-lg">
-      <CardHeader className="p-8 border-b border-border/50 flex flex-row justify-between items-center bg-card">
-        <CardTitle className="text-2xl font-bold text-foreground">Hardware Fleet</CardTitle>
+    <Card className="overflow-hidden rounded-[2rem] border border-border/50 shadow-lg">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 bg-card p-8">
+        <CardTitle className="text-2xl font-bold text-foreground">
+          Hardware Fleet
+        </CardTitle>
         <Button
           variant="ghost"
           size="icon"
-          className="rounded-lg h-9 w-9"
+          className="h-9 w-9 rounded-lg"
           aria-label="More fleet actions"
         >
           <MoreHorizontal className="size-4 text-muted-foreground" />
         </Button>
       </CardHeader>
-      
+
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <Table className="w-full border-collapse">
             <TableHeader>
-              <TableRow className="bg-muted/20 hover:bg-muted/20 border-b border-border/50">
-                <TableHead className="px-8 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider h-12">
+              <TableRow className="border-b border-border/50 bg-muted/20 hover:bg-muted/20">
+                <TableHead className="h-12 px-8 py-4 text-left text-xs font-bold tracking-wider text-muted-foreground uppercase">
                   Device ID
                 </TableHead>
-                <TableHead className="px-8 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider h-12">
+                <TableHead className="h-12 px-8 py-4 text-left text-xs font-bold tracking-wider text-muted-foreground uppercase">
                   Type
                 </TableHead>
-                <TableHead className="px-8 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider h-12">
+                <TableHead className="h-12 px-8 py-4 text-left text-xs font-bold tracking-wider text-muted-foreground uppercase">
                   Assigned Machine
                 </TableHead>
-                <TableHead className="px-8 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider h-12">
+                <TableHead className="h-12 px-8 py-4 text-left text-xs font-bold tracking-wider text-muted-foreground uppercase">
                   Signal Strength
                 </TableHead>
-                <TableHead className="px-8 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider h-12">
+                <TableHead className="h-12 px-8 py-4 text-left text-xs font-bold tracking-wider text-muted-foreground uppercase">
                   Last Heartbeat
                 </TableHead>
-                <TableHead className="px-8 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-wider h-12">
+                <TableHead className="h-12 px-8 py-4 text-right text-xs font-bold tracking-wider text-muted-foreground uppercase">
                   Actions
                 </TableHead>
               </TableRow>
@@ -75,33 +78,35 @@ export const DeviceTable = () => {
               {MOCK_DEVICES.map((innerDevice) => (
                 <TableRow
                   key={innerDevice.id}
-                  className={`hover:bg-muted/30 transition-colors border-b border-border/30 group ${
-                    innerDevice.status === "warning" ? "bg-destructive/5 hover:bg-destructive/10" : ""
+                  className={`group border-b border-border/30 transition-colors hover:bg-muted/30 ${
+                    innerDevice.status === "warning"
+                      ? "bg-destructive/5 hover:bg-destructive/10"
+                      : ""
                   }`}
                 >
-                  <TableCell className="px-8 py-6 h-16">
+                  <TableCell className="h-16 px-8 py-6">
                     <div className="flex items-center gap-3">
                       <div
-                        className={`w-2 h-2 rounded-full ${
+                        className={`h-2 w-2 rounded-full ${
                           innerDevice.status === "active"
-                            ? "bg-primary animate-pulse"
+                            ? "animate-pulse bg-primary"
                             : innerDevice.status === "warning"
-                            ? "bg-destructive"
-                            : "bg-muted-foreground"
+                              ? "bg-destructive"
+                              : "bg-muted-foreground"
                         }`}
                       />
-                      <span className="text-xs font-mono bg-muted text-muted-foreground px-2.5 py-1 rounded-md border border-border/35">
+                      <span className="rounded-md border border-border/35 bg-muted px-2.5 py-1 font-mono text-xs text-muted-foreground">
                         {innerDevice.deviceId}
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="px-8 py-6 font-semibold text-foreground capitalize h-16">
+                  <TableCell className="h-16 px-8 py-6 font-semibold text-foreground capitalize">
                     {innerDevice.type.replace("_", " ")}
                   </TableCell>
-                  <TableCell className="px-8 py-6 text-muted-foreground h-16">
+                  <TableCell className="h-16 px-8 py-6 text-muted-foreground">
                     {innerDevice.assignedMachine}
                   </TableCell>
-                  <TableCell className="px-8 py-6 h-16">
+                  <TableCell className="h-16 px-8 py-6">
                     <div className="flex items-center gap-2">
                       <SignalIcon strength={innerDevice.signalStrength} />
                       <span
@@ -119,14 +124,14 @@ export const DeviceTable = () => {
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="px-8 py-6 text-muted-foreground h-16">
+                  <TableCell className="h-16 px-8 py-6 text-muted-foreground">
                     {innerDevice.lastHeartbeat}
                   </TableCell>
-                  <TableCell className="px-8 py-6 text-right h-16">
+                  <TableCell className="h-16 px-8 py-6 text-right">
                     <Button
                       variant="link"
                       size="sm"
-                      className="text-primary hover:text-primary/80 font-bold text-sm h-8 p-0"
+                      className="h-8 p-0 text-sm font-bold text-primary hover:text-primary/80"
                       aria-label={`Configure ${innerDevice.deviceId}`}
                     >
                       Configure
@@ -138,15 +143,15 @@ export const DeviceTable = () => {
           </Table>
         </div>
 
-        <div className="p-6 bg-muted/20 border-t border-border/50 flex justify-between items-center">
-          <p className="text-sm text-muted-foreground font-medium">
+        <div className="flex items-center justify-between border-t border-border/50 bg-muted/20 p-6">
+          <p className="text-sm font-medium text-muted-foreground">
             Showing 4 of 42 hardware devices
           </p>
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="sm"
-              className="h-9 px-4 text-sm font-semibold border-border/50 hover:bg-muted"
+              className="h-9 border-border/50 px-4 text-sm font-semibold hover:bg-muted"
               aria-label="Previous page"
             >
               Previous
