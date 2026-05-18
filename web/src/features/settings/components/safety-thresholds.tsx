@@ -2,19 +2,42 @@
 
 import * as React from "react"
 import { Shield, AlertTriangle } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { MOCK_SETTINGS } from "../data/mock-settings"
 
-export function SafetyThresholds() {
+export const SafetyThresholds = () => {
+  const [voltageSensitivity, setVoltageSensitivity] = React.useState(MOCK_SETTINGS.voltageSensitivity)
+  const [tdrGracePeriod, setTdrGracePeriod] = React.useState(MOCK_SETTINGS.tdrGracePeriod)
+  const [shuntTripDelay, setShuntTripDelay] = React.useState(MOCK_SETTINGS.shuntTripDelay)
+  const [isEditingShunt, setIsEditingShunt] = React.useState(false)
+
+  const handleVoltageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setVoltageSensitivity(Number(event.target.value))
+  }
+
+  const handleGracePeriodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTdrGracePeriod(Number(event.target.value))
+  }
+
+  const handleShuntDelayChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setShuntTripDelay(Number(event.target.value))
+  }
+
+  const handleToggleShuntEdit = () => {
+    setIsEditingShunt((prevEditState) => !prevEditState)
+  }
+
   return (
-    <div className="bg-card rounded-xl p-6 shadow-md border border-border/30">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 bg-destructive/10 rounded-lg">
+    <Card className="border border-border/50">
+      <CardHeader className="flex flex-row items-center gap-3">
+        <div className="p-2 bg-destructive/10 rounded-lg shrink-0">
           <Shield className="size-5 text-destructive" />
         </div>
-        <h3 className="text-xl font-bold text-foreground">Safety Thresholds</h3>
-      </div>
-
-      <div className="space-y-6">
+        <CardTitle className="text-xl font-bold text-foreground">Safety Thresholds</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
         <div className="flex flex-col gap-2">
           <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
             ZMPT101B Voltage Sensitivity
@@ -25,11 +48,13 @@ export function SafetyThresholds() {
               min="0.5"
               max="1.5"
               step="0.05"
-              defaultValue={MOCK_SETTINGS.voltageSensitivity}
-              className="flex-grow"
+              value={voltageSensitivity}
+              onChange={handleVoltageChange}
+              className="flex-grow accent-primary bg-muted rounded-lg appearance-none h-2 cursor-pointer"
+              aria-label="ZMPT101B Voltage Sensitivity"
             />
             <span className="text-sm font-bold w-12 text-right">
-              {MOCK_SETTINGS.voltageSensitivity}v
+              {voltageSensitivity.toFixed(2)}v
             </span>
           </div>
         </div>
@@ -38,10 +63,12 @@ export function SafetyThresholds() {
           <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
             TDR Grace Period (ms)
           </label>
-          <input
+          <Input
             type="number"
-            defaultValue={MOCK_SETTINGS.tdrGracePeriod}
-            className="w-full bg-muted border-transparent focus:border-primary focus:ring-primary/20 rounded-lg py-2 px-4 text-sm"
+            value={tdrGracePeriod}
+            onChange={handleGracePeriodChange}
+            className="w-full bg-transparent border-input text-foreground h-8"
+            aria-label="TDR Grace Period (ms)"
           />
         </div>
 
@@ -50,28 +77,44 @@ export function SafetyThresholds() {
             Shunt Trip Delay
           </label>
           <div className="flex items-center gap-2">
-            <div className="h-10 w-full bg-muted rounded-lg flex items-center px-4">
-              <span className="text-sm">{MOCK_SETTINGS.shuntTripDelay}ms</span>
-            </div>
-            <button className="h-10 px-4 bg-secondary text-secondary-foreground rounded-lg font-bold hover:brightness-95 transition-all text-sm">
-              EDIT
-            </button>
+            {isEditingShunt ? (
+              <Input
+                type="number"
+                value={shuntTripDelay}
+                onChange={handleShuntDelayChange}
+                className="w-full bg-transparent border-input text-foreground h-8"
+                aria-label="Shunt Trip Delay (ms)"
+              />
+            ) : (
+              <div className="h-8 w-full bg-muted/50 border border-border/50 rounded-lg flex items-center px-3">
+                <span className="text-sm font-medium text-foreground">{shuntTripDelay}ms</span>
+              </div>
+            )}
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleToggleShuntEdit}
+              className="h-8 font-bold"
+              aria-label={isEditingShunt ? "Save Shunt Trip Delay" : "Edit Shunt Trip Delay"}
+            >
+              {isEditingShunt ? "SAVE" : "EDIT"}
+            </Button>
           </div>
         </div>
 
-        <div className="p-4 rounded-lg bg-destructive/5 border border-destructive/10">
+        <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20">
           <div className="flex items-center gap-2 mb-2">
             <AlertTriangle className="size-4 text-destructive" />
             <p className="text-xs font-bold text-destructive uppercase tracking-wider">
               Warning
             </p>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground leading-normal">
             Lowering delays below 20ms may cause phantom trips in inductive
             loads.
           </p>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }

@@ -1,81 +1,93 @@
 "use client"
 
 import * as React from "react"
-import { Zap, Lock, AlertTriangle, Shield } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Zap, Lock, AlertTriangle, Shield, ArrowUpRight } from "lucide-react"
 import { ENERGY_STATS } from "../data/mock-energy"
 
-export function EnergyStats() {
+export const EnergyStats = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <div className="bg-muted/30 rounded-xl p-6 border border-border/50 flex flex-col justify-between">
-        <div className="flex justify-between items-start">
-          <span className="text-primary">
-            <Zap className="size-6" />
-          </span>
-          <span className="text-muted-foreground text-xs">Active Points</span>
-        </div>
-        <div className="mt-4">
-          <div className="text-3xl font-black text-foreground">
-            {ENERGY_STATS.activePoints}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Active Points Card */}
+      <Card className="relative overflow-hidden border border-border/50 bg-card text-card-foreground hover:border-primary/30 transition-all duration-300 hover:shadow-md group">
+        <CardContent className="p-6 flex flex-col justify-between h-full min-h-[140px]">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary border border-primary/20 transition-transform group-hover:scale-110">
+              <Zap className="h-5 w-5" />
+            </div>
+            <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">Active Points</span>
           </div>
-          <div className="text-xs text-primary flex items-center gap-1 mt-1">
-            <span className="text-xs">↑</span>
-            {ENERGY_STATS.activePointsTrend}
+          <div className="mt-4">
+            <div className="text-3xl font-black text-foreground tracking-tight leading-none">
+              {ENERGY_STATS.activePoints}
+            </div>
+            <div className="text-[11px] text-emerald-500 font-medium flex items-center gap-1 mt-2">
+              <ArrowUpRight className="h-3 w-3 shrink-0" />
+              <span>{ENERGY_STATS.activePointsTrend}</span>
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      <div className="bg-muted/30 rounded-xl p-6 border border-border/50 flex flex-col justify-between">
-        <div className="flex justify-between items-start">
-          <span className="text-secondary">
-            <Lock className="size-6" />
-          </span>
-          <span className="text-muted-foreground text-xs">Isolated Now</span>
-        </div>
-        <div className="mt-4">
-          <div className="text-3xl font-black text-foreground">
-            {ENERGY_STATS.isolatedNow}
+      {/* Isolated Now Card */}
+      <Card className="relative overflow-hidden border border-border/50 bg-card text-card-foreground hover:border-primary/30 transition-all duration-300 hover:shadow-md group">
+        <CardContent className="p-6 flex flex-col justify-between h-full min-h-[140px]">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20 transition-transform group-hover:scale-110">
+              <Lock className="h-5 w-5" />
+            </div>
+            <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">Isolated Now</span>
           </div>
-          <div className="text-xs text-muted-foreground mt-1">
-            {ENERGY_STATS.isolatedNote}
+          <div className="mt-4">
+            <div className="text-3xl font-black text-foreground tracking-tight leading-none">
+              {ENERGY_STATS.isolatedNow}
+            </div>
+            <div className="text-[11px] text-muted-foreground/80 font-medium mt-2">
+              {ENERGY_STATS.isolatedNote}
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      <div className="bg-muted/30 rounded-xl p-6 border border-border/50 flex flex-col justify-between">
-        <div className="flex justify-between items-start">
-          <span className="text-destructive">
-            <AlertTriangle className="size-6" />
-          </span>
-          <span className="text-muted-foreground text-xs">Health Alerts</span>
-        </div>
-        <div className="mt-4">
-          <div className="text-3xl font-black text-destructive">
-            {ENERGY_STATS.healthAlerts}
+      {/* Health Alerts Card */}
+      <Card className="relative overflow-hidden border border-border/50 bg-card text-card-foreground hover:border-destructive/30 transition-all duration-300 hover:shadow-md group">
+        <CardContent className="p-6 flex flex-col justify-between h-full min-h-[140px]">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-destructive/10 text-destructive border border-destructive/20 transition-transform group-hover:scale-110">
+              <AlertTriangle className="h-5 w-5" />
+            </div>
+            <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">Health Alerts</span>
           </div>
-          <div className="text-xs text-destructive flex items-center gap-1 mt-1">
-            <span className="text-xs">!</span>
-            {ENERGY_STATS.healthAlertNote}
+          <div className="mt-4">
+            <div className="text-3xl font-black text-destructive tracking-tight leading-none">
+              {ENERGY_STATS.healthAlerts}
+            </div>
+            <div className="text-[11px] text-destructive/80 font-medium mt-2">
+              {ENERGY_STATS.healthAlertNote}
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      <div className="bg-primary text-primary-foreground rounded-xl p-6 shadow-lg flex flex-col justify-between">
-        <div className="flex justify-between items-start">
-          <span className="">
-            <Shield className="size-6" />
-          </span>
-          <span className="text-primary-foreground/60 text-xs">Compliance</span>
-        </div>
-        <div className="mt-4">
-          <div className="text-3xl font-black">
-            {ENERGY_STATS.compliance}%
+      {/* Compliance Card */}
+      <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl group">
+        <CardContent className="p-6 flex flex-col justify-between h-full min-h-[140px]">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/10 text-primary-foreground border border-white/20 transition-transform group-hover:scale-110">
+              <Shield className="h-5 w-5" />
+            </div>
+            <span className="text-primary-foreground/75 text-xs font-semibold tracking-wider uppercase">Compliance</span>
           </div>
-          <div className="text-xs text-primary-foreground/80 mt-1">
-            {ENERGY_STATS.complianceNote}
+          <div className="mt-4">
+            <div className="text-3xl font-black tracking-tight leading-none">
+              {ENERGY_STATS.compliance}%
+            </div>
+            <div className="text-[11px] text-primary-foreground/80 font-medium mt-2">
+              {ENERGY_STATS.complianceNote}
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

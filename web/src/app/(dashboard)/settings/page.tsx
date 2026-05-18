@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Configure hardware, safety thresholds, and system preferences",
 }
 
-export default function SettingsPage() {
+const SettingsPage = () => {
   return (
     <div className="space-y-8 pb-12">
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
@@ -61,3 +61,5 @@ export default function SettingsPage() {
     </div>
   )
 }
+
+export default SettingsPage
