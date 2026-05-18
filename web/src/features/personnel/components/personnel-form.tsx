@@ -46,7 +46,9 @@ export const PersonnelForm = ({
 
   const isEditMode = mode === "edit"
   const [employeeId] = React.useState<string>(
-    () => personnel?.employeeId ?? `EL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
+    () =>
+      personnel?.employeeId ??
+      `EL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
   )
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -88,7 +90,10 @@ export const PersonnelForm = ({
       )}
 
       <div className="grid gap-2">
-        <Label htmlFor="fullName" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+        <Label
+          htmlFor="fullName"
+          className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
+        >
           Full Name
         </Label>
         <div className="group relative">
@@ -106,7 +111,10 @@ export const PersonnelForm = ({
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="email" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+        <Label
+          htmlFor="email"
+          className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
+        >
           Email Address
         </Label>
         <div className="group relative">
@@ -126,7 +134,10 @@ export const PersonnelForm = ({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="grid gap-2">
-          <Label htmlFor="employeeId" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+          <Label
+            htmlFor="employeeId"
+            className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
+          >
             Employee ID {!isEditMode && "(Auto)"}
           </Label>
           <Input
@@ -139,14 +150,21 @@ export const PersonnelForm = ({
         </div>
 
         <div className="grid gap-2">
-          <Label htmlFor="role" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+          <Label
+            htmlFor="role"
+            className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
+          >
             System Role
           </Label>
-          <Select name="role" defaultValue={isEditMode ? personnel?.role : "user"} disabled={isLoading}>
-            <SelectTrigger className="h-14 rounded-2xl border-border bg-muted font-mono text-sm focus:ring-primary">
+          <Select
+            name="role"
+            defaultValue={isEditMode ? personnel?.role : "user"}
+            disabled={isLoading}
+          >
+            <SelectTrigger className="h-14 w-full rounded-2xl border-border bg-muted px-4 py-6 font-mono text-sm focus:ring-primary">
               <SelectValue placeholder="Select role" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="p-2">
               <SelectItem value="user">User (Operator)</SelectItem>
               <SelectItem value="admin">Administrator</SelectItem>
             </SelectContent>
@@ -155,7 +173,10 @@ export const PersonnelForm = ({
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="position" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+        <Label
+          htmlFor="position"
+          className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
+        >
           Position
         </Label>
         <Input
@@ -163,7 +184,7 @@ export const PersonnelForm = ({
           name="position"
           defaultValue={isEditMode ? personnel?.position : undefined}
           placeholder="e.g. SENIOR ELECTRICIAN"
-          className="h-14 rounded-2xl border-border bg-muted font-mono text-sm focus-visible:ring-primary uppercase"
+          className="h-14 rounded-2xl border-border bg-muted font-mono text-sm uppercase focus-visible:ring-primary"
           required
           disabled={isLoading}
         />
@@ -171,14 +192,21 @@ export const PersonnelForm = ({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="grid gap-2">
-          <Label htmlFor="securityLevel" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+          <Label
+            htmlFor="securityLevel"
+            className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
+          >
             Security Level
           </Label>
-          <Select name="securityLevel" defaultValue={isEditMode ? personnel?.securityLevel : "Level 2"} disabled={isLoading}>
-            <SelectTrigger className="h-14 rounded-2xl border-border bg-muted font-mono text-sm focus:ring-primary">
+          <Select
+            name="securityLevel"
+            defaultValue={isEditMode ? personnel?.securityLevel : "Level 2"}
+            disabled={isLoading}
+          >
+            <SelectTrigger className="h-14 w-full rounded-2xl border-border bg-muted px-4 py-6 font-mono text-sm focus:ring-primary">
               <SelectValue placeholder="Select level" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="p-2">
               <SelectItem value="Level 1">Level 1</SelectItem>
               <SelectItem value="Level 2">Level 2</SelectItem>
               <SelectItem value="Level 3">Level 3</SelectItem>
@@ -189,14 +217,21 @@ export const PersonnelForm = ({
         </div>
 
         <div className="grid gap-2">
-          <Label htmlFor="status" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+          <Label
+            htmlFor="status"
+            className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
+          >
             Current Status
           </Label>
-          <Select name="status" defaultValue={isEditMode ? personnel?.status : "active"} disabled={isLoading}>
-            <SelectTrigger className="h-14 rounded-2xl border-border bg-muted font-mono text-sm focus:ring-primary">
+          <Select
+            name="status"
+            defaultValue={isEditMode ? personnel?.status : "active"}
+            disabled={isLoading}
+          >
+            <SelectTrigger className="h-14 w-full rounded-2xl border-border bg-muted px-4 py-6 font-mono text-sm focus:ring-primary">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="p-2">
               <SelectItem value="active">Active</SelectItem>
               <SelectItem value="inactive">Inactive</SelectItem>
               <SelectItem value="off-site">Off-Site</SelectItem>
@@ -207,7 +242,10 @@ export const PersonnelForm = ({
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="pin" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+        <Label
+          htmlFor="pin"
+          className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
+        >
           {isEditMode ? "Update Secure PIN (Optional)" : "Secure PIN"}
         </Label>
         <div className="group relative">
@@ -216,23 +254,29 @@ export const PersonnelForm = ({
             id="pin"
             name="pin"
             type={showPin ? "text" : "password"}
-            placeholder={isEditMode ? "Leave blank to keep current PIN" : "••••"}
+            placeholder={
+              isEditMode ? "Leave blank to keep current PIN" : "••••"
+            }
             maxLength={4}
             pattern="\d{4}"
             title="PIN must be exactly 4 digits"
-            className="h-14 rounded-2xl border-border bg-muted px-12 font-mono text-sm focus-visible:ring-primary tracking-widest"
+            className="h-14 rounded-2xl border-border bg-muted px-12 font-mono text-sm tracking-widest focus-visible:ring-primary"
             required={!isEditMode}
             disabled={isLoading}
           />
           <button
             type="button"
             onClick={() => setShowPin(!showPin)}
-            className="absolute top-1/2 right-4 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            className="absolute top-1/2 right-4 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
             tabIndex={-1}
             aria-label={showPin ? "Hide PIN" : "Show PIN"}
             disabled={isLoading}
           >
-            {showPin ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+            {showPin ? (
+              <EyeOff className="size-5" />
+            ) : (
+              <Eye className="size-5" />
+            )}
           </button>
         </div>
       </div>
@@ -253,7 +297,9 @@ export const PersonnelForm = ({
           disabled={isLoading}
           className={cn(
             "flex h-12 items-center justify-center gap-2 rounded-xl bg-sidebar px-6 text-xs font-black tracking-widest text-sidebar-foreground uppercase shadow-lg transition-transform sm:w-auto",
-            isLoading ? "opacity-70 cursor-not-allowed" : "hover:scale-105 active:scale-95"
+            isLoading
+              ? "cursor-not-allowed opacity-70"
+              : "hover:scale-105 active:scale-95"
           )}
         >
           {isLoading && <Loader2 className="size-4 animate-spin" />}
