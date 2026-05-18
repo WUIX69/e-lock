@@ -21,3 +21,17 @@ export interface ComplianceStat {
   label: string
   value: string
 }
+
+export interface AdminStatItem {
+  count: string | number
+  total?: string | number
+  status?: string
+  subtext: string
+}
+
+export interface AdminDashboardStats {
+  activeLockouts: AdminStatItem
+  anomaliesDetected: AdminStatItem
+  nodeDiagnostics: AdminStatItem
+}
+

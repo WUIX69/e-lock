@@ -1,4 +1,4 @@
-import { RecentActivityItem, ComplianceStat } from "@/types/dashboard"
+import { RecentActivityItem, ComplianceStat, AdminDashboardStats } from "@/types/dashboard"
 
 export const MOCK_VOLTAGE_BARS: number[] = [
   40, 60, 45, 80, 55, 90, 70, 85, 40, 65, 50, 75, 45,
@@ -55,14 +55,25 @@ export const MOCK_COMPLIANCE_STATS: ComplianceStat[] = [
   { label: "Last Sync", value: "Now" },
 ]
 
-export const MOCK_DASHBOARD_HERO = {
-  unitName: "Main Crusher",
-  unitId: "#402",
-  status: "Isolated",
-  description:
-    "Unit is currently in isolated safety mode. All power sources have been verified as offline by administrative staff.",
-  timeInState: "02h 41m",
+export const MOCK_ADMIN_STATS: AdminDashboardStats = {
+  activeLockouts: {
+    count: 14,
+    total: 24,
+    status: "Nodes",
+    subtext: "+2 since shift change",
+  },
+  anomaliesDetected: {
+    count: 0,
+    status: "Failures",
+    subtext: "Failsafe Loop: Healthy",
+  },
+  nodeDiagnostics: {
+    count: "98%",
+    status: "Nominal",
+    subtext: "11/12 nodes online",
+  },
 }
+
 
 export const MOCK_SYSTEM_DIAGNOSTICS = {
   mesh: {

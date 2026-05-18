@@ -8,29 +8,71 @@ import { OnboardingCta } from "@/features/dashboard/components/onboarding-cta"
 import { RecentLogs } from "@/features/dashboard/components/recent-logs"
 import { NodeDiagnostics } from "@/features/dashboard/components/node-diagnostics"
 
-import { ArrowRight, History } from "lucide-react"
+import { ArrowRight, History, LayoutGrid, Layers } from "lucide-react"
 import Link from "next/link"
 import { MOCK_COMPLIANCE_STATS } from "@/data/mock/dashboard"
 
-export function AdminDashboard() {
+export const AdminDashboard = () => {
+  const [nodeDiagnosticsPosition, setNodeDiagnosticsPosition] = React.useState<"top" | "bottom">("bottom")
+
   return (
     <div className="space-y-12 pb-12">
-      {/* Page Header (Subtle) */}
-      <div className="flex items-center justify-between">
+      {/* Page Header (Subtle & Dynamic) */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <div className="h-8 w-1 rounded-full bg-primary" />
           <h2 className="text-sm font-black tracking-[0.3em] text-muted-foreground uppercase">
             System Overview
           </h2>
         </div>
-        <Link
-          href="/audit"
-          className="group flex items-center gap-2 text-xs font-bold text-primary hover:underline"
-        >
-          <History className="size-4" />
-          View Safety History
-          <ArrowRight className="size-3 transition-transform group-hover:translate-x-1" />
-        </Link>
+
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Bento Grid Layout Order Switcher */}
+          <div 
+            className="flex items-center gap-1 rounded-xl border border-border bg-card p-1 shadow-sm"
+            role="radiogroup"
+            aria-label="Node diagnostics layout position switcher"
+          >
+            <span className="hidden pl-2.5 pr-1.5 text-[9px] font-black tracking-widest text-muted-foreground uppercase lg:inline">
+              Layout:
+            </span>
+            <button
+              onClick={() => setNodeDiagnosticsPosition("top")}
+              role="radio"
+              aria-checked={nodeDiagnosticsPosition === "top"}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[9px] font-black tracking-widest uppercase transition-all duration-200 ${
+                nodeDiagnosticsPosition === "top"
+                  ? "bg-primary text-primary-foreground shadow-sm shadow-primary/10"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <LayoutGrid className="size-3" />
+              Integrity Top
+            </button>
+            <button
+              onClick={() => setNodeDiagnosticsPosition("bottom")}
+              role="radio"
+              aria-checked={nodeDiagnosticsPosition === "bottom"}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[9px] font-black tracking-widest uppercase transition-all duration-200 ${
+                nodeDiagnosticsPosition === "bottom"
+                  ? "bg-primary text-primary-foreground shadow-sm shadow-primary/10"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <Layers className="size-3" />
+              Integrity Bottom
+            </button>
+          </div>
+
+          <Link
+            href="/audit"
+            className="group flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-bold text-primary shadow-sm transition-colors hover:bg-muted"
+          >
+            <History className="size-4" />
+            View Safety History
+            <ArrowRight className="size-3 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
       </div>
 
       {/* Hero Section */}
@@ -38,11 +80,23 @@ export function AdminDashboard() {
 
       {/* Bento Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <ActivePersonnelList />
-        <RecentLogs />
-        <NodeDiagnostics />
-        <LatestAlert />
-        <OnboardingCta />
+        {nodeDiagnosticsPosition === "top" ? (
+          <React.Fragment>
+            <NodeDiagnostics />
+            <LatestAlert />
+            <OnboardingCta />
+            <ActivePersonnelList />
+            <RecentLogs />
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            <ActivePersonnelList />
+            <RecentLogs />
+            <NodeDiagnostics />
+            <LatestAlert />
+            <OnboardingCta />
+          </React.Fragment>
+        )}
       </div>
 
       {/* Footer Insight Section */}
