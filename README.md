@@ -14,14 +14,14 @@ e-lock/
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Shadcn UI |
-| **Database** | PostgreSQL, Drizzle ORM |
-| **Auth** | Custom plain auth (session-based) |
-| **Firmware** | ESP32 (PlatformIO), C++17, Arduino framework |
-| **Communication** | MQTT (PubSubClient), ESP-NOW (optional) |
-| **Sensors** | Adafruit Fingerprint Sensor, Solenoid Lock, OLED Display, Buzzer/LED |
+| Layer             | Technology                                                                |
+| ----------------- | ------------------------------------------------------------------------- |
+| **Frontend**      | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Shadcn UI |
+| **Database**      | PostgreSQL, Drizzle ORM                                                   |
+| **Auth**          | Custom plain auth (session-based)                                         |
+| **Firmware**      | ESP32 (PlatformIO), C++17, Arduino framework                              |
+| **Communication** | MQTT (PubSubClient), ESP-NOW (optional)                                   |
+| **Sensors**       | Adafruit Fingerprint Sensor, Solenoid Lock, OLED Display, Buzzer/LED      |
 
 ## Architecture
 
@@ -54,8 +54,7 @@ pio device monitor # Serial monitor
 - [Developer Onboarding & Contributing Guide](docs/CONTRIBUTING.md)
 - [Environment Variables Setup](docs/ENV.md)
 - [Operations & Runbook Guide](docs/RUNBOOK.md)
-- [System Architecture](docs/architecture/system-overview.md)
-- [MQTT Topic Contracts](docs/api/mqtt-topics.md)
-- [Hardware Wiring Diagram](docs/hardware/wiring-diagram.md)
+- [System Architecture](docs/SYSTEM-OVERVIEW.md)
+- [MQTT Topic Contracts](docs/MQTT-TOPICS.md)
+- [Hardware Wiring Diagram](docs/WIRING-DIAGRAM.md)
 - [PlatformIO Antigravity IDE Fix](docs/PLARFORM-IO-FIX-ANTIGRAVITY.md)
-
