@@ -50,7 +50,12 @@ pio device monitor # Serial monitor
 
 ## Documentation
 
-- [Feature-Sliced Design Reference](docs/FSD.md)
+- [System Overview & LOTO Specifications](docs/E-LOCK.md)
+- [Developer Onboarding & Contributing Guide](docs/CONTRIBUTING.md)
+- [Environment Variables Setup](docs/ENV.md)
+- [Operations & Runbook Guide](docs/RUNBOOK.md)
 - [System Architecture](docs/architecture/system-overview.md)
 - [MQTT Topic Contracts](docs/api/mqtt-topics.md)
 - [Hardware Wiring Diagram](docs/hardware/wiring-diagram.md)
+- [PlatformIO Antigravity IDE Fix](docs/PLARFORM-IO-FIX-ANTIGRAVITY.md)
+
