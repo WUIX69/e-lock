@@ -43,6 +43,8 @@ firmware/.vscode/
 # other
 everything-claude-code/
 .opencode
+.claude
+.temp
 
 # Docker / Infra
 infra/.env

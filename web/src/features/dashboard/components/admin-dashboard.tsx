@@ -2,12 +2,12 @@
 
 import * as React from "react"
 import { RealtimeStats } from "@/features/dashboard/components/realtime-stats"
-import { VoltageChart } from "@/features/dashboard/components/voltage-chart"
 import { ActivePersonnelList } from "@/features/dashboard/components/active-personnel-list"
-import { MeshStatus } from "@/features/dashboard/components/mesh-status"
-import { NodeDiagnostics } from "@/features/dashboard/components/node-diagnostics"
-import { EnvironmentCard } from "@/features/dashboard/components/environment-card"
 import { LatestAlert } from "@/features/dashboard/components/latest-alert"
+import { OnboardingCta } from "@/features/dashboard/components/onboarding-cta"
+import { RecentLogs } from "@/features/dashboard/components/recent-logs"
+import { NodeDiagnostics } from "@/features/dashboard/components/node-diagnostics"
+
 import { ArrowRight, History } from "lucide-react"
 import Link from "next/link"
 import { MOCK_COMPLIANCE_STATS } from "@/data/mock/dashboard"
@@ -38,12 +38,11 @@ export function AdminDashboard() {
 
       {/* Bento Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <VoltageChart />
         <ActivePersonnelList />
-        <MeshStatus />
+        <RecentLogs />
         <NodeDiagnostics />
-        <EnvironmentCard />
         <LatestAlert />
+        <OnboardingCta />
       </div>
 
       {/* Footer Insight Section */}
