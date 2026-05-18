@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Activity, Signal, AlertTriangle, Router } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
-import { DEVICE_STATS } from "../data/mock-devices"
+import { DEVICE_STATS } from "@/data/mock/devices"
 
 export const DeviceStats = () => {
   return (

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { MOCK_SETTINGS } from "../data/mock-settings"
+import { MOCK_SETTINGS } from "@/data/mock/settings"
 
 export const HardwareConfig = () => {
   const [heartbeatInterval, setHeartbeatInterval] = React.useState(MOCK_SETTINGS.heartbeatInterval)

@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Zap, Wind, Droplets, Flame, Sliders } from "lucide-react"
-import { MOCK_ENERGY_SOURCES } from "../data/mock-energy"
+import { MOCK_ENERGY_SOURCES } from "@/data/mock/energy"
 import { cn } from "@/lib/utils"
 
 const typeIcons = {

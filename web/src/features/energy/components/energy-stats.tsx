@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Zap, Lock, AlertTriangle, Shield, ArrowUpRight } from "lucide-react"
-import { ENERGY_STATS } from "../data/mock-energy"
+import { ENERGY_STATS } from "@/data/mock/energy"
 
 export const EnergyStats = () => {
   return (

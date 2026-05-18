@@ -8,7 +8,7 @@ import {
   Wifi,
   MoreHorizontal,
 } from "lucide-react"
-import { MOCK_DEVICES } from "../data/mock-devices"
+import { MOCK_DEVICES } from "@/data/mock/devices"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {

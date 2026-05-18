@@ -5,7 +5,7 @@ import { Shield, AlertTriangle } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { MOCK_SETTINGS } from "../data/mock-settings"
+import { MOCK_SETTINGS } from "@/data/mock/settings"
 
 export const SafetyThresholds = () => {
   const [voltageSensitivity, setVoltageSensitivity] = React.useState(MOCK_SETTINGS.voltageSensitivity)

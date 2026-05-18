@@ -4,7 +4,7 @@ import * as React from "react"
 import { Upload, Download, CheckCircle, Loader2 } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { BACKUP_STATS } from "../data/mock-settings"
+import { BACKUP_STATS } from "@/data/mock/settings"
 
 export const SystemBackups = () => {
   const [isImporting, setIsImporting] = React.useState(false)

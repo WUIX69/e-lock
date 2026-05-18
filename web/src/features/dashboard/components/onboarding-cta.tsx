@@ -29,7 +29,7 @@ export const OnboardingCta = () => {
 
       <div className="relative z-10 mt-8">
         <Link
-          href="/personnel"
+          href="/admin/personnel"
           className="group inline-flex items-center gap-2 rounded-xl bg-primary-foreground px-6 py-3 text-xs font-black tracking-widest text-primary uppercase transition-transform hover:scale-105"
         >
           Register New Personnel

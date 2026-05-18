@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { MOCK_SETTINGS } from "../data/mock-settings"
+import { MOCK_SETTINGS } from "@/data/mock/settings"
 
 export const SecurityAccess = () => {
   const [retryCount, setRetryCount] = React.useState(MOCK_SETTINGS.biometricRetryLimit)

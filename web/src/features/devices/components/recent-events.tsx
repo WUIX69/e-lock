@@ -4,7 +4,7 @@ import * as React from "react"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { MOCK_DEVICE_EVENTS, type DeviceEvent } from "../data/mock-devices"
+import { MOCK_DEVICE_EVENTS, type DeviceEvent } from "@/data/mock/devices"
 import { Info, AlertTriangle, CheckCircle2, Loader2, ScrollText } from "lucide-react"
 import { cn } from "@/lib/utils"
 

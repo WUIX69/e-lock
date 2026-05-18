@@ -28,11 +28,11 @@ const getNavigation = (role: string | undefined) => {
   if (role === "admin") {
     return [
       { name: "Dashboard", href: "/", icon: LayoutDashboard },
-      { name: "Energy Sources", href: "/energy", icon: Zap },
-      { name: "Lockout Devices", href: "/devices", icon: Lock },
-      { name: "Safety Logs", href: "/audit", icon: History },
+      { name: "Energy Sources", href: "/admin/energy", icon: Zap },
+      { name: "Lockout Devices", href: "/admin/devices", icon: Lock },
+      { name: "Safety Logs", href: "/admin/audit", icon: History },
       { name: "Team Access", href: "/admin/personnel", icon: Users },
-      { name: "System Settings", href: "/settings", icon: Settings },
+      { name: "System Settings", href: "/admin/settings", icon: Settings },
     ]
   }
 

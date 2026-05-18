@@ -4,7 +4,7 @@ import * as React from "react"
 import { Network, Wifi, Loader2 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { NETWORK_STATS } from "../data/mock-settings"
+import { NETWORK_STATS } from "@/data/mock/settings"
 
 export const NetworkManagement = () => {
   const [isScanning, setIsScanning] = React.useState(false)

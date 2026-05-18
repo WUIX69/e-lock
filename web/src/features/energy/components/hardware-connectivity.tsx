@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { MOCK_HARDWARE_NODES } from "../data/mock-energy"
+import { MOCK_HARDWARE_NODES } from "@/data/mock/energy"
 import { Loader2, RefreshCw, Activity } from "lucide-react"
 import { cn } from "@/lib/utils"
 
