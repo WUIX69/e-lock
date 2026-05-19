@@ -6,11 +6,11 @@ import { LotoControlPanel } from "@/features/dashboard/components/user/loto-cont
 import { UserTelemetryChart } from "@/features/dashboard/components/user/user-telemetry-chart"
 import { MaintenanceChecklist } from "@/features/dashboard/components/user/maintenance-checklist"
 import { EmergencyFab } from "@/features/dashboard/components/user/emergency-fab"
-import { useSession } from "@/context/session-context"
+import { useAuth } from "@/context/auth-context"
 import { MOCK_USER_DASHBOARD_DATA } from "@/data/mock/user-dashboard"
 
 export function UserDashboard() {
-  const { currentUser } = useSession()
+  const { currentUser } = useAuth()
 
   if (!currentUser) return null
 

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { getSessionAction } from "@/features/auth/server/actions"
+import { getSessionAction } from "@/features/auth/server/actions/auth"
 
 export interface SessionUser {
   id: string
@@ -10,17 +10,17 @@ export interface SessionUser {
   role: "admin" | "user"
 }
 
-interface SessionContextValue {
+interface AuthContextValue {
   currentUser: SessionUser | null
   setCurrentUser: (user: SessionUser | null) => void
   isLoading: boolean
 }
 
-const SessionContext = React.createContext<SessionContextValue | undefined>(
+const AuthContext = React.createContext<AuthContextValue | undefined>(
   undefined
 )
 
-export function SessionProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = React.useState<SessionUser | null>(null)
   const [isLoading, setIsLoading] = React.useState(true)
 
@@ -47,16 +47,16 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <SessionContext.Provider value={{ currentUser, setCurrentUser, isLoading }}>
+    <AuthContext.Provider value={{ currentUser, setCurrentUser, isLoading }}>
       {children}
-    </SessionContext.Provider>
+    </AuthContext.Provider>
   )
 }
 
-export function useSession() {
-  const context = React.useContext(SessionContext)
+export function useAuth() {
+  const context = React.useContext(AuthContext)
   if (context === undefined) {
-    throw new Error("useSession must be used within a SessionProvider")
+    throw new Error("useAuth must be used within an AuthProvider")
   }
   return context
 }

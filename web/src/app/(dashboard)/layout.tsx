@@ -2,8 +2,8 @@ import { Sidebar } from "@/components/layout/sidebar"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { SidebarProvider } from "@/context/sidebar-context"
-import { SessionProvider } from "@/context/session-context"
-import { requireAuth } from "@/features/auth/server/actions/auth"
+import { AuthProvider } from "@/context/auth-context"
+import { requireAuth } from "@/features/auth/server/actions/jwt"
 
 export default async function DashboardLayout({
   children,
@@ -14,7 +14,7 @@ export default async function DashboardLayout({
   await requireAuth()
 
   return (
-    <SessionProvider>
+    <AuthProvider>
       <SidebarProvider>
         <div className="flex h-screen overflow-hidden bg-background">
           <Sidebar />
@@ -27,6 +27,6 @@ export default async function DashboardLayout({
           </div>
         </div>
       </SidebarProvider>
-    </SessionProvider>
+    </AuthProvider>
   )
 }

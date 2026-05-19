@@ -1,13 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { useSession } from "@/context/session-context"
+import { useAuth } from "@/context/auth-context"
 import { AdminDashboard } from "@/features/dashboard/components/admin-dashboard"
 import { UserDashboard } from "@/features/dashboard/components/user-dashboard"
 import { Loader2 } from "lucide-react"
 
 export default function DashboardPage() {
-  const { currentUser, isLoading } = useSession()
+  const { currentUser, isLoading } = useAuth()
 
   if (isLoading) {
     return (

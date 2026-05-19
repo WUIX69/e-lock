@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Footer } from "@/components/layout/footer"
 
-import { loginAction } from "@/features/auth/server/actions"
+import { loginAction } from "@/features/auth/server/actions/auth"
 
 export function LoginForm() {
   const router = useRouter()

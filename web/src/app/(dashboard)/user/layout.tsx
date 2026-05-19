@@ -1,4 +1,4 @@
-import { requireAuth } from "@/features/auth/server/actions/auth"
+import { requireAuth } from "@/features/auth/server/actions/jwt"
 
 export default async function UserLayout({
   children,

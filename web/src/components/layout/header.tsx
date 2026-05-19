@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useSidebar } from "@/context/sidebar-context"
-import { useSession } from "@/context/session-context"
+import { useAuth } from "@/context/auth-context"
 
 const breadcrumbs = [
   { name: "Facility Alpha", href: "#" },
@@ -25,7 +25,7 @@ const breadcrumbs = [
 
 export function Header() {
   const { setIsOpen } = useSidebar()
-  const { currentUser } = useSession()
+  const { currentUser } = useAuth()
 
   return (
     <header className="sticky top-0 z-40 flex h-20 w-full shrink-0 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-md md:px-8">
@@ -130,7 +130,7 @@ export function Header() {
               <DropdownMenuItem
                 onClick={async () => {
                   const { logoutAction } =
-                    await import("@/features/auth/server/actions")
+                    await import("@/features/auth/server/actions/auth")
                   await logoutAction()
                   window.location.href = "/login"
                 }}

@@ -4,7 +4,7 @@ import { AccessControlPanel } from "@/features/personnel/components/access-contr
 import { PersonnelPageActions } from "@/features/personnel/components/personnel-page-actions"
 import { DataTable } from "@/features/personnel/components/data-table"
 import { columns } from "@/features/personnel/components/columns"
-import { getAllPersonnel } from "@/features/personnel/server/db"
+import { getAllPersonnel } from "@/features/personnel/server/db/personnel"
 
 export const metadata: Metadata = {
   title: "Personnel | E-LOCK Management",

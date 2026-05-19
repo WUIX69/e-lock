@@ -8,7 +8,7 @@ import {
   getUserByEmail,
   insertPersonnel,
   updatePersonnel,
-} from "@/features/personnel/server/db"
+} from "@/features/personnel/server/db/personnel"
 import { AddPersonnelResult } from "@/types/personnel"
 
 export async function addPersonnelAction(
@@ -79,7 +79,6 @@ export async function editPersonnelAction(
 
     const { id: validatedId, ...updateFields } = validatedData.data
 
-    // Check if email belongs to another user
     const existingUser = await getUserByEmail(updateFields.email)
     if (existingUser && existingUser.id !== validatedId) {
       return {

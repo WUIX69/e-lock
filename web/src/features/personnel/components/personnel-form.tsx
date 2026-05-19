@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils"
 import {
   addPersonnelAction,
   editPersonnelAction,
-} from "@/features/personnel/server/actions"
+} from "@/features/personnel/server/actions/personnel"
 import { BiometricEnrollmentSection } from "@/features/personnel/components/biometric-enrollment-section"
 import { PersonnelRow } from "@/features/personnel/components/columns"
 

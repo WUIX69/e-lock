@@ -1,23 +1,20 @@
+"use server"
+
 import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
-import { SignJWT, jwtVerify } from "jose"
+import * as bcrypt from "bcryptjs"
+import { getUserByEmail } from "@/features/auth/server/db/auth"
+import {
+  createAccessToken,
+  createRefreshToken,
+  verifyAccessToken,
+  refreshSession,
+  SessionUser,
+} from "@/features/auth/server/actions/jwt"
 import { env } from "@/data/env/server"
 
-// Strict environment checks - env will throw if missing
-const ACCESS_SECRET = new TextEncoder().encode(env.JWT_SECRET)
-const REFRESH_SECRET = new TextEncoder().encode(env.JWT_REFRESH_SECRET)
-
-export interface SessionUser {
-  sub: string
-  email: string
-  name: string
-  role: "admin" | "user"
-}
-
-// HACK: parse ms-style expiration string to seconds since jose/cookies need numbers or string durations
 function parseExpiresInToSeconds(expiresIn: string): number {
   const match = expiresIn.match(/^(\d+)([smhd])$/)
-  if (!match) return 3600 // Default 1 hour
+  if (!match) return 3600
   const value = parseInt(match[1], 10)
   const unit = match[2]
   switch (unit) {
@@ -34,108 +31,84 @@ function parseExpiresInToSeconds(expiresIn: string): number {
   }
 }
 
-export async function createAccessToken(payload: SessionUser): Promise<string> {
-  return new SignJWT({ ...payload })
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime(env.JWT_EXPIRES_IN)
-    .sign(ACCESS_SECRET)
-}
+export async function loginAction(formData: FormData) {
+  const email = formData.get("email")?.toString()
+  const password = formData.get("password")?.toString()
 
-export async function createRefreshToken(
-  payload: SessionUser
-): Promise<string> {
-  return new SignJWT({ ...payload })
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime(env.JWT_REFRESH_EXPIRES_IN)
-    .sign(REFRESH_SECRET)
-}
+  if (!email || !password) {
+    return { error: "Email and password are required" }
+  }
 
-export async function verifyAccessToken(
-  token: string
-): Promise<SessionUser | null> {
   try {
-    const { payload } = await jwtVerify(token, ACCESS_SECRET)
-    return payload as unknown as SessionUser
-  } catch {
-    return null
-  }
-}
+    const user = await getUserByEmail(email)
+    if (!user) {
+      return { error: "Invalid credentials" }
+    }
 
-export async function verifyRefreshToken(
-  token: string
-): Promise<SessionUser | null> {
-  try {
-    const { payload } = await jwtVerify(token, REFRESH_SECRET)
-    return payload as unknown as SessionUser
-  } catch {
-    return null
-  }
-}
+    const isMatch = await bcrypt.compare(password, user.passwordHash)
+    if (!isMatch) {
+      return { error: "Invalid credentials" }
+    }
 
-export async function refreshSession(): Promise<SessionUser | null> {
-  const cookieStore = await cookies()
-  const refreshToken = cookieStore.get("elock_refresh_token")?.value
+    const payload: SessionUser = {
+      sub: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    }
 
-  if (!refreshToken) {
-    return null
-  }
+    const accessToken = await createAccessToken(payload)
+    const refreshToken = await createRefreshToken(payload)
 
-  const payload = await verifyRefreshToken(refreshToken)
-  if (!payload) {
-    return null
-  }
+    const cookieStore = await cookies()
+    const accessAge = parseExpiresInToSeconds(env.JWT_EXPIRES_IN)
+    const refreshAge = parseExpiresInToSeconds(env.JWT_REFRESH_EXPIRES_IN)
 
-  // Generate new access token
-  const newAccessToken = await createAccessToken({
-    sub: payload.sub,
-    email: payload.email,
-    name: payload.name,
-    role: payload.role,
-  })
-
-  const accessAge = parseExpiresInToSeconds(env.JWT_EXPIRES_IN)
-  try {
-    cookieStore.set("elock_access_token", newAccessToken, {
+    cookieStore.set("elock_access_token", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: accessAge,
       path: "/",
     })
-  } catch {
-    // HACK: Ignore error when called from Server Components during render.
-    // The session is valid for this request, but the cookie won't persist
-    // until a Server Action or Middleware updates it.
-  }
 
-  return payload
+    cookieStore.set("elock_refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: refreshAge,
+      path: "/",
+    })
+
+    return { success: true, role: user.role }
+  } catch (error) {
+    console.error("Login error:", error)
+    return { error: "An unexpected error occurred" }
+  }
 }
 
-export async function requireAuth(
-  allowedRoles?: ("admin" | "user")[]
-): Promise<SessionUser> {
+export async function logoutAction() {
   const cookieStore = await cookies()
-  const accessToken = cookieStore.get("elock_access_token")?.value
-  let payload: SessionUser | null = null
+  cookieStore.delete("elock_access_token")
+  cookieStore.delete("elock_refresh_token")
+  return { success: true }
+}
 
-  if (accessToken) {
-    payload = await verifyAccessToken(accessToken)
+export async function getSessionAction(): Promise<SessionUser | null> {
+  const cookieStore = await cookies()
+  const token = cookieStore.get("elock_access_token")?.value
+
+  if (!token) {
+    return refreshSession()
   }
 
-  // Attempt to refresh if access token is invalid or missing
-  if (!payload) {
-    payload = await refreshSession()
+  try {
+    const payload = await verifyAccessToken(token)
+    if (!payload) {
+      return refreshSession()
+    }
+    return payload
+  } catch {
+    return refreshSession()
   }
-
-  if (!payload) {
-    redirect("/login")
-  }
-
-  if (allowedRoles && !allowedRoles.includes(payload.role)) {
-    redirect("/unauthorized")
-  }
-
-  return payload
 }

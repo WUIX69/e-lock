@@ -19,9 +19,9 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useSidebar } from "@/context/sidebar-context"
-import { useSession } from "@/context/session-context"
+import { useAuth } from "@/context/auth-context"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
-import { logoutAction } from "@/features/auth/server/actions"
+import { logoutAction } from "@/features/auth/server/actions/auth"
 import { useRouter } from "next/navigation"
 
 const getNavigation = (role: string | undefined) => {
@@ -46,7 +46,7 @@ function SidebarContent() {
   const pathname = usePathname()
   const router = useRouter()
   const { setIsOpen } = useSidebar()
-  const { currentUser } = useSession()
+  const { currentUser } = useAuth()
 
   const navigation = getNavigation(currentUser?.role)
 
