@@ -1,2 +1,8 @@
 packages:
   - "web"
+allowBuilds:
+  ecc-universal: true
+  esbuild: true
+  msw: true
+  sharp: true
+  unrs-resolver: true
