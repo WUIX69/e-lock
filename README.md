@@ -23,9 +23,23 @@ e-lock/
 | **Communication** | MQTT (PubSubClient), ESP-NOW (optional)                                   |
 | **Sensors**       | Adafruit Fingerprint Sensor, Solenoid Lock, OLED Display, Buzzer/LED      |
 
+## Core Features & Workflows
+
+The web dashboard is divided into distinct roles to manage the LOTO process effectively:
+
+### 👷 User Workflows
+
+- **Node Operations:** Users can browse and select a specific node (device) to submit tasks such as general records, maintenance logs, or repair requests.
+- **Collaborative Maintenance:** When submitting a task on a node, users can invite another user to co-perform the task, ensuring multi-person lockout accountability.
+
+### 🛡️ Admin Workflows
+
+- **Task Monitoring:** Admins have a global view of all submitted records, maintenance, and repair tasks across every node in the facility.
+- **Device Management:** Admins can provision and add new node devices to the system's active list as the physical hardware network expands.
+
 ## Architecture
 
-The system follows **Feature-Sliced Design (FSD)** on the web side and **modular library architecture** on the firmware side. See [docs/architecture/system-overview.md](docs/architecture/system-overview.md) for details.
+The system follows **Feature-Sliced Design (FSD)** on the web side and **modular library architecture** on the firmware side. See [docs/SYSTEM-OVERVIEW.md](docs/SYSTEM-OVERVIEW.md) for details.
 
 ## Getting Started
 

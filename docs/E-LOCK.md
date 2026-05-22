@@ -39,13 +39,17 @@ If an Admin fingerprint is detected, the dashboard provides oversight and manage
    - Employee Name
    - Secure PIN
    - Fingerprint Data
+3. **Task Monitoring:** A global view of all submitted records, maintenance, and repair tasks across every node in the facility.
+4. **Device Management:** Provision and add new node devices to the system's active list as the physical hardware network expands.
 
-### B. Employee Flow
+### B. Employee Flow (User Workflows)
 
-If an Employee fingerprint is detected, access is restricted to operational safety tools:
+If an Employee/User fingerprint is detected, access is restricted to operational safety and task-handling tools:
 
 1. **Maintenance:** Initiates the LOTO sequence to de-energize specific machinery for safe servicing.
 2. **Monitoring:** Displays the real-time electrical status of assigned machinery.
+3. **Node Operations:** Browse and select a specific node (device) to submit tasks such as general records, maintenance logs, or repair requests.
+4. **Collaborative Maintenance:** When submitting a task on a node, invite another user to co-perform the task, ensuring multi-person lockout accountability.
 
 ### C. Fallback Security Mechanism
 
