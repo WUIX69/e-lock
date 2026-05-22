@@ -3,6 +3,8 @@ import {
   FailSafeHardwareRow,
   TelemetrySample,
   MaintenanceTicket,
+  LockoutInvitation,
+  ActiveLockout,
 } from "@/types/user-dashboard"
 import { Bolt, Timer } from "lucide-react"
 
@@ -69,9 +71,39 @@ export const MOCK_MAINTENANCE_TICKET: MaintenanceTicket = {
   ],
 }
 
+export const MOCK_LOCKOUT_INVITATION: LockoutInvitation = {
+  zoneId: "L2",
+  equipmentName: "High-Voltage Switch 4",
+  inviterName: "M. Chen",
+  participantCount: 3,
+}
+
+export const MOCK_ACTIVE_LOCKOUTS: ActiveLockout[] = [
+  {
+    id: "lo-001",
+    zoneId: "L1",
+    assetName: "Main Conveyor Hub #2",
+    isolatedAt: "10:30 AM",
+    duration: "2h 15m",
+    status: "maintenance_in_progress",
+    isVisible: true,
+  },
+  {
+    id: "lo-002",
+    zoneId: "L2",
+    assetName: "Hydraulic Lift B-12",
+    isolatedAt: "11:45 AM",
+    duration: "1h 00m",
+    status: "awaiting_verification",
+    isVisible: true,
+  },
+]
+
 export const MOCK_USER_DASHBOARD_DATA = {
   assignedMachine: MOCK_ASSIGNED_MACHINE,
   lotoStatus: MOCK_FAILSAFE_HARDWARE,
   telemetry: MOCK_TELEMETRY_SAMPLES,
   checklist: MOCK_MAINTENANCE_TICKET,
+  lockoutInvitation: MOCK_LOCKOUT_INVITATION,
+  myActiveLockouts: MOCK_ACTIVE_LOCKOUTS,
 }

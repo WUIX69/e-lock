@@ -35,3 +35,22 @@ export interface MaintenanceTicket {
   ticketId: string
   tasks: MaintenanceTask[]
 }
+
+export interface LockoutInvitation {
+  zoneId: string
+  equipmentName: string
+  inviterName: string
+  participantCount: number
+}
+
+export type LockoutStatus = "maintenance_in_progress" | "awaiting_verification"
+
+export interface ActiveLockout {
+  id: string
+  zoneId: string
+  assetName: string
+  isolatedAt: string
+  duration: string
+  status: LockoutStatus
+  isVisible: boolean
+}

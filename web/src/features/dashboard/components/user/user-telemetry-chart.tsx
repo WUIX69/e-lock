@@ -21,7 +21,7 @@ import { TelemetrySample } from "@/types/user-dashboard"
 
 export function UserTelemetryChart({ data }: { data: TelemetrySample[] }) {
   return (
-    <section className="col-span-12 rounded-3xl border border-border bg-card p-8 shadow-sm lg:col-span-7">
+    <section className="col-span-12 h-full rounded-3xl border border-border bg-card p-8 shadow-sm lg:col-span-7">
       <div className="mb-8 flex items-center justify-between">
         <div className="space-y-1">
           <h3 className="flex items-center gap-2 text-xl font-black tracking-tight text-foreground">

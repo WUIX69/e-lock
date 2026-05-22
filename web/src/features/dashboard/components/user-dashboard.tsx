@@ -6,6 +6,8 @@ import { LotoControlPanel } from "@/features/dashboard/components/user/loto-cont
 import { UserTelemetryChart } from "@/features/dashboard/components/user/user-telemetry-chart"
 import { MaintenanceChecklist } from "@/features/dashboard/components/user/maintenance-checklist"
 import { EmergencyFab } from "@/features/dashboard/components/user/emergency-fab"
+import { JoinLockoutCard } from "@/features/dashboard/components/user/join-lockout-card"
+import { ActiveLockoutsPanel } from "@/features/dashboard/components/user/active-lockouts-panel"
 import { useAuth } from "@/context/auth-context"
 import { MOCK_USER_DASHBOARD_DATA } from "@/data/mock/user-dashboard"
 
@@ -41,6 +43,14 @@ export function UserDashboard() {
         </div>
         <div className="lg:col-span-4">
           <LotoControlPanel loto={data.lotoStatus} />
+        </div>
+
+        {/* Middle Row - New */}
+        <div className="lg:col-span-8">
+          <ActiveLockoutsPanel lockouts={data.myActiveLockouts} />
+        </div>
+        <div className="lg:col-span-4">
+          <JoinLockoutCard invitation={data.lockoutInvitation} />
         </div>
 
         {/* Bottom Row */}

@@ -9,11 +9,11 @@ import { AssignedMachine } from "@/types/user-dashboard"
 
 export function MachineStatusCard({ machine }: { machine: AssignedMachine }) {
   return (
-    <section className="relative col-span-12 overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-sm lg:col-span-8">
+    <section className="relative h-full col-span-12 overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-sm lg:col-span-8">
       {/* Background Glow */}
       <div className="absolute top-0 right-0 -mt-20 -mr-20 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
 
-      <div className="relative z-10 flex flex-col gap-8">
+      <div className="relative z-10 flex h-full flex-col gap-8">
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
@@ -63,8 +63,8 @@ export function MachineStatusCard({ machine }: { machine: AssignedMachine }) {
         </div>
 
         {/* Footer Row */}
-        <div className="flex flex-col gap-6 md:flex-row">
-          <div className="relative h-48 w-full overflow-hidden rounded-2xl border border-border shadow-inner md:w-1/2">
+        <div className="flex flex-col h-full gap-6 md:flex-row">
+          <div className="relative w-full overflow-hidden rounded-2xl border border-border shadow-inner md:w-1/2">
             <Image
               src={machine.imageUrl}
               alt={machine.name}
@@ -72,7 +72,7 @@ export function MachineStatusCard({ machine }: { machine: AssignedMachine }) {
               className="object-cover transition-transform duration-500 hover:scale-105"
             />
           </div>
-          <div className="flex flex-1 flex-col justify-between rounded-2xl bg-sidebar p-6 text-sidebar-foreground">
+          <div className="flex h-48 flex-1 flex-col justify-between rounded-2xl bg-sidebar p-6 text-sidebar-foreground">
             <div>
               <h4 className="flex items-center gap-2 text-sm font-black tracking-wide">
                 <ShieldCheck className="size-4 text-secondary-foreground" />
