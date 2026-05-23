@@ -16,6 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { PaginationBar } from "@/components/ui/pagination-bar"
+import { usePagination } from "@/hooks/use-pagination"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -32,6 +34,9 @@ export function DataTable<TData, TValue>({
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
+
+  const pagination = usePagination({ totalItems: data.length, pageSize: 6 })
+  const pageData = data.slice(pagination.startIndex, pagination.endIndex)
 
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card">
@@ -61,20 +66,24 @@ export function DataTable<TData, TValue>({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-                className="border-border transition-colors hover:bg-muted/30"
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="py-4">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
+          {pageData.length ? (
+            pageData.map((row, index) => {
+              const tableRow = table.getRowModel().rows[index]
+              if (!tableRow) return null
+              return (
+                <TableRow
+                  key={tableRow.id}
+                  data-state={tableRow.getIsSelected() && "selected"}
+                  className="border-border transition-colors hover:bg-muted/30"
+                >
+                  {tableRow.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className="py-4">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              )
+            })
           ) : (
             <TableRow>
               <TableCell
@@ -87,6 +96,20 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
+
+      <PaginationBar
+        page={pagination.page}
+        totalPages={pagination.totalPages}
+        startIndex={pagination.startIndex}
+        endIndex={pagination.endIndex}
+        totalItems={data.length}
+        pageNumbers={pagination.pageNumbers}
+        hasNext={pagination.hasNext}
+        hasPrev={pagination.hasPrev}
+        onNext={pagination.nextPage}
+        onPrev={pagination.prevPage}
+        onGoToPage={pagination.goToPage}
+      />
     </div>
   )
 }

@@ -19,6 +19,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { PaginationBar } from "@/components/ui/pagination-bar"
+import { usePagination } from "@/hooks/use-pagination"
 
 interface SignalIconProps {
   strength: number
@@ -37,6 +39,9 @@ interface DeviceTableProps {
 }
 
 export const DeviceTable = ({ devices }: DeviceTableProps) => {
+  const pagination = usePagination({ totalItems: devices.length, pageSize: 6 })
+  const pageDevices = devices.slice(pagination.startIndex, pagination.endIndex)
+
   return (
     <Card className="overflow-hidden rounded-[2rem] border border-border/50 shadow-lg">
       <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 bg-card p-8">
@@ -79,7 +84,7 @@ export const DeviceTable = ({ devices }: DeviceTableProps) => {
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-border/30">
-              {devices.map((innerDevice) => (
+              {pageDevices.map((innerDevice) => (
                 <TableRow
                   key={innerDevice.id}
                   className={`group border-b border-border/30 transition-colors hover:bg-muted/30 ${
@@ -147,28 +152,19 @@ export const DeviceTable = ({ devices }: DeviceTableProps) => {
           </Table>
         </div>
 
-        <div className="flex items-center justify-between border-t border-border/50 bg-muted/20 p-6">
-            <p className="text-sm font-medium text-muted-foreground">
-              Showing {devices.length} hardware device{devices.length !== 1 ? "s" : ""}
-            </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9 border-border/50 px-4 text-sm font-semibold hover:bg-muted"
-              aria-label="Previous page"
-            >
-              Previous
-            </Button>
-            <Button
-              size="sm"
-              className="h-9 px-4 text-sm font-semibold shadow-sm"
-              aria-label="Next page"
-            >
-              Next
-            </Button>
-          </div>
-        </div>
+        <PaginationBar
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+          startIndex={pagination.startIndex}
+          endIndex={pagination.endIndex}
+          totalItems={devices.length}
+          pageNumbers={pagination.pageNumbers}
+          hasNext={pagination.hasNext}
+          hasPrev={pagination.hasPrev}
+          onNext={pagination.nextPage}
+          onPrev={pagination.prevPage}
+          onGoToPage={pagination.goToPage}
+        />
       </CardContent>
     </Card>
   )
