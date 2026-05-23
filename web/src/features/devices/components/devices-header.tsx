@@ -3,10 +3,12 @@
 import * as React from "react"
 import { RefreshCcw, PlusCircle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { RegisterHardwareDialog } from "@/features/devices/components/register-hardware-dialog"
 
 export const DevicesHeader = () => {
   const [isSyncing, setIsSyncing] = React.useState(false)
   const [syncStatus, setSyncStatus] = React.useState<string | null>(null)
+  const [isRegisterOpen, setIsRegisterOpen] = React.useState(false)
 
   const handleSyncDevices = () => {
     setIsSyncing(true)
@@ -55,6 +57,7 @@ export const DevicesHeader = () => {
             )}
           </Button>
           <Button
+            onClick={() => setIsRegisterOpen(true)}
             className="flex h-12 shrink-0 items-center gap-2 rounded-xl bg-primary px-6 font-bold text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-95"
             aria-label="Register new hardware device"
           >
@@ -63,6 +66,11 @@ export const DevicesHeader = () => {
           </Button>
         </div>
       </div>
+
+      <RegisterHardwareDialog
+        isOpen={isRegisterOpen}
+        onOpenChange={setIsRegisterOpen}
+      />
 
       {syncStatus && (
         <div className="animate-fade-in pl-4 text-sm font-semibold text-primary">
