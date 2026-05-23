@@ -2,19 +2,19 @@
 
 import { Search } from "lucide-react"
 
-interface NodeFiltersProps {
+interface UserDeviceFiltersProps {
   searchQuery: string
   onSearchChange: (value: string) => void
   activeFilter: "all" | "nearby"
   onFilterChange: (value: "all" | "nearby") => void
 }
 
-export const NodeFilters = ({
+export const UserDeviceFilters = ({
   searchQuery,
   onSearchChange,
   activeFilter,
   onFilterChange,
-}: NodeFiltersProps) => {
+}: UserDeviceFiltersProps) => {
   return (
     <section className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
       <div className="flex-1 max-w-2xl">
@@ -27,7 +27,7 @@ export const NodeFilters = ({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="w-full rounded-xl border border-border bg-background py-4 pl-12 pr-4 text-foreground shadow-md placeholder:text-muted-foreground/50 focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
-            placeholder="Search facilities or industrial nodes..."
+            placeholder="Search facilities or industrial devices..."
             type="text"
           />
         </div>
@@ -41,7 +41,7 @@ export const NodeFilters = ({
               : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          All Nodes
+          All Devices
         </button>
         <button
           onClick={() => onFilterChange("nearby")}
@@ -51,7 +51,7 @@ export const NodeFilters = ({
               : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          Nearby Nodes
+          Nearby Devices
         </button>
       </div>
     </section>

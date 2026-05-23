@@ -32,5 +32,5 @@ export interface AdminStatItem {
 export interface AdminDashboardStats {
   activeLockouts: AdminStatItem
   anomaliesDetected: AdminStatItem
-  nodeDiagnostics: AdminStatItem
+  deviceDiagnostics: AdminStatItem
 }

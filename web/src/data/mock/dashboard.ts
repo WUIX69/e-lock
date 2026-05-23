@@ -55,7 +55,7 @@ export const MOCK_RECENT_ACTIVITY: RecentActivityItem[] = [
 export const MOCK_COMPLIANCE_STATS: ComplianceStat[] = [
   { label: "Audit Score", value: "98/100" },
   { label: "Compliance", value: "100%" },
-  { label: "Active Nodes", value: "12/12" },
+  { label: "Active Devices", value: "12/12" },
   { label: "Last Sync", value: "Now" },
 ]
 
@@ -63,7 +63,7 @@ export const MOCK_ADMIN_STATS: AdminDashboardStats = {
   activeLockouts: {
     count: 14,
     total: 24,
-    status: "Nodes",
+    status: "Devices",
     subtext: "+2 since shift change",
   },
   anomaliesDetected: {
@@ -71,17 +71,17 @@ export const MOCK_ADMIN_STATS: AdminDashboardStats = {
     status: "Failures",
     subtext: "Failsafe Loop: Healthy",
   },
-  nodeDiagnostics: {
+  deviceDiagnostics: {
     count: "98%",
     status: "Nominal",
-    subtext: "11/12 nodes online",
+    subtext: "11/12 devices online",
   },
 }
 
 export const MOCK_SYSTEM_DIAGNOSTICS = {
   mesh: {
     signal: 94,
-    nodes: 12,
+    devices: 12,
     latency: "12ms",
   },
   environment: {
@@ -90,7 +90,7 @@ export const MOCK_SYSTEM_DIAGNOSTICS = {
   },
   latestAlert: {
     message:
-      "RFID tag verification requested at Node 04. Access granted to Alex T.",
+      "RFID tag verification requested at Device 04. Access granted to Alex T.",
     time: "12m ago",
   },
   integrity: {

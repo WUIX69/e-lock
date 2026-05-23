@@ -33,9 +33,9 @@ export const MeshStatus = () => {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
             <p className="text-[10px] font-bold text-muted-foreground uppercase">
-              Nodes
+              Devices
             </p>
-            <p className="text-xl font-black text-foreground">{mesh.nodes}</p>
+            <p className="text-xl font-black text-foreground">{mesh.devices}</p>
           </div>
           <div className="space-y-1">
             <p className="text-[10px] font-bold text-muted-foreground uppercase">

@@ -39,7 +39,7 @@ const getNavigation = (role: string | undefined) => {
 
   return [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
-    { name: "Node Devices", href: "/user/nodes", icon: Network },
+    { name: "Devices", href: "/user/devices", icon: Network },
     { name: "My Activity", href: "/user/my-activity", icon: Activity },
   ]
 }

@@ -6,14 +6,14 @@ import { ActivePersonnelList } from "@/features/dashboard/components/active-pers
 import { LatestAlert } from "@/features/dashboard/components/latest-alert"
 import { OnboardingCta } from "@/features/dashboard/components/onboarding-cta"
 import { RecentLogs } from "@/features/dashboard/components/recent-logs"
-import { NodeDiagnostics } from "@/features/dashboard/components/node-diagnostics"
+import { DeviceDiagnostics } from "@/features/dashboard/components/device-diagnostics"
 
 import { ArrowRight, History, LayoutGrid, Layers } from "lucide-react"
 import Link from "next/link"
 import { MOCK_COMPLIANCE_STATS } from "@/data/mock/dashboard"
 
 export const AdminDashboard = () => {
-  const [nodeDiagnosticsPosition, setNodeDiagnosticsPosition] = React.useState<
+  const [deviceDiagnosticsPosition, setDeviceDiagnosticsPosition] = React.useState<
     "top" | "bottom"
   >("bottom")
 
@@ -33,17 +33,17 @@ export const AdminDashboard = () => {
           <div
             className="flex items-center gap-1 rounded-xl border border-border bg-card p-1 shadow-sm"
             role="radiogroup"
-            aria-label="Node diagnostics layout position switcher"
+            aria-label="Device diagnostics layout position switcher"
           >
             <span className="hidden pr-1.5 pl-2.5 text-[9px] font-black tracking-widest text-muted-foreground uppercase lg:inline">
               Layout:
             </span>
             <button
-              onClick={() => setNodeDiagnosticsPosition("top")}
+              onClick={() => setDeviceDiagnosticsPosition("top")}
               role="radio"
-              aria-checked={nodeDiagnosticsPosition === "top"}
+              aria-checked={deviceDiagnosticsPosition === "top"}
               className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[9px] font-black tracking-widest uppercase transition-all duration-200 ${
-                nodeDiagnosticsPosition === "top"
+                deviceDiagnosticsPosition === "top"
                   ? "bg-primary text-primary-foreground shadow-sm shadow-primary/10"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
@@ -52,11 +52,11 @@ export const AdminDashboard = () => {
               Integrity Top
             </button>
             <button
-              onClick={() => setNodeDiagnosticsPosition("bottom")}
+              onClick={() => setDeviceDiagnosticsPosition("bottom")}
               role="radio"
-              aria-checked={nodeDiagnosticsPosition === "bottom"}
+              aria-checked={deviceDiagnosticsPosition === "bottom"}
               className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[9px] font-black tracking-widest uppercase transition-all duration-200 ${
-                nodeDiagnosticsPosition === "bottom"
+                deviceDiagnosticsPosition === "bottom"
                   ? "bg-primary text-primary-foreground shadow-sm shadow-primary/10"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
@@ -82,9 +82,9 @@ export const AdminDashboard = () => {
 
       {/* Bento Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {nodeDiagnosticsPosition === "top" ? (
+        {deviceDiagnosticsPosition === "top" ? (
           <React.Fragment>
-            <NodeDiagnostics />
+            <DeviceDiagnostics />
             <LatestAlert />
             <OnboardingCta />
             <ActivePersonnelList />
@@ -94,7 +94,7 @@ export const AdminDashboard = () => {
           <React.Fragment>
             <ActivePersonnelList />
             <RecentLogs />
-            <NodeDiagnostics />
+            <DeviceDiagnostics />
             <LatestAlert />
             <OnboardingCta />
           </React.Fragment>

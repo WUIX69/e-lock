@@ -4,7 +4,7 @@ import * as React from "react"
 import { ShieldCheck } from "lucide-react"
 import { MOCK_SYSTEM_DIAGNOSTICS } from "@/data/mock/dashboard"
 
-export const NodeDiagnostics = () => {
+export const DeviceDiagnostics = () => {
   const { integrity } = MOCK_SYSTEM_DIAGNOSTICS
 
   return (
@@ -16,7 +16,7 @@ export const NodeDiagnostics = () => {
       <div className="mt-6 space-y-4">
         <div className="space-y-1">
           <h4 className="text-sm font-black tracking-widest text-foreground uppercase">
-            Node Integrity
+            Device Integrity
           </h4>
           <p className="text-xs leading-relaxed text-muted-foreground">
             All peripheral locking modules reporting {integrity.status}.

@@ -10,12 +10,12 @@ import { VerificationSection } from "./verification-section"
 import { BiometricAuth } from "./biometric-auth"
 
 interface TaskFormProps {
-  defaultNodeId?: string
+  defaultDeviceId?: string
 }
 
-export const TaskForm = ({ defaultNodeId = "" }: TaskFormProps) => {
+export const TaskForm = ({ defaultDeviceId = "" }: TaskFormProps) => {
   const router = useRouter()
-  const [nodeId, setNodeId] = useState(defaultNodeId)
+  const [deviceId, setDeviceId] = useState(defaultDeviceId)
   const [taskType, setTaskType] = useState("")
   const [subject, setSubject] = useState("")
   const [priority, setPriority] = useState<TaskPriority>("Routine")
@@ -24,7 +24,7 @@ export const TaskForm = ({ defaultNodeId = "" }: TaskFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    router.push("/user/nodes")
+    router.push("/user/devices")
   }
 
   return (
@@ -37,9 +37,9 @@ export const TaskForm = ({ defaultNodeId = "" }: TaskFormProps) => {
           <h3 className="text-xl font-bold tracking-tight">Resource Selection</h3>
         </div>
         <ResourceSelection
-          nodeId={nodeId}
+          deviceId={deviceId}
           taskType={taskType}
-          onNodeIdChange={setNodeId}
+          onDeviceIdChange={setDeviceId}
           onTaskTypeChange={setTaskType}
         />
       </section>

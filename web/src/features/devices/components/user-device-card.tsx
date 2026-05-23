@@ -2,12 +2,12 @@
 
 import { ArrowRight } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { NodeDevice } from "@/types/nodes"
+import { UserDevice } from "@/types/devices"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 
-interface NodeCardProps {
-  node: NodeDevice
+interface UserDeviceCardProps {
+  device: UserDevice
 }
 
 const statusConfig = {
@@ -34,11 +34,11 @@ const statusConfig = {
   },
 }
 
-export const NodeCard = ({ node }: NodeCardProps) => {
+export const UserDeviceCard = ({ device }: UserDeviceCardProps) => {
   const router = useRouter()
-  const status = statusConfig[node.status]
-  const isOffline = node.status === "offline"
-  const initials = node.lastTechnician
+  const status = statusConfig[device.status]
+  const isOffline = device.status === "offline"
+  const initials = device.lastTechnician
     .split(" ")
     .map((n) => n[0])
     .join("")
@@ -55,18 +55,18 @@ export const NodeCard = ({ node }: NodeCardProps) => {
           <span
             className={cn(
               "mb-2 inline-flex items-center rounded px-2 py-0.5 text-[10px] font-black uppercase tracking-tighter",
-              node.status === "operational" || node.status === "maintenance"
+              device.status === "operational" || device.status === "maintenance"
                 ? "bg-accent-green text-primary"
                 : "bg-muted text-muted-foreground"
             )}
           >
-            {node.sector}
+            {device.sector}
           </span>
           <h3 className="text-2xl font-bold tracking-tight text-foreground transition-colors group-hover:text-primary">
-            {node.name}
+            {device.name}
           </h3>
           <p className="mt-1 font-mono text-xs text-muted-foreground">
-            ID: {node.deviceId}
+            ID: {device.deviceId}
           </p>
         </div>
         <div className="flex flex-col items-end">
@@ -90,13 +90,13 @@ export const NodeCard = ({ node }: NodeCardProps) => {
           <span className="text-muted-foreground">Last Technician</span>
           <div className="flex items-center gap-2">
             <Avatar className="h-6 w-6 rounded-full">
-              <AvatarImage src={node.lastTechnicianAvatar} alt={node.lastTechnician} />
+              <AvatarImage src={device.lastTechnicianAvatar} alt={device.lastTechnician} />
               <AvatarFallback className="text-[10px] font-bold">
                 {initials}
               </AvatarFallback>
             </Avatar>
             <span className="font-medium text-foreground">
-              {node.lastTechnician}
+              {device.lastTechnician}
             </span>
           </div>
         </div>
@@ -105,7 +105,7 @@ export const NodeCard = ({ node }: NodeCardProps) => {
 
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">
-            {node.status === "offline" ? "Status Alert" : node.uptime ? "Uptime" : "Details"}
+            {device.status === "offline" ? "Status Alert" : device.uptime ? "Uptime" : "Details"}
           </span>
           <span
             className={cn(
@@ -113,13 +113,13 @@ export const NodeCard = ({ node }: NodeCardProps) => {
               isOffline ? "text-destructive" : "text-foreground"
             )}
           >
-            {node.uptime || node.loadStatus || node.alert}
+            {device.uptime || device.loadStatus || device.alert}
           </span>
         </div>
       </div>
 
       <button
-        onClick={() => router.push(`/user/tasks/submit?nodeId=${node.id}`)}
+        onClick={() => router.push(`/user/tasks/submit?deviceId=${device.id}`)}
         className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 font-black tracking-widest text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 active:scale-95 group/btn"
       >
         SUBMIT TASK

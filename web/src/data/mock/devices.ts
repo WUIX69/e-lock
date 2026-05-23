@@ -1,3 +1,5 @@
+import { UserDevice } from "@/types/devices"
+
 export interface Device {
   id: string
   deviceId: string
@@ -11,7 +13,7 @@ export interface Device {
 export const MOCK_DEVICES: Device[] = [
   {
     id: "dev-001",
-    deviceId: "NODE-42",
+    deviceId: "DEV-42",
     type: "field_controller",
     assignedMachine: "Main Crusher #402",
     signalStrength: -48,
@@ -20,7 +22,7 @@ export const MOCK_DEVICES: Device[] = [
   },
   {
     id: "dev-002",
-    deviceId: "NODE-89",
+    deviceId: "DEV-89",
     type: "shunt_trip",
     assignedMachine: "Secondary Conveyor",
     signalStrength: -92,
@@ -38,7 +40,7 @@ export const MOCK_DEVICES: Device[] = [
   },
   {
     id: "dev-004",
-    deviceId: "NODE-114",
+    deviceId: "DEV-114",
     type: "field_controller",
     assignedMachine: "Ventilation System 02",
     signalStrength: -72,
@@ -58,13 +60,13 @@ export const MOCK_DEVICE_EVENTS: DeviceEvent[] = [
   {
     id: "evt-001",
     timestamp: "14:22:10",
-    message: "NODE-42 Re-synchronized",
+    message: "DEV-42 Re-synchronized",
     type: "success",
   },
   {
     id: "evt-002",
     timestamp: "14:15:33",
-    message: "NODE-89 Low Signal Warning - Signal dropped below -90dBm",
+    message: "DEV-89 Low Signal Warning - Signal dropped below -90dBm",
     type: "warning",
   },
   {
@@ -76,7 +78,7 @@ export const MOCK_DEVICE_EVENTS: DeviceEvent[] = [
   {
     id: "evt-004",
     timestamp: "12:30:45",
-    message: "New Hardware Paired - NODE-114 assigned to Ventilation 02",
+    message: "New Hardware Paired - DEV-114 assigned to Ventilation 02",
     type: "success",
   },
 ]
@@ -87,3 +89,61 @@ export const DEVICE_STATS = {
   warnings: 3,
   gateways: 5,
 }
+
+export const MOCK_USER_DEVICES: UserDevice[] = [
+  {
+    id: "dev-001",
+    name: "Milling Station Alpha",
+    deviceId: "#ELK-9902-MS",
+    sector: "Sector 7-G",
+    status: "operational",
+    lastTechnician: "Jared Vance",
+    lastTechnicianAvatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=JaredVance",
+    uptime: "99.98%",
+  },
+  {
+    id: "dev-002",
+    name: "Hydraulic Press 02",
+    deviceId: "#ELK-1145-HP",
+    sector: "Sector 4-B",
+    status: "offline",
+    lastTechnician: "Sarah Chen",
+    lastTechnicianAvatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=SarahChen",
+    alert: "PRESSURE DROP",
+  },
+  {
+    id: "dev-003",
+    name: "Conveyor Main",
+    deviceId: "#ELK-4421-CH",
+    sector: "Logistics Hub",
+    status: "operational",
+    lastTechnician: "Mark Wilson",
+    lastTechnicianAvatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=MarkWilson",
+    loadStatus: "NORMAL (42%)",
+  },
+  {
+    id: "dev-004",
+    name: "HV Transformer-A",
+    deviceId: "#ELK-8812-HV",
+    sector: "Power Core",
+    status: "operational",
+    lastTechnician: "Alex Wong",
+    lastTechnicianAvatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=AlexWong",
+    loadStatus: "42°C (STABLE)",
+  },
+  {
+    id: "dev-005",
+    name: "Sprayer Unit 04",
+    deviceId: "#ELK-3029-SU",
+    sector: "Paint Shop",
+    status: "maintenance",
+    lastTechnician: "Elena Rodriguez",
+    lastTechnicianAvatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=ElenaRodriguez",
+    loadStatus: "NOW",
+  },
+]

@@ -13,7 +13,7 @@ export interface CoWorker {
 }
 
 export interface TaskFormData {
-  nodeId: string
+  deviceId: string
   taskType: TaskCategory
   subject: string
   priority: TaskPriority
@@ -24,7 +24,7 @@ export interface TaskFormData {
 
 export interface TaskRecord {
   id: string
-  nodeId: string
+  deviceId: string
   nodeName: string
   taskType: TaskCategory
   subject: string

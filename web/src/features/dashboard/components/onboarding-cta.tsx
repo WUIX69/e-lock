@@ -23,7 +23,7 @@ export const OnboardingCta = () => {
 
         <p className="max-w-sm text-sm leading-relaxed font-medium text-primary-foreground/80">
           Streamline facility access by registering new personnel. Biometric
-          profiles will be securely provisioned to authorized nodes.
+          profiles will be securely provisioned to authorized devices.
         </p>
       </div>
 

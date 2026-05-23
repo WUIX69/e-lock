@@ -5,7 +5,7 @@ import { TaskForm } from "@/features/tasks/components/task-form"
 export default async function TaskSubmitPage({
   searchParams,
 }: {
-  searchParams: Promise<{ nodeId?: string }>
+  searchParams: Promise<{ deviceId?: string }>
 }) {
   const params = await searchParams
 
@@ -30,7 +30,7 @@ export default async function TaskSubmitPage({
         </p>
       </div>
 
-      <TaskForm defaultNodeId={params.nodeId || ""} />
+      <TaskForm defaultDeviceId={params.deviceId || ""} />
     </div>
   )
 }

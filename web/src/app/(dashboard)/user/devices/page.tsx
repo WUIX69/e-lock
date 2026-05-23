@@ -1,17 +1,17 @@
 import { getAllDevices } from "@/features/devices/server/db/devices"
-import { NodeDevice, NodeStatus } from "@/types/nodes"
-import { NodesClient } from "@/features/nodes/components/nodes-client"
+import { UserDevice, UserDeviceStatus } from "@/types/devices"
+import { UserDevicesClient } from "@/features/devices/components/user-devices-client"
 
-const STATUS_MAP: Record<string, NodeStatus> = {
+const STATUS_MAP: Record<string, UserDeviceStatus> = {
   active: "operational",
   warning: "maintenance",
   offline: "offline",
 }
 
-const NodesPage = async () => {
+const DevicesPage = async () => {
   const dbDevices = await getAllDevices()
 
-  const nodes: NodeDevice[] = dbDevices.map((d) => ({
+  const devices: UserDevice[] = dbDevices.map((d) => ({
     id: d.id,
     name: d.assignedMachine,
     deviceId: d.deviceId,
@@ -23,7 +23,7 @@ const NodesPage = async () => {
     uptime: d.status === "active" ? "99.9%" : undefined,
   }))
 
-  return <NodesClient nodes={nodes} />
+  return <UserDevicesClient devices={devices} />
 }
 
-export default NodesPage
+export default DevicesPage

@@ -22,7 +22,7 @@ export const RealtimeStats = () => {
 
             <div className="space-y-2">
               <h2 className="text-3xl leading-none font-black tracking-tight text-foreground md:text-4xl">
-                Safety & Node Diagnostics
+                Safety & Device Diagnostics
               </h2>
               <p className="max-w-xl text-xs leading-relaxed font-medium text-muted-foreground md:text-sm">
                 Administrative monitoring of system lockouts, communication
@@ -83,22 +83,22 @@ export const RealtimeStats = () => {
               </div>
             </div>
 
-            {/* Node Diagnostics */}
+            {/* Device Diagnostics */}
             <div className="group/stat relative flex flex-col justify-between gap-5 overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-primary/30 hover:shadow-md hover:shadow-primary/5">
               <span className="text-[9px] font-black tracking-widest text-muted-foreground uppercase">
-                Node Diagnostics
+                Device Diagnostics
               </span>
               <div className="space-y-1.5">
                 <div className="flex items-baseline gap-1.5">
                   <span className="text-4xl font-extrabold tracking-tight text-primary">
-                    {MOCK_ADMIN_STATS.nodeDiagnostics.count}
+                    {MOCK_ADMIN_STATS.deviceDiagnostics.count}
                   </span>
                   <span className="text-xs font-bold text-muted-foreground">
-                    {MOCK_ADMIN_STATS.nodeDiagnostics.status}
+                    {MOCK_ADMIN_STATS.deviceDiagnostics.status}
                   </span>
                 </div>
                 <p className="text-[10px] font-bold tracking-wide text-muted-foreground">
-                  {MOCK_ADMIN_STATS.nodeDiagnostics.subtext}
+                  {MOCK_ADMIN_STATS.deviceDiagnostics.subtext}
                 </p>
               </div>
               <div className="flex w-full items-center justify-center rounded-xl border border-border/20 bg-muted/60 py-3 shadow-inner transition-all duration-300 group-hover/stat:border-primary/20 group-hover/stat:bg-primary/5">
