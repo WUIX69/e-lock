@@ -42,6 +42,7 @@ const getNavigation = (role: string | undefined) => {
   return [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
     { name: "Devices", href: "/user/devices", icon: Network },
+    { name: "Task Records", href: "/tasks", icon: ClipboardList },
     { name: "My Activity", href: "/user/my-activity", icon: Activity },
   ]
 }
@@ -81,7 +82,8 @@ function SidebarContent() {
       {/* Navigation */}
       <nav className="flex-1 space-y-1 overflow-y-auto px-4 py-6">
         {navigation.map((item) => {
-          const isActive = pathname === item.href
+          const isActive = pathname === item.href ||
+            (item.href === "/tasks" && pathname.startsWith("/tasks"))
           return (
             <Link
               key={item.name}

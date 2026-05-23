@@ -14,6 +14,8 @@ interface TaskCardProps {
     taskType: string
     subject: string
     priority: string
+    description: string | null
+    userName: string | null
     status: string
     submittedAt: Date
     coWorkers: { id: string | null; name: string }[]
@@ -144,11 +146,12 @@ export const TaskCard = ({ task }: TaskCardProps) => {
           subject: task.subject,
           taskType: task.taskType,
           priority: task.priority,
-          description: null,
+          description: task.description,
           status: task.status,
           deviceName: task.deviceName,
           deviceLabel: task.deviceLabel,
-          userName: null,
+          userName: task.userName,
+          userPosition: undefined,
           submittedAt: task.submittedAt,
           coWorkers: task.coWorkers,
         }}
