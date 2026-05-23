@@ -1,39 +1,29 @@
-"use client"
+import { getAllDevices } from "@/features/devices/server/db/devices"
+import { NodeDevice, NodeStatus } from "@/types/nodes"
+import { NodesClient } from "@/features/nodes/components/nodes-client"
 
-import { useState, useMemo } from "react"
-import { MOCK_NODES } from "@/data/mock/nodes"
-import { NodesHeader } from "@/features/nodes/components/nodes-header"
-import { NodeFilters } from "@/features/nodes/components/node-filters"
-import { NodeGrid } from "@/features/nodes/components/node-grid"
-
-export default function NodesPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [activeFilter, setActiveFilter] = useState<"all" | "nearby">("all")
-
-  const filteredNodes = useMemo(
-    () =>
-      MOCK_NODES.filter((node) => {
-        const matchesSearch =
-          node.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          node.deviceId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          node.sector.toLowerCase().includes(searchQuery.toLowerCase())
-        return matchesSearch
-      }),
-    [searchQuery]
-  )
-
-  return (
-    <div className="space-y-8 pb-12">
-      <NodesHeader />
-
-      <NodeFilters
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
-      />
-
-      <NodeGrid nodes={filteredNodes} />
-    </div>
-  )
+const STATUS_MAP: Record<string, NodeStatus> = {
+  active: "operational",
+  warning: "maintenance",
+  offline: "offline",
 }
+
+const NodesPage = async () => {
+  const dbDevices = await getAllDevices()
+
+  const nodes: NodeDevice[] = dbDevices.map((d) => ({
+    id: d.id,
+    name: d.assignedMachine,
+    deviceId: d.deviceId,
+    sector: "Production",
+    status: STATUS_MAP[d.status] ?? "offline",
+    lastTechnician: "System",
+    lastTechnicianAvatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=System",
+    uptime: d.status === "active" ? "99.9%" : undefined,
+  }))
+
+  return <NodesClient nodes={nodes} />
+}
+
+export default NodesPage

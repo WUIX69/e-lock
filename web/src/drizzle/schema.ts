@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm"
 import {
   boolean,
   index,
+  integer,
   pgEnum,
   pgTable,
   text,
@@ -22,11 +23,18 @@ const updatedAt = timestamp("updated_at", { withTimezone: true })
 
 // ─── Enums ───────────────────────────────────────────────────────────────────
 
-export const LockStatusEnum = pgEnum("lock_status", [
-  "locked",
-  "unlocked",
-  "unknown",
+export const DeviceTypeEnum = pgEnum("device_type", [
+  "field_controller",
+  "shunt_trip",
+  "gateway",
 ])
+
+export const DeviceStatusEnum = pgEnum("device_status", [
+  "active",
+  "warning",
+  "offline",
+])
+
 export const UserRoleEnum = pgEnum("user_role", ["admin", "user"])
 export const UserStatusEnum = pgEnum("user_status", [
   "active",
@@ -62,24 +70,34 @@ export const UserTable = pgTable(
   ]
 )
 
-export const LockTable = pgTable("locks", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull(),
-  location: text("location"),
-  macAddress: text("mac_address").notNull().unique(),
-  status: LockStatusEnum("status").notNull().default("unknown"),
-  isActive: boolean("is_active").notNull().default(true),
-  createdAt,
-  updatedAt,
-})
+export const DeviceTable = pgTable(
+  "devices",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    deviceId: text("device_id").notNull().unique(),
+    type: DeviceTypeEnum("type").notNull(),
+    assignedMachine: text("assigned_machine").notNull(),
+    macAddress: text("mac_address").notNull().unique(),
+    isHighPriority: boolean("is_high_priority").notNull().default(false),
+    signalStrength: integer("signal_strength").default(0),
+    lastHeartbeatAt: timestamp("last_heartbeat_at", { withTimezone: true }),
+    status: DeviceStatusEnum("status").notNull().default("offline"),
+    createdAt,
+    updatedAt,
+  },
+  (table) => [
+    index("devices.device_id_index").on(table.deviceId),
+    index("devices.mac_address_index").on(table.macAddress),
+  ]
+)
 
 export const AuditLogTable = pgTable(
   "audit_logs",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    lockId: uuid("lock_id")
+    deviceId: uuid("device_id")
       .notNull()
-      .references(() => LockTable.id, { onDelete: "cascade" }),
+      .references(() => DeviceTable.id, { onDelete: "cascade" }),
     userId: uuid("user_id").references(() => UserTable.id, {
       onDelete: "set null",
     }),
@@ -89,14 +107,14 @@ export const AuditLogTable = pgTable(
       .defaultNow(),
   },
   (table) => [
-    index("audit_logs.lock_id_index").on(table.lockId),
+    index("audit_logs.device_id_index").on(table.deviceId),
     index("audit_logs.triggered_at_index").on(table.triggeredAt),
   ]
 )
 
 // ─── Relations ────────────────────────────────────────────────────────────────
 
-export const lockRelations = relations(LockTable, ({ many }) => ({
+export const deviceRelations = relations(DeviceTable, ({ many }) => ({
   auditLogs: many(AuditLogTable),
 }))
 
@@ -105,9 +123,9 @@ export const userRelations = relations(UserTable, ({ many }) => ({
 }))
 
 export const auditLogRelations = relations(AuditLogTable, ({ one }) => ({
-  lock: one(LockTable, {
-    fields: [AuditLogTable.lockId],
-    references: [LockTable.id],
+  device: one(DeviceTable, {
+    fields: [AuditLogTable.deviceId],
+    references: [DeviceTable.id],
   }),
   user: one(UserTable, {
     fields: [AuditLogTable.userId],

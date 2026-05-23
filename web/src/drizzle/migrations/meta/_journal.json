@@ -8,6 +8,13 @@
       "when": 1779009649688,
       "tag": "0000_mute_robin_chapel",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1779012000000,
+      "tag": "0001_migrate_devices",
+      "breakpoints": true
     }
   ]
 }

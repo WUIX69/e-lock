@@ -8,7 +8,7 @@ import {
   Wifi,
   MoreHorizontal,
 } from "lucide-react"
-import { MOCK_DEVICES } from "@/data/mock/devices"
+import { Device } from "@/types/devices"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
@@ -32,7 +32,11 @@ const SignalIcon = ({ strength }: SignalIconProps) => {
   return <SignalLow className="size-4 text-destructive" />
 }
 
-export const DeviceTable = () => {
+interface DeviceTableProps {
+  devices: Device[]
+}
+
+export const DeviceTable = ({ devices }: DeviceTableProps) => {
   return (
     <Card className="overflow-hidden rounded-[2rem] border border-border/50 shadow-lg">
       <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 bg-card p-8">
@@ -75,7 +79,7 @@ export const DeviceTable = () => {
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-border/30">
-              {MOCK_DEVICES.map((innerDevice) => (
+              {devices.map((innerDevice) => (
                 <TableRow
                   key={innerDevice.id}
                   className={`group border-b border-border/30 transition-colors hover:bg-muted/30 ${
@@ -144,9 +148,9 @@ export const DeviceTable = () => {
         </div>
 
         <div className="flex items-center justify-between border-t border-border/50 bg-muted/20 p-6">
-          <p className="text-sm font-medium text-muted-foreground">
-            Showing 4 of 42 hardware devices
-          </p>
+            <p className="text-sm font-medium text-muted-foreground">
+              Showing {devices.length} hardware device{devices.length !== 1 ? "s" : ""}
+            </p>
           <div className="flex gap-2">
             <Button
               variant="outline"

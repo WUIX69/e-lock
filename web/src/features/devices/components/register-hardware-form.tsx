@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
+import { addDeviceAction } from "@/features/devices/server/actions/devices"
 import { MOCK_DEVICES } from "@/data/mock/devices"
 
 type HardwareType = "controller" | "gateway" | "shunt_trip"
@@ -70,7 +71,16 @@ export const RegisterHardwareForm = ({
     setError(null)
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      const formData = new FormData(event.currentTarget)
+      formData.set("hardwareType", hardwareType)
+      const result = await addDeviceAction(formData)
+
+      if (result.error) {
+        setError(result.error)
+        setIsLoading(false)
+        return
+      }
+
       onSuccess()
     } catch {
       setError("An unexpected error occurred.")
