@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { ColumnDef } from "@tanstack/react-table"
 import {
   SignalLow,
   SignalMedium,
@@ -11,16 +12,8 @@ import {
 import { Device } from "@/types/devices"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { PaginationBar } from "@/components/ui/pagination-bar"
-import { usePagination } from "@/hooks/use-pagination"
+import { Input } from "@/components/ui/input"
+import { DataTable } from "@/components/ui/data-table"
 
 interface SignalIconProps {
   strength: number
@@ -38,9 +31,116 @@ interface DeviceTableProps {
   devices: Device[]
 }
 
+const columns: ColumnDef<Device>[] = [
+  {
+    accessorKey: "deviceId",
+    header: "Device ID",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const status = row.original.status
+      return (
+        <div className="flex items-center gap-3">
+          <div
+            className={`h-2 w-2 rounded-full ${
+              status === "active"
+                ? "animate-pulse bg-primary"
+                : status === "warning"
+                  ? "bg-destructive"
+                  : "bg-muted-foreground"
+            }`}
+          />
+          <span className="rounded-md border border-border/35 bg-muted px-2.5 py-1 font-mono text-xs text-muted-foreground">
+            {row.original.deviceId}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: "type",
+    header: "Type",
+    enableSorting: true,
+    cell: ({ row }) => (
+      <span className="font-semibold text-foreground capitalize">
+        {row.original.type.replace("_", " ")}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "assignedMachine",
+    header: "Assigned Machine",
+    enableSorting: true,
+    cell: ({ row }) => (
+      <span className="text-muted-foreground">
+        {row.original.assignedMachine}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "signalStrength",
+    header: "Signal Strength",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const strength = row.original.signalStrength
+      const status = row.original.status
+      return (
+        <div className="flex items-center gap-2">
+          <SignalIcon strength={strength} />
+          <span
+            className={`text-xs font-bold ${
+              status === "warning" ? "text-destructive" : "text-foreground"
+            }`}
+          >
+            {strength === 0
+              ? "Uplink Stable"
+              : `${strength} dBm${strength < -80 ? " (LOW)" : ""}`}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: "lastHeartbeat",
+    header: "Last Heartbeat",
+    cell: ({ row }) => (
+      <span className="text-muted-foreground">{row.original.lastHeartbeat}</span>
+    ),
+  },
+  {
+    id: "actions",
+    header: "",
+    cell: () => (
+      <div className="text-right">
+        <Button
+          variant="link"
+          size="sm"
+          className="h-8 p-0 text-sm font-bold text-primary hover:text-primary/80"
+        >
+          Configure
+        </Button>
+      </div>
+    ),
+  },
+]
+
 export const DeviceTable = ({ devices }: DeviceTableProps) => {
-  const pagination = usePagination({ totalItems: devices.length, pageSize: 6 })
-  const pageDevices = devices.slice(pagination.startIndex, pagination.endIndex)
+  const [search, setSearch] = React.useState("")
+  const [statusFilter, setStatusFilter] = React.useState("all")
+  const [typeFilter, setTypeFilter] = React.useState("all")
+
+  const filtered = devices.filter((d) => {
+    if (statusFilter !== "all" && d.status !== statusFilter) return false
+    if (typeFilter !== "all" && d.type !== typeFilter) return false
+    if (search) {
+      const q = search.toLowerCase()
+      if (
+        !d.deviceId.toLowerCase().includes(q) &&
+        !d.assignedMachine.toLowerCase().includes(q)
+      )
+        return false
+    }
+    return true
+  })
 
   return (
     <Card className="overflow-hidden rounded-[2rem] border border-border/50 shadow-lg">
@@ -59,111 +159,41 @@ export const DeviceTable = ({ devices }: DeviceTableProps) => {
       </CardHeader>
 
       <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <Table className="w-full border-collapse">
-            <TableHeader>
-              <TableRow className="border-b border-border/50 bg-muted/20 hover:bg-muted/20">
-                <TableHead className="h-12 px-8 py-4 text-left text-xs font-bold tracking-wider text-muted-foreground uppercase">
-                  Device ID
-                </TableHead>
-                <TableHead className="h-12 px-8 py-4 text-left text-xs font-bold tracking-wider text-muted-foreground uppercase">
-                  Type
-                </TableHead>
-                <TableHead className="h-12 px-8 py-4 text-left text-xs font-bold tracking-wider text-muted-foreground uppercase">
-                  Assigned Machine
-                </TableHead>
-                <TableHead className="h-12 px-8 py-4 text-left text-xs font-bold tracking-wider text-muted-foreground uppercase">
-                  Signal Strength
-                </TableHead>
-                <TableHead className="h-12 px-8 py-4 text-left text-xs font-bold tracking-wider text-muted-foreground uppercase">
-                  Last Heartbeat
-                </TableHead>
-                <TableHead className="h-12 px-8 py-4 text-right text-xs font-bold tracking-wider text-muted-foreground uppercase">
-                  Actions
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="divide-y divide-border/30">
-              {pageDevices.map((innerDevice) => (
-                <TableRow
-                  key={innerDevice.id}
-                  className={`group border-b border-border/30 transition-colors hover:bg-muted/30 ${
-                    innerDevice.status === "warning"
-                      ? "bg-destructive/5 hover:bg-destructive/10"
-                      : ""
-                  }`}
-                >
-                  <TableCell className="h-16 px-8 py-6">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`h-2 w-2 rounded-full ${
-                          innerDevice.status === "active"
-                            ? "animate-pulse bg-primary"
-                            : innerDevice.status === "warning"
-                              ? "bg-destructive"
-                              : "bg-muted-foreground"
-                        }`}
-                      />
-                      <span className="rounded-md border border-border/35 bg-muted px-2.5 py-1 font-mono text-xs text-muted-foreground">
-                        {innerDevice.deviceId}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="h-16 px-8 py-6 font-semibold text-foreground capitalize">
-                    {innerDevice.type.replace("_", " ")}
-                  </TableCell>
-                  <TableCell className="h-16 px-8 py-6 text-muted-foreground">
-                    {innerDevice.assignedMachine}
-                  </TableCell>
-                  <TableCell className="h-16 px-8 py-6">
-                    <div className="flex items-center gap-2">
-                      <SignalIcon strength={innerDevice.signalStrength} />
-                      <span
-                        className={`text-xs font-bold ${
-                          innerDevice.status === "warning"
-                            ? "text-destructive"
-                            : "text-foreground"
-                        }`}
-                      >
-                        {innerDevice.signalStrength === 0
-                          ? "Uplink Stable"
-                          : `${innerDevice.signalStrength} dBm${
-                              innerDevice.signalStrength < -80 ? " (LOW)" : ""
-                            }`}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="h-16 px-8 py-6 text-muted-foreground">
-                    {innerDevice.lastHeartbeat}
-                  </TableCell>
-                  <TableCell className="h-16 px-8 py-6 text-right">
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="h-8 p-0 text-sm font-bold text-primary hover:text-primary/80"
-                      aria-label={`Configure ${innerDevice.deviceId}`}
-                    >
-                      Configure
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-
-        <PaginationBar
-          page={pagination.page}
-          totalPages={pagination.totalPages}
-          startIndex={pagination.startIndex}
-          endIndex={pagination.endIndex}
-          totalItems={devices.length}
-          pageNumbers={pagination.pageNumbers}
-          hasNext={pagination.hasNext}
-          hasPrev={pagination.hasPrev}
-          onNext={pagination.nextPage}
-          onPrev={pagination.prevPage}
-          onGoToPage={pagination.goToPage}
+        <DataTable
+          columns={columns}
+          data={filtered}
+          pageSize={6}
+          toolbar={
+            <div className="flex flex-wrap items-center gap-3">
+              <Input
+                placeholder="Search device ID or machine..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-9 w-64 text-xs"
+              />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="h-9 w-32 rounded-lg border border-border bg-card px-3 text-xs font-medium text-foreground"
+              >
+                <option value="all">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="warning">Warning</option>
+                <option value="offline">Offline</option>
+                <option value="maintenance">Maintenance</option>
+              </select>
+              <select
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+                className="h-9 w-36 rounded-lg border border-border bg-card px-3 text-xs font-medium text-foreground"
+              >
+                <option value="all">All Types</option>
+                <option value="field_controller">Field Controller</option>
+                <option value="shunt_trip">Shunt Trip</option>
+                <option value="gateway">Gateway</option>
+              </select>
+            </div>
+          }
         />
       </CardContent>
     </Card>
