@@ -54,8 +54,7 @@ export async function addDeviceAction(
 
     await insertDevice(validatedData.data)
 
-    revalidatePath("/admin/devices")
-    revalidatePath("/user/devices")
+    revalidatePath("/devices")
 
     return { success: true }
   } catch (error) {

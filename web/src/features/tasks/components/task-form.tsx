@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Lock } from "lucide-react"
-import { useAuth } from "@/context/auth-context"
 import { TaskPriority, CoWorker } from "@/types/tasks"
 import { Device } from "@/types/devices"
 import { ResourceSelection } from "./resource-selection"
@@ -30,7 +29,6 @@ export const TaskForm = ({
   taskId,
 }: TaskFormProps) => {
   const router = useRouter()
-  const { currentUser } = useAuth()
   const [deviceId, setDeviceId] = useState(defaultDeviceId)
   const [taskType, setTaskType] = useState("")
   const [subject, setSubject] = useState("")
@@ -125,7 +123,7 @@ export const TaskForm = ({
       return
     }
 
-    router.push(currentUser?.role === "admin" ? "/tasks" : "/user/my-activity")
+    router.push("/tasks")
   }
 
   if (loading) {

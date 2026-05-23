@@ -1,7 +1,6 @@
-import { Lock, FileText, Clock } from "lucide-react"
+import { Lock, Clock } from "lucide-react"
 import { getSessionAction } from "@/features/auth/server/actions/auth"
 import { getTasksByUser } from "@/features/tasks/server/db/tasks"
-import { TaskCard } from "./task-card"
 
 export default async function MyActivityPage() {
   const session = await getSessionAction()
@@ -60,28 +59,7 @@ export default async function MyActivityPage() {
         </div>
       </div>
 
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="rounded-xl bg-accent-green/10 p-3 text-accent-green">
-            <FileText className="size-5" />
-          </div>
-          <h3 className="text-xl font-bold">My Task Records</h3>
-        </div>
 
-        {tasks.length === 0 ? (
-          <div className="rounded-3xl border border-border bg-card p-8 text-center">
-            <p className="text-sm text-muted-foreground">
-              No task records yet. Submit your first task from a device card.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {tasks.map((task) => (
-              <TaskCard key={task.id} task={task} />
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   )
 }

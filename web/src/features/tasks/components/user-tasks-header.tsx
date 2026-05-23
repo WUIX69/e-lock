@@ -31,7 +31,7 @@ export const UserTasksHeader = () => {
         </button>
         <button
           type="button"
-          onClick={() => router.push("/user/devices")}
+          onClick={() => router.push("/devices")}
           className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-primary-foreground shadow-md shadow-primary/20 transition-all hover:brightness-110 active:scale-95"
         >
           <Plus className="size-4" />
