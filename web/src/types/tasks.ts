@@ -6,10 +6,13 @@ export type TaskCategory =
   | "General Record / Log"
   | "Safety Inspection"
 
+export type TaskStatus = "pending" | "completed" | "cancelled"
+
 export interface CoWorker {
   id: string
   name: string
   role: string
+  employeeId?: string
 }
 
 export interface TaskFormData {
@@ -18,20 +21,25 @@ export interface TaskFormData {
   subject: string
   priority: TaskPriority
   description: string
-  attachments: File[]
   coWorker: CoWorker | null
+}
+
+export interface AddTaskResult {
+  error?: string
+  success?: boolean
 }
 
 export interface TaskRecord {
   id: string
   deviceId: string
-  nodeName: string
-  taskType: TaskCategory
+  userId: string
+  taskType: string
   subject: string
   priority: TaskPriority
-  description: string
-  submittedBy: string
-  coWorker: CoWorker | null
+  description: string | null
+  coWorkerId: string | null
+  coWorkerName: string | null
+  status: TaskStatus
   submittedAt: string
-  status: "completed" | "pending"
+  updatedAt: string
 }

@@ -2,29 +2,30 @@
 
 import { Search, X } from "lucide-react"
 import { useState, useMemo } from "react"
-import { MOCK_COWORKERS } from "@/data/mock/tasks"
 import { CoWorker } from "@/types/tasks"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 interface VerificationSectionProps {
   selectedCoWorker: CoWorker | null
   onSelectCoWorker: (coworker: CoWorker | null) => void
+  coworkers: CoWorker[]
 }
 
 export const VerificationSection = ({
   selectedCoWorker,
   onSelectCoWorker,
+  coworkers,
 }: VerificationSectionProps) => {
   const [searchQuery, setSearchQuery] = useState("")
 
   const filtered = useMemo(
     () =>
-      MOCK_COWORKERS.filter(
+      coworkers.filter(
         (cw) =>
           cw.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          cw.id.includes(searchQuery)
+          (cw.employeeId || cw.id).includes(searchQuery)
       ),
-    [searchQuery]
+    [searchQuery, coworkers]
   )
 
   return (
@@ -68,7 +69,7 @@ export const VerificationSection = ({
                   <div>
                     <p className="text-sm font-bold text-foreground">{cw.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      ID: {cw.id} &middot; {cw.role}
+                      ID: {cw.employeeId || cw.id} &middot; {cw.role}
                     </p>
                   </div>
                 </button>
@@ -88,7 +89,7 @@ export const VerificationSection = ({
           </Avatar>
           <div className="flex-1">
             <p className="text-xs font-bold text-foreground">
-              {selectedCoWorker.name} (ID: {selectedCoWorker.id})
+              {selectedCoWorker.name} (ID: {selectedCoWorker.employeeId || selectedCoWorker.id})
             </p>
             <p className="text-xs text-muted-foreground">{selectedCoWorker.role}</p>
           </div>

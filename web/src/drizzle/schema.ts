@@ -70,6 +70,40 @@ export const UserTable = pgTable(
   ]
 )
 
+export const TaskTable = pgTable(
+  "tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    deviceId: uuid("device_id")
+      .notNull()
+      .references(() => DeviceTable.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => UserTable.id, { onDelete: "cascade" }),
+    taskType: text("task_type").notNull(),
+    subject: text("subject").notNull(),
+    priority: text("priority").notNull(),
+    description: text("description"),
+    coWorkerId: uuid("co_worker_id").references(() => UserTable.id, {
+      onDelete: "set null",
+    }),
+    coWorkerName: text("co_worker_name"),
+    status: text("status").notNull().default("pending"),
+    submittedAt: timestamp("submitted_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    index("tasks.device_id_index").on(table.deviceId),
+    index("tasks.user_id_index").on(table.userId),
+    index("tasks.status_index").on(table.status),
+  ]
+)
+
 export const DeviceTable = pgTable(
   "devices",
   {
@@ -116,10 +150,12 @@ export const AuditLogTable = pgTable(
 
 export const deviceRelations = relations(DeviceTable, ({ many }) => ({
   auditLogs: many(AuditLogTable),
+  tasks: many(TaskTable),
 }))
 
 export const userRelations = relations(UserTable, ({ many }) => ({
   auditLogs: many(AuditLogTable),
+  tasks: many(TaskTable),
 }))
 
 export const auditLogRelations = relations(AuditLogTable, ({ one }) => ({
@@ -129,6 +165,21 @@ export const auditLogRelations = relations(AuditLogTable, ({ one }) => ({
   }),
   user: one(UserTable, {
     fields: [AuditLogTable.userId],
+    references: [UserTable.id],
+  }),
+}))
+
+export const taskRelations = relations(TaskTable, ({ one }) => ({
+  device: one(DeviceTable, {
+    fields: [TaskTable.deviceId],
+    references: [DeviceTable.id],
+  }),
+  user: one(UserTable, {
+    fields: [TaskTable.userId],
+    references: [UserTable.id],
+  }),
+  coWorker: one(UserTable, {
+    fields: [TaskTable.coWorkerId],
     references: [UserTable.id],
   }),
 }))

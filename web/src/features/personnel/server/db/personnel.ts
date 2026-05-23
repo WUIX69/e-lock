@@ -40,6 +40,14 @@ export async function getAllPersonnel() {
   return await db.select().from(UserTable).orderBy(UserTable.createdAt)
 }
 
+export async function getAllActivePersonnel() {
+  return await db
+    .select()
+    .from(UserTable)
+    .where(eq(UserTable.status, "active"))
+    .orderBy(UserTable.createdAt)
+}
+
 export async function updatePersonnel(
   id: string,
   data: Omit<EditPersonnelSchema, "id">
