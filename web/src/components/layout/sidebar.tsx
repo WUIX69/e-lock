@@ -33,7 +33,7 @@ const getNavigation = (role: string | undefined) => {
       { name: "Energy Sources", href: "/admin/energy", icon: Zap },
       { name: "Lockout Devices", href: "/admin/devices", icon: Lock },
       { name: "Safety Logs", href: "/admin/audit", icon: History },
-      { name: "Task Records", href: "/admin/tasks", icon: ClipboardList },
+      { name: "Task Records", href: "/tasks", icon: ClipboardList },
       { name: "Team Access", href: "/admin/personnel", icon: Users },
       { name: "System Settings", href: "/admin/settings", icon: Settings },
     ]

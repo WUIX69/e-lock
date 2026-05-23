@@ -21,7 +21,7 @@ export interface TaskFormData {
   subject: string
   priority: TaskPriority
   description: string
-  coWorker: CoWorker | null
+  coWorkers: CoWorker[]
 }
 
 export interface AddTaskResult {
@@ -37,8 +37,7 @@ export interface TaskRecord {
   subject: string
   priority: TaskPriority
   description: string | null
-  coWorkerId: string | null
-  coWorkerName: string | null
+  coWorkers: { id: string; name: string }[]
   status: TaskStatus
   submittedAt: string
   updatedAt: string

@@ -4,6 +4,15 @@ import { eq } from "drizzle-orm"
 import { AddDeviceSchema } from "@/features/devices/schemas/devices"
 import { DeviceStatus } from "@/types/devices"
 
+export async function getDeviceById(id: string) {
+  const devices = await db
+    .select()
+    .from(DeviceTable)
+    .where(eq(DeviceTable.id, id))
+    .limit(1)
+  return devices[0] || null
+}
+
 export async function getDeviceByDeviceId(deviceId: string) {
   const devices = await db
     .select()

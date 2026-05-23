@@ -27,7 +27,7 @@ export type PersonnelRow = {
   employeeId: string
   name: string
   email: string
-  role: "admin" | "user"
+  role: "admin" | "senior_engineer" | "user"
   position: string
   securityLevel: string
   status: "active" | "inactive" | "off-site" | "on-leave"

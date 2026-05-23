@@ -187,7 +187,7 @@ async function seed() {
       name: "Alex Thompson",
       email: "user@elock.dev",
       passwordHash: userPasswordHash,
-      role: "user" as const,
+      role: "senior_engineer" as const,
       employeeId: "P-101",
       position: "SENIOR ELECTRICIAN",
       securityLevel: "Level 4 (LOTO)",

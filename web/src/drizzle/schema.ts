@@ -33,9 +33,14 @@ export const DeviceStatusEnum = pgEnum("device_status", [
   "active",
   "warning",
   "offline",
+  "maintenance",
 ])
 
-export const UserRoleEnum = pgEnum("user_role", ["admin", "user"])
+export const UserRoleEnum = pgEnum("user_role", [
+  "admin",
+  "senior_engineer",
+  "user",
+])
 export const UserStatusEnum = pgEnum("user_status", [
   "active",
   "inactive",
@@ -84,10 +89,6 @@ export const TaskTable = pgTable(
     subject: text("subject").notNull(),
     priority: text("priority").notNull(),
     description: text("description"),
-    coWorkerId: uuid("co_worker_id").references(() => UserTable.id, {
-      onDelete: "set null",
-    }),
-    coWorkerName: text("co_worker_name"),
     status: text("status").notNull().default("pending"),
     submittedAt: timestamp("submitted_at", { withTimezone: true })
       .notNull()
@@ -102,6 +103,21 @@ export const TaskTable = pgTable(
     index("tasks.user_id_index").on(table.userId),
     index("tasks.status_index").on(table.status),
   ]
+)
+
+export const TaskCoWorkerTable = pgTable(
+  "task_coworkers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    taskId: uuid("task_id")
+      .notNull()
+      .references(() => TaskTable.id, { onDelete: "cascade" }),
+    userId: uuid("user_id").references(() => UserTable.id, {
+      onDelete: "set null",
+    }),
+    name: text("name").notNull(),
+  },
+  (table) => [index("task_coworkers.task_id_index").on(table.taskId)]
 )
 
 export const DeviceTable = pgTable(
@@ -156,6 +172,7 @@ export const deviceRelations = relations(DeviceTable, ({ many }) => ({
 export const userRelations = relations(UserTable, ({ many }) => ({
   auditLogs: many(AuditLogTable),
   tasks: many(TaskTable),
+  taskCoWorkers: many(TaskCoWorkerTable),
 }))
 
 export const auditLogRelations = relations(AuditLogTable, ({ one }) => ({
@@ -169,7 +186,7 @@ export const auditLogRelations = relations(AuditLogTable, ({ one }) => ({
   }),
 }))
 
-export const taskRelations = relations(TaskTable, ({ one }) => ({
+export const taskRelations = relations(TaskTable, ({ one, many }) => ({
   device: one(DeviceTable, {
     fields: [TaskTable.deviceId],
     references: [DeviceTable.id],
@@ -178,8 +195,19 @@ export const taskRelations = relations(TaskTable, ({ one }) => ({
     fields: [TaskTable.userId],
     references: [UserTable.id],
   }),
-  coWorker: one(UserTable, {
-    fields: [TaskTable.coWorkerId],
-    references: [UserTable.id],
-  }),
+  coWorkers: many(TaskCoWorkerTable),
 }))
+
+export const taskCoWorkerRelations = relations(
+  TaskCoWorkerTable,
+  ({ one }) => ({
+    task: one(TaskTable, {
+      fields: [TaskCoWorkerTable.taskId],
+      references: [TaskTable.id],
+    }),
+    user: one(UserTable, {
+      fields: [TaskCoWorkerTable.userId],
+      references: [UserTable.id],
+    }),
+  })
+)

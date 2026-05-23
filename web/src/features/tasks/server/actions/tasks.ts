@@ -6,10 +6,35 @@ import {
   insertTask,
   getTaskById,
   updateTask,
+  updateTaskCoworkers,
   deleteTask,
+  getAllTasks,
 } from "@/features/tasks/server/db/tasks"
+import { getDeviceById } from "@/features/devices/server/db/devices"
 import { getSessionAction } from "@/features/auth/server/actions/auth"
 import { AddTaskResult } from "@/types/tasks"
+
+const RESTRICTED_DEVICE_STATUSES = ["offline", "maintenance"]
+
+function canBypassDeviceRestriction(role: string): boolean {
+  return role === "admin" || role === "senior_engineer"
+}
+
+async function checkDeviceAccess(
+  deviceId: string,
+  userRole: string
+): Promise<string | null> {
+  const device = await getDeviceById(deviceId)
+  if (!device) return "Device not found."
+
+  if (RESTRICTED_DEVICE_STATUSES.includes(device.status)) {
+    if (!canBypassDeviceRestriction(userRole)) {
+      return `Cannot submit task: device is currently "${device.status}". Only Senior Engineers and Admins can submit tasks on restricted devices.`
+    }
+  }
+
+  return null
+}
 
 export async function submitTaskAction(
   formData: FormData
@@ -26,8 +51,10 @@ export async function submitTaskAction(
       subject: formData.get("subject"),
       priority: formData.get("priority"),
       description: formData.get("description") || undefined,
-      coWorkerId: formData.get("coWorkerId") || undefined,
-      coWorkerName: formData.get("coWorkerName") || undefined,
+      coWorkerIds: JSON.parse((formData.get("coWorkerIds") as string) || "[]"),
+      coWorkerNames: JSON.parse(
+        (formData.get("coWorkerNames") as string) || "[]"
+      ),
     }
 
     const parsed = submitTaskSchema.safeParse(raw)
@@ -35,6 +62,12 @@ export async function submitTaskAction(
       console.error("Task validation errors:", parsed.error.format())
       return { error: "Validation failed. Please check the form fields." }
     }
+
+    const deviceError = await checkDeviceAccess(
+      parsed.data.deviceId,
+      session.role
+    )
+    if (deviceError) return { error: deviceError }
 
     await insertTask(parsed.data, session.sub)
 
@@ -57,15 +90,13 @@ export async function updateTaskAction(
 
     const id = formData.get("id") as string
     const existing = await getTaskById(id)
-    if (!existing) {
-      return { error: "Task not found." }
-    }
+    if (!existing) return { error: "Task not found." }
 
-    if (existing.userId !== session.sub) {
+    if (existing.userId !== session.sub && session.role !== "admin") {
       return { error: "You can only update your own tasks." }
     }
 
-    if (existing.status !== "pending") {
+    if (existing.status !== "pending" && session.role !== "admin") {
       return { error: "Only pending tasks can be updated." }
     }
 
@@ -76,15 +107,26 @@ export async function updateTaskAction(
       subject: formData.get("subject") || existing.subject,
       priority: formData.get("priority") || existing.priority,
       description: formData.get("description") || existing.description,
-      coWorkerId: formData.get("coWorkerId") || existing.coWorkerId,
-      coWorkerName: formData.get("coWorkerName") || existing.coWorkerName,
+      coWorkerIds: JSON.parse(
+        (formData.get("coWorkerIds") as string) || "[]"
+      ),
+      coWorkerNames: JSON.parse(
+        (formData.get("coWorkerNames") as string) || "[]"
+      ),
       status: formData.get("status") || undefined,
     }
 
     const parsed = updateTaskSchema.safeParse(raw)
     if (!parsed.success) {
+      console.error("Update validation errors:", parsed.error.format())
       return { error: "Validation failed." }
     }
+
+    const deviceError = await checkDeviceAccess(
+      parsed.data.deviceId,
+      session.role
+    )
+    if (deviceError) return { error: deviceError }
 
     await updateTask(id, {
       status: parsed.data.status,
@@ -92,7 +134,16 @@ export async function updateTaskAction(
       description: parsed.data.description ?? null,
     })
 
+    if (parsed.data.coWorkerIds.length > 0) {
+      await updateTaskCoworkers(
+        id,
+        parsed.data.coWorkerIds,
+        parsed.data.coWorkerNames
+      )
+    }
+
     revalidatePath("/user/my-activity")
+    revalidatePath("/tasks")
     return { success: true }
   } catch (error) {
     console.error("Update task error:", error)
@@ -105,21 +156,17 @@ export async function cancelTaskAction(
 ): Promise<AddTaskResult> {
   try {
     const session = await getSessionAction()
-    if (!session) {
-      return { error: "You must be logged in." }
-    }
+    if (!session) return { error: "You must be logged in." }
 
     const id = formData.get("id") as string
     const existing = await getTaskById(id)
-    if (!existing) {
-      return { error: "Task not found." }
-    }
+    if (!existing) return { error: "Task not found." }
 
-    if (existing.userId !== session.sub) {
+    if (existing.userId !== session.sub && session.role !== "admin") {
       return { error: "You can only cancel your own tasks." }
     }
 
-    if (existing.status !== "pending") {
+    if (existing.status !== "pending" && session.role !== "admin") {
       return { error: "Only pending tasks can be cancelled." }
     }
 
@@ -138,27 +185,59 @@ export async function deleteTaskAction(
 ): Promise<AddTaskResult> {
   try {
     const session = await getSessionAction()
-    if (!session) {
-      return { error: "You must be logged in." }
-    }
+    if (!session) return { error: "You must be logged in." }
 
     const id = formData.get("id") as string
     const existing = await getTaskById(id)
-    if (!existing) {
-      return { error: "Task not found." }
-    }
+    if (!existing) return { error: "Task not found." }
 
-    if (session.role !== "admin" && existing.userId !== session.sub) {
-      return { error: "Unauthorized." }
+    if (session.role !== "admin") {
+      return { error: "Only admins can delete tasks." }
     }
 
     await deleteTask(id)
 
-    revalidatePath("/admin/tasks")
+    revalidatePath("/tasks")
     revalidatePath("/user/my-activity")
     return { success: true }
   } catch (error) {
     console.error("Delete task error:", error)
     return { error: "An unexpected error occurred." }
+  }
+}
+
+export async function getTaskForEditAction(
+  taskId: string
+): Promise<{ task?: Record<string, unknown>; error?: string }> {
+  try {
+    const session = await getSessionAction()
+    if (!session) return { error: "You must be logged in." }
+
+    const task = await getTaskById(taskId)
+    if (!task) return { error: "Task not found." }
+
+    if (task.userId !== session.sub && session.role !== "admin") {
+      return { error: "Unauthorized." }
+    }
+
+    if (task.status !== "pending" && session.role !== "admin") {
+      return { error: "Only pending tasks can be edited." }
+    }
+
+    return { task }
+  } catch {
+    return { error: "Failed to load task." }
+  }
+}
+
+export async function getAllTasksAction() {
+  try {
+    const session = await getSessionAction()
+    if (!session) return { error: "You must be logged in." }
+
+    const tasks = await getAllTasks()
+    return { tasks }
+  } catch {
+    return { error: "Failed to load tasks." }
   }
 }

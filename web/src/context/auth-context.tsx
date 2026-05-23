@@ -7,7 +7,7 @@ export interface SessionUser {
   id: string
   email: string
   name: string
-  role: "admin" | "user"
+  role: "admin" | "senior_engineer" | "user"
 }
 
 interface AuthContextValue {

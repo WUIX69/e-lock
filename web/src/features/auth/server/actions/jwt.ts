@@ -10,7 +10,7 @@ export interface SessionUser {
   sub: string
   email: string
   name: string
-  role: "admin" | "user"
+  role: "admin" | "senior_engineer" | "user"
 }
 
 function parseExpiresInToSeconds(expiresIn: string): number {
@@ -108,7 +108,7 @@ export async function refreshSession(): Promise<SessionUser | null> {
 }
 
 export async function requireAuth(
-  allowedRoles?: ("admin" | "user")[]
+  allowedRoles?: ("admin" | "senior_engineer" | "user")[]
 ): Promise<SessionUser> {
   const cookieStore = await cookies()
   const accessToken = cookieStore.get("elock_access_token")?.value

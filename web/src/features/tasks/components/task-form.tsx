@@ -1,36 +1,89 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Lock } from "lucide-react"
+import { useAuth } from "@/context/auth-context"
 import { TaskPriority, CoWorker } from "@/types/tasks"
 import { Device } from "@/types/devices"
 import { ResourceSelection } from "./resource-selection"
 import { TaskDetails } from "./task-details"
 import { VerificationSection } from "./verification-section"
 import { BiometricAuth } from "./biometric-auth"
-import { submitTaskAction } from "@/features/tasks/server/actions/tasks"
+import {
+  submitTaskAction,
+  updateTaskAction,
+  getTaskForEditAction,
+} from "@/features/tasks/server/actions/tasks"
 
 interface TaskFormProps {
   defaultDeviceId?: string
   devices: Device[]
   coworkers: CoWorker[]
+  taskId?: string
 }
 
 export const TaskForm = ({
   defaultDeviceId = "",
   devices,
   coworkers,
+  taskId,
 }: TaskFormProps) => {
   const router = useRouter()
+  const { currentUser } = useAuth()
   const [deviceId, setDeviceId] = useState(defaultDeviceId)
   const [taskType, setTaskType] = useState("")
   const [subject, setSubject] = useState("")
   const [priority, setPriority] = useState<TaskPriority>("Routine")
   const [description, setDescription] = useState("")
-  const [coWorker, setCoWorker] = useState<CoWorker | null>(null)
+  const [coWorkers, setCoWorkers] = useState<CoWorker[]>([])
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [loading, setLoading] = useState(!!taskId)
+
+  useEffect(() => {
+    if (!taskId) return
+
+    getTaskForEditAction(taskId).then((result) => {
+      if (result.error) {
+        setError(result.error)
+        setLoading(false)
+        return
+      }
+
+      const task = result.task as {
+        deviceId: string
+        taskType: string
+        subject: string
+        priority: string
+        description: string | null
+        coWorkers: { id: string; name: string }[]
+      }
+      setDeviceId(task.deviceId)
+      setTaskType(task.taskType)
+      setSubject(task.subject)
+      setPriority(task.priority as TaskPriority)
+      setDescription(task.description || "")
+
+      if (task.coWorkers?.length > 0) {
+        const matched: CoWorker[] = task.coWorkers
+          .map((cw: { id: string; name: string }) => {
+            const found = coworkers.find((c) => c.id === cw.id)
+            return (
+              found || {
+                id: cw.id,
+                name: cw.name,
+                role: "Co-worker",
+              }
+            )
+          })
+          .filter(Boolean)
+        setCoWorkers(matched)
+      }
+
+      setLoading(false)
+    })
+  }, [taskId, coworkers])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,19 +96,44 @@ export const TaskForm = ({
     formData.set("subject", subject)
     formData.set("priority", priority)
     formData.set("description", description)
-    if (coWorker) {
-      formData.set("coWorkerId", coWorker.id)
-      formData.set("coWorkerName", coWorker.name)
+
+    if (coWorkers.length > 0) {
+      formData.set(
+        "coWorkerIds",
+        JSON.stringify(coWorkers.map((cw) => cw.id))
+      )
+      formData.set(
+        "coWorkerNames",
+        JSON.stringify(coWorkers.map((cw) => cw.name))
+      )
+    } else {
+      formData.set("coWorkerIds", "[]")
+      formData.set("coWorkerNames", "[]")
     }
 
-    const result = await submitTaskAction(formData)
+    let result
+    if (taskId) {
+      formData.set("id", taskId)
+      result = await updateTaskAction(formData)
+    } else {
+      result = await submitTaskAction(formData)
+    }
+
     if (result.error) {
       setError(result.error)
       setIsSubmitting(false)
       return
     }
 
-    router.push("/user/my-activity")
+    router.push(currentUser?.role === "admin" ? "/tasks" : "/user/my-activity")
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <p className="text-sm text-muted-foreground">Loading task...</p>
+      </div>
+    )
   }
 
   return (
@@ -71,7 +149,9 @@ export const TaskForm = ({
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-green text-xs font-black text-primary">
             1
           </span>
-          <h3 className="text-xl font-bold tracking-tight">Resource Selection</h3>
+          <h3 className="text-xl font-bold tracking-tight">
+            {taskId ? "Resource" : "Resource Selection"}
+          </h3>
         </div>
         <ResourceSelection
           deviceId={deviceId}
@@ -109,8 +189,8 @@ export const TaskForm = ({
             <h3 className="text-xl font-bold tracking-tight">Verification</h3>
           </div>
           <VerificationSection
-            selectedCoWorker={coWorker}
-            onSelectCoWorker={setCoWorker}
+            selectedCoWorkers={coWorkers}
+            onCoWorkersChange={setCoWorkers}
             coworkers={coworkers}
           />
         </section>
@@ -141,7 +221,11 @@ export const TaskForm = ({
           className="flex items-center gap-2 rounded-full bg-primary px-8 py-3 font-bold text-primary-foreground shadow-lg transition-all hover:brightness-110 active:opacity-80 disabled:opacity-50"
         >
           <Lock className="size-4" />
-          {isSubmitting ? "Submitting..." : "Submit Record"}
+          {isSubmitting
+            ? "Submitting..."
+            : taskId
+              ? "Update Record"
+              : "Submit Record"}
         </button>
       </div>
     </form>

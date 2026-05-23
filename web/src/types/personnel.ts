@@ -27,7 +27,7 @@ export interface AccessProtocol {
 export interface AddPersonnelFormData {
   fullName: string
   email: string
-  role: "admin" | "user"
+  role: "admin" | "senior_engineer" | "user"
   pin: string
 }
 

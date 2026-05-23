@@ -119,7 +119,7 @@ export const UserDeviceCard = ({ device }: UserDeviceCardProps) => {
       </div>
 
       <button
-        onClick={() => router.push(`/user/tasks/submit?deviceId=${device.id}`)}
+        onClick={() => router.push(`/tasks/submit?deviceId=${device.id}`)}
         className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 font-black tracking-widest text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 active:scale-95 group/btn"
       >
         SUBMIT TASK

@@ -1,5 +1,5 @@
 export type DeviceType = "field_controller" | "shunt_trip" | "gateway"
-export type DeviceStatus = "active" | "warning" | "offline"
+export type DeviceStatus = "active" | "warning" | "offline" | "maintenance"
 
 export interface Device {
   id: string

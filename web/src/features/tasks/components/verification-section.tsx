@@ -1,32 +1,50 @@
 "use client"
 
-import { Search, X } from "lucide-react"
 import { useState, useMemo } from "react"
+import { Check, ChevronsUpDown, X } from "lucide-react"
 import { CoWorker } from "@/types/tasks"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
 
 interface VerificationSectionProps {
-  selectedCoWorker: CoWorker | null
-  onSelectCoWorker: (coworker: CoWorker | null) => void
+  selectedCoWorkers: CoWorker[]
+  onCoWorkersChange: (coworkers: CoWorker[]) => void
   coworkers: CoWorker[]
 }
 
 export const VerificationSection = ({
-  selectedCoWorker,
-  onSelectCoWorker,
+  selectedCoWorkers,
+  onCoWorkersChange,
   coworkers,
 }: VerificationSectionProps) => {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [open, setOpen] = useState(false)
 
-  const filtered = useMemo(
-    () =>
-      coworkers.filter(
-        (cw) =>
-          cw.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (cw.employeeId || cw.id).includes(searchQuery)
-      ),
-    [searchQuery, coworkers]
+  const selectedIds = useMemo(
+    () => new Set(selectedCoWorkers.map((cw) => cw.id)),
+    [selectedCoWorkers]
   )
+
+  const handleToggle = (cw: CoWorker) => {
+    if (selectedIds.has(cw.id)) {
+      onCoWorkersChange(selectedCoWorkers.filter((s) => s.id !== cw.id))
+    } else {
+      onCoWorkersChange([...selectedCoWorkers, cw])
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -35,71 +53,96 @@ export const VerificationSection = ({
         lockout/tagout state.
       </p>
 
-      {!selectedCoWorker ? (
-        <div className="relative">
-          <input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-lg border border-border bg-muted p-3 pr-12 font-body-md text-foreground transition-all placeholder:text-muted-foreground/50 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
-            placeholder="Search co-worker by ID or name..."
-            type="text"
-          />
-          <Search className="absolute right-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
-
-          {searchQuery && filtered.length > 0 && (
-            <div className="absolute z-10 mt-1 w-full rounded-xl border border-border bg-card p-2 shadow-xl">
-              {filtered.map((cw) => (
-                <button
-                  key={cw.id}
-                  type="button"
-                  onClick={() => {
-                    onSelectCoWorker(cw)
-                    setSearchQuery("")
-                  }}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-muted"
-                >
-                  <Avatar className="h-8 w-8 rounded-full">
-                    <AvatarFallback className="text-xs font-bold">
-                      {cw.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-sm font-bold text-foreground">{cw.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      ID: {cw.employeeId || cw.id} &middot; {cw.role}
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="flex items-center gap-3 rounded-lg border border-border/20 bg-muted p-3">
-          <Avatar className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-            <AvatarFallback>
-              {selectedCoWorker.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <p className="text-xs font-bold text-foreground">
-              {selectedCoWorker.name} (ID: {selectedCoWorker.employeeId || selectedCoWorker.id})
-            </p>
-            <p className="text-xs text-muted-foreground">{selectedCoWorker.role}</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => onSelectCoWorker(null)}
-            className="rounded-full p-1 text-destructive transition-colors hover:bg-destructive/10"
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full justify-between rounded-lg border-border bg-muted px-3 py-6 font-body-md text-foreground hover:bg-muted/80"
           >
-            <X className="size-4" />
-          </button>
+            {selectedCoWorkers.length > 0
+              ? `${selectedCoWorkers.length} co-worker${selectedCoWorkers.length > 1 ? "s" : ""} selected`
+              : "Search co-workers..."}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent
+          className="w-full min-w-[var(--radix-popover-trigger-width)] p-0"
+          align="start"
+        >
+          <Command>
+            <CommandInput placeholder="Search by name or ID..." />
+            <CommandList>
+              <CommandEmpty>No employees found.</CommandEmpty>
+              <CommandGroup>
+                {coworkers.map((cw) => (
+                  <CommandItem
+                    key={cw.id}
+                    value={`${cw.name} ${cw.employeeId || cw.id}`}
+                    onSelect={() => handleToggle(cw)}
+                  >
+                    <div
+                      className={cn(
+                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                        selectedIds.has(cw.id)
+                          ? "bg-primary text-primary-foreground"
+                          : "opacity-50"
+                      )}
+                    >
+                      {selectedIds.has(cw.id) && (
+                        <Check className="h-3 w-3" />
+                      )}
+                    </div>
+                    <Avatar className="mr-2 h-7 w-7 rounded-full">
+                      <AvatarFallback className="text-[10px] font-bold">
+                        {cw.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{cw.name}</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {cw.employeeId || cw.id} &middot; {cw.role}
+                      </p>
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+
+      {selectedCoWorkers.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {selectedCoWorkers.map((cw) => (
+            <div
+              key={cw.id}
+              className="flex items-center gap-1.5 rounded-full border border-border/20 bg-muted px-3 py-1.5"
+            >
+              <Avatar className="h-5 w-5 rounded-full">
+                <AvatarFallback className="text-[8px] font-bold">
+                  {cw.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-xs font-medium text-foreground">
+                {cw.name}
+              </span>
+              <button
+                type="button"
+                onClick={() => handleToggle(cw)}
+                className="ml-1 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
         </div>
       )}
     </div>

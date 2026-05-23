@@ -6,8 +6,8 @@ export const submitTaskSchema = z.object({
   subject: z.string().min(3, "Subject must be at least 3 characters"),
   priority: z.enum(["Routine", "High", "Critical"]),
   description: z.string().optional(),
-  coWorkerId: z.string().uuid().optional(),
-  coWorkerName: z.string().optional(),
+  coWorkerIds: z.array(z.string().uuid()).default([]),
+  coWorkerNames: z.array(z.string()).default([]),
 })
 
 export const updateTaskSchema = submitTaskSchema.extend({

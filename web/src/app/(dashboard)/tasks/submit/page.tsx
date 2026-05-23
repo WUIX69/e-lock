@@ -9,7 +9,7 @@ import { CoWorker } from "@/types/tasks"
 export default async function TaskSubmitPage({
   searchParams,
 }: {
-  searchParams: Promise<{ deviceId?: string }>
+  searchParams: Promise<{ deviceId?: string; taskId?: string }>
 }) {
   const params = await searchParams
   const dbDevices = await getAllDevices()
@@ -32,6 +32,8 @@ export default async function TaskSubmitPage({
     employeeId: u.employeeId,
   }))
 
+  const isEditing = !!params.taskId
+
   return (
     <div className="mx-auto space-y-8 pb-12">
       <div className="mb-8">
@@ -40,16 +42,20 @@ export default async function TaskSubmitPage({
             Dashboard
           </Link>
           <ChevronRight className="size-3" />
-          <span className="text-primary">Task Submission</span>
+          <span className="text-primary">
+            {isEditing ? "Edit Task Record" : "Task Submission"}
+          </span>
         </nav>
         <div className="flex items-center gap-3">
           <div className="h-8 w-1 rounded-full bg-sidebar-accent" />
           <h2 className="text-3xl font-black tracking-tighter text-foreground">
-            Submit Task Record
+            {isEditing ? "Edit Task Record" : "Submit Task Record"}
           </h2>
         </div>
         <p className="ml-4 mt-1 text-sm text-muted-foreground">
-          Complete all steps to securely log industrial maintenance actions.
+          {isEditing
+            ? "Update your pending maintenance task."
+            : "Complete all steps to securely log industrial maintenance actions."}
         </p>
       </div>
 
@@ -57,6 +63,7 @@ export default async function TaskSubmitPage({
         defaultDeviceId={params.deviceId || ""}
         devices={devices}
         coworkers={coworkers}
+        taskId={params.taskId}
       />
     </div>
   )

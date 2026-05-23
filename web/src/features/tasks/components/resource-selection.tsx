@@ -1,5 +1,6 @@
 "use client"
 
+import { AlertTriangle } from "lucide-react"
 import { MOCK_TASK_TYPES } from "@/data/mock/tasks"
 import { Device } from "@/types/devices"
 
@@ -11,6 +12,8 @@ interface ResourceSelectionProps {
   onDeviceIdChange: (value: string) => void
   onTaskTypeChange: (value: string) => void
 }
+
+const RESTRICTED_STATUSES = ["offline", "maintenance"]
 
 export const ResourceSelection = ({
   deviceId,
@@ -25,6 +28,10 @@ export const ResourceSelection = ({
     ? devices.find((d) => d.id === defaultDeviceId)
     : null
 
+  const isRestricted =
+    selectedDevice &&
+    RESTRICTED_STATUSES.includes(selectedDevice.status)
+
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       <div className="space-y-2">
@@ -32,8 +39,20 @@ export const ResourceSelection = ({
           Machine / Device ID
         </label>
         {isPreselected && selectedDevice ? (
-          <div className="w-full rounded-lg border border-border bg-muted/50 p-3 font-body-md text-foreground">
-            {selectedDevice.assignedMachine} ({selectedDevice.deviceId})
+          <div>
+            <div className="w-full rounded-lg border border-border bg-muted/50 p-3 font-body-md text-foreground">
+              {selectedDevice.assignedMachine} ({selectedDevice.deviceId})
+            </div>
+            {isRestricted && (
+              <div className="mt-2 flex items-center gap-2 rounded-lg border border-yellow-400/30 bg-yellow-50 px-3 py-2 text-xs font-medium text-yellow-800">
+                <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                <span>
+                  This device is currently &quot;{selectedDevice.status}&quot;.
+                  Only Senior Engineers and Admins can submit tasks on
+                  restricted devices.
+                </span>
+              </div>
+            )}
           </div>
         ) : (
           <select
