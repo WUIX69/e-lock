@@ -1,6 +1,6 @@
 "use client"
 
-import { X } from "lucide-react"
+
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
@@ -63,7 +63,7 @@ export const TaskDetailModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[90vh] !max-w-2xl flex-col gap-0 p-0">
+      <DialogContent className="flex max-h-[90vh] sm:max-w-2xl flex-col gap-0 p-0">
         {/* Header */}
         <div className="flex flex-col gap-4 border-b border-border bg-muted/30 px-6 py-6">
           <div className="flex items-start justify-between">
@@ -75,13 +75,7 @@ export const TaskDetailModal = ({
                 Task Details
               </DialogTitle>
             </div>
-            <button
-              type="button"
-              onClick={() => onOpenChange(false)}
-              className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted"
-            >
-              <X className="size-5" />
-            </button>
+
           </div>
 
           <div className="flex flex-wrap gap-2">
