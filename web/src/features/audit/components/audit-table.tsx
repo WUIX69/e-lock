@@ -3,17 +3,20 @@
 import * as React from "react"
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
 import {
   Fingerprint,
   ShieldCheck,
   ShieldAlert,
   Zap,
+  Circle,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { MOCK_AUDIT_LOGS } from "@/data/mock/audit-logs"
 import type { AuditLog } from "@/types/audit"
 import { DataTable } from "@/components/ui/data-table"
+import { ToolbarRow } from "@/components/primitives/toolbar-row"
+import { FilterInput } from "@/components/primitives/filter-input"
+import { FilterSelect } from "@/components/primitives/filter-select"
 
 const columns: ColumnDef<AuditLog>[] = [
   {
@@ -105,18 +108,20 @@ const columns: ColumnDef<AuditLog>[] = [
     enableSorting: true,
     cell: ({ row }) => {
       const status = row.original.status
+      const getColor = (s: string) => {
+        switch (s) {
+          case "Secured": return "text-accent-foreground bg-accent"
+          case "Active": return "text-secondary-foreground bg-secondary"
+          case "Blocked": return "text-destructive-foreground bg-destructive"
+          default: return "text-muted-foreground bg-muted"
+        }
+      }
       return (
-        <div className="text-right">
-          <Badge
-            className={cn(
-              "rounded-full px-4 py-1 text-[10px] font-black tracking-widest uppercase shadow-sm",
-              status === "Secured" && "bg-accent text-accent-foreground",
-              status === "Active" && "bg-secondary text-secondary-foreground",
-              status === "Blocked" && "bg-destructive text-destructive-foreground"
-            )}
-          >
-            {status}
-          </Badge>
+        <div
+          className={`flex w-fit items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-black tracking-widest uppercase ${getColor(status)}`}
+        >
+          <Circle className="size-2 fill-current" />
+          {status}
         </div>
       )
     },
@@ -141,30 +146,29 @@ export function AuditTable() {
   })
 
   return (
-    <DataTable
-      columns={columns}
-      data={filtered}
-      pageSize={8}
-      toolbar={
-        <div className="flex flex-wrap items-center gap-3">
-          <Input
-            placeholder="Search personnel or machine..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="h-9 w-64 text-xs"
-          />
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-9 w-36 rounded-lg border border-border bg-card px-3 text-xs font-medium text-foreground"
-          >
-            <option value="all">All Statuses</option>
-            <option value="Secured">Secured</option>
-            <option value="Active">Active</option>
-            <option value="Blocked">Blocked</option>
-          </select>
-        </div>
-      }
-    />
+    <div className="space-y-4">
+      <ToolbarRow
+        filters={
+          <>
+            <FilterInput
+              placeholder="Search personnel or machine..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <FilterSelect
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              options={[
+                { value: "all", label: "All Statuses" },
+                { value: "Secured", label: "Secured" },
+                { value: "Active", label: "Active" },
+                { value: "Blocked", label: "Blocked" },
+              ]}
+            />
+          </>
+        }
+      />
+      <DataTable columns={columns} data={filtered} pageSize={8} />
+    </div>
   )
 }

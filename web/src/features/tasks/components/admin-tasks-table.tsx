@@ -10,11 +10,14 @@ import {
   MoreVertical,
   Download,
   Printer,
-  Search,
+  Circle,
 } from "lucide-react"
 import { deleteTaskAction } from "@/features/tasks/server/actions/tasks"
 import { TaskDetailModal } from "@/features/tasks/components/task-detail-modal"
 import { DataTable } from "@/components/ui/data-table"
+import { ToolbarRow } from "@/components/primitives/toolbar-row"
+import { FilterInput } from "@/components/primitives/filter-input"
+import { FilterSelect } from "@/components/primitives/filter-select"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,10 +61,17 @@ const taskTypeStyles: Record<string, string> = {
     "bg-yellow-50 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400",
 }
 
-const statusStyles: Record<string, { icon: string; color: string }> = {
-  completed: { icon: "check_circle", color: "text-primary" },
-  pending: { icon: "pending", color: "text-yellow-600 dark:text-yellow-400" },
-  cancelled: { icon: "cancel", color: "text-gray-400 dark:text-gray-500" },
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case "completed":
+      return "text-green-500 bg-green-500/10"
+    case "pending":
+      return "text-yellow-500 bg-yellow-500/10"
+    case "cancelled":
+      return "text-muted-foreground bg-muted"
+    default:
+      return "text-muted-foreground bg-muted"
+  }
 }
 
 export const AdminTasksTable = ({ tasks, stats }: AdminTasksTableProps) => {
@@ -152,7 +162,7 @@ export const AdminTasksTable = ({ tasks, stats }: AdminTasksTableProps) => {
     },
     {
       accessorKey: "deviceLabel",
-      header: "Node ID",
+      header: "Device ID",
       cell: ({ row }) => (
         <code className="rounded bg-muted px-2 py-1 font-mono text-xs text-primary">
           {row.original.deviceLabel || "N/A"}
@@ -179,19 +189,15 @@ export const AdminTasksTable = ({ tasks, stats }: AdminTasksTableProps) => {
       header: "Status",
       enableSorting: true,
       cell: ({ row }) => {
-        const st = statusStyles[row.original.status] || {
-          icon: "help",
-          color: "text-gray-400",
-        }
+        const status = row.original.status
+        const label = status === "completed" ? "Verified" : status === "pending" ? "Pending" : "Cancelled"
         return (
-          <span className={`flex items-center gap-2 font-bold ${st.color}`}>
-            {row.original.status === "completed" && "✓"}
-            {row.original.status === "pending" && "⏳"}
-            {row.original.status === "cancelled" && "✕"}
-            {row.original.status === "completed" && "Verified"}
-            {row.original.status === "pending" && "Pending"}
-            {row.original.status === "cancelled" && "Cancelled"}
-          </span>
+          <div
+            className={`flex w-fit items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-black tracking-widest uppercase ${getStatusColor(status)}`}
+          >
+            <Circle className="size-2 fill-current" />
+            {label}
+          </div>
         )
       },
     },
@@ -318,84 +324,70 @@ export const AdminTasksTable = ({ tasks, stats }: AdminTasksTableProps) => {
         </div>
       )}
 
-      {/* Task Ledger */}
-      <div className="overflow-hidden rounded-3xl border border-border/20 bg-card shadow-sm">
-        <div className="flex items-center justify-between border-b border-border/30 p-6">
-          <h3 className="text-2xl font-black tracking-tighter text-foreground">
-            Task Ledger
-          </h3>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              className="rounded-lg border border-border p-2 text-muted-foreground transition-colors hover:bg-muted"
-            >
-              <Download className="size-4" />
-            </button>
-            <button
-              type="button"
-              className="rounded-lg border border-border p-2 text-muted-foreground transition-colors hover:bg-muted"
-            >
-              <Printer className="size-4" />
-            </button>
-          </div>
-        </div>
-
-        <div className="p-0">
-          <DataTable
-            columns={columns}
-            data={filtered}
-            pageSize={10}
-            toolbar={
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    placeholder="Search tasks..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="h-9 w-56 rounded-xl border border-border bg-card pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
-                  />
-                </div>
-                <select
-                  value={workerFilter}
-                  onChange={(e) => setWorkerFilter(e.target.value)}
-                  className="h-9 w-36 rounded-xl border border-border bg-card px-3 text-xs font-medium text-foreground"
-                >
-                  <option value="">All Personnel</option>
-                  {uniqueWorkers.map((name) => (
-                    <option key={name} value={name}>
-                      {name}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value={typeFilter}
-                  onChange={(e) => setTypeFilter(e.target.value)}
-                  className="h-9 w-44 rounded-xl border border-border bg-card px-3 text-xs font-medium text-foreground"
-                >
-                  <option value="all">All Types</option>
-                  {uniqueTypes.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearch("")
-                    setWorkerFilter("")
-                    setTypeFilter("all")
-                  }}
-                  className="flex items-center gap-1 rounded-xl border border-border bg-card px-4 py-1.5 text-xs font-bold text-foreground transition-all hover:bg-muted"
-                >
-                  <span className="text-sm">✕</span>
-                  Reset
-                </button>
-              </div>
-            }
-          />
-        </div>
+      <div className="space-y-4">
+        <ToolbarRow
+          title="Task Ledger"
+          filters={
+            <>
+              <FilterInput
+                placeholder="Search tasks..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <FilterSelect
+                value={workerFilter}
+                onChange={(e) => setWorkerFilter(e.target.value)}
+                options={[
+                  { value: "", label: "All Personnel" },
+                  ...uniqueWorkers.map((name) => ({
+                    value: name,
+                    label: name,
+                  })),
+                ]}
+              />
+              <FilterSelect
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+                options={[
+                  { value: "all", label: "All Types" },
+                  ...uniqueTypes.map((t) => ({
+                    value: t,
+                    label: t,
+                  })),
+                ]}
+              />
+            </>
+          }
+          actions={
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch("")
+                  setWorkerFilter("")
+                  setTypeFilter("all")
+                }}
+                className="flex items-center gap-1 rounded-xl border border-border bg-card px-4 py-1.5 text-xs font-bold text-foreground transition-all hover:bg-muted"
+              >
+                <span className="text-sm">✕</span>
+                Reset
+              </button>
+              <button
+                type="button"
+                className="rounded-lg border border-border p-2 text-muted-foreground transition-colors hover:bg-muted"
+              >
+                <Download className="size-4" />
+              </button>
+              <button
+                type="button"
+                className="rounded-lg border border-border p-2 text-muted-foreground transition-colors hover:bg-muted"
+              >
+                <Printer className="size-4" />
+              </button>
+            </>
+          }
+        />
+        <DataTable columns={columns} data={filtered} pageSize={10} />
       </div>
 
       {viewTask && (

@@ -3,11 +3,13 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ColumnDef } from "@tanstack/react-table"
-import { ExternalLink, Pencil, XCircle } from "lucide-react"
+import { ExternalLink, Pencil, XCircle, Circle } from "lucide-react"
 import { cancelTaskAction } from "@/features/tasks/server/actions/tasks"
 import { TaskDetailModal } from "@/features/tasks/components/task-detail-modal"
-import { Input } from "@/components/ui/input"
 import { DataTable } from "@/components/ui/data-table"
+import { ToolbarRow } from "@/components/primitives/toolbar-row"
+import { FilterInput } from "@/components/primitives/filter-input"
+import { FilterSelect } from "@/components/primitives/filter-select"
 
 type TaskItem = {
   id: string
@@ -38,10 +40,17 @@ const taskTypeColors: Record<string, string> = {
     "bg-yellow-50 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400 font-bold",
 }
 
-const statusConfig: Record<string, { dot: string; label: string }> = {
-  completed: { dot: "bg-primary", label: "Verified" },
-  pending: { dot: "bg-yellow-500", label: "Awaiting Supervisor" },
-  cancelled: { dot: "bg-gray-400 dark:bg-gray-500", label: "Cancelled" },
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case "completed":
+      return "text-green-500 bg-green-500/10"
+    case "pending":
+      return "text-yellow-500 bg-yellow-500/10"
+    case "cancelled":
+      return "text-muted-foreground bg-muted"
+    default:
+      return "text-muted-foreground bg-muted"
+  }
 }
 
 const codeColors = [
@@ -99,7 +108,7 @@ export const UserTasksTable = ({ tasks }: UserTasksTableProps) => {
   const columns: ColumnDef<TaskItem>[] = [
     {
       accessorKey: "deviceLabel",
-      header: "Node Name",
+      header: "Device",
       enableSorting: true,
       cell: ({ row }) => {
         const task = row.original
@@ -167,21 +176,13 @@ export const UserTasksTable = ({ tasks }: UserTasksTableProps) => {
       enableSorting: true,
       cell: ({ row }) => {
         const status = row.original.status
-        const cfg = statusConfig[status] || {
-          dot: "bg-gray-400",
-          label: status,
-        }
-        const isPending = status === "pending"
+        const label = status === "completed" ? "Verified" : status === "pending" ? "Awaiting Supervisor" : "Cancelled"
         return (
-          <div className="flex items-center gap-2">
-            <span
-              className={`h-2 w-2 rounded-full ${cfg.dot} ${isPending ? "animate-pulse" : ""}`}
-            />
-            <span
-              className={`text-sm font-bold ${isPending ? "text-yellow-700 dark:text-yellow-400" : "text-primary"}`}
-            >
-              {cfg.label}
-            </span>
+          <div
+            className={`flex w-fit items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-black tracking-widest uppercase ${getStatusColor(status)}`}
+          >
+            <Circle className="size-2 fill-current" />
+            {label}
           </div>
         )
       },
@@ -227,68 +228,48 @@ export const UserTasksTable = ({ tasks }: UserTasksTableProps) => {
 
   return (
     <>
-      <div className="rounded-3xl border border-border/20 bg-card p-6 shadow-sm">
-        <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-2xl font-black tracking-tighter text-foreground">
-            My Recent Submissions
-          </h3>
-          <div className="flex gap-2">
-            <span className="rounded-full bg-muted px-3 py-1 text-[10px] font-bold text-muted-foreground">
-              SORT: NEWEST
-            </span>
-            <span className="rounded-full bg-muted px-3 py-1 text-[10px] font-bold text-muted-foreground">
-              VIEW: ALL
-            </span>
-          </div>
-        </div>
-
+      <div className="space-y-4">
+        <ToolbarRow
+          title="My Recent Submissions"
+          filters={
+            <>
+              <FilterInput
+                placeholder="Search device or task..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <FilterSelect
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                options={[
+                  { value: "all", label: "All Statuses" },
+                  { value: "pending", label: "Pending" },
+                  { value: "completed", label: "Completed" },
+                  { value: "cancelled", label: "Cancelled" },
+                ]}
+              />
+              <FilterSelect
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+                options={[
+                  { value: "all", label: "All Types" },
+                  { value: "Preventative Maintenance", label: "Preventative Maintenance" },
+                  { value: "Emergency Repair", label: "Emergency Repair" },
+                  { value: "General Record / Log", label: "General Record / Log" },
+                  { value: "Safety Inspection", label: "Safety Inspection" },
+                ]}
+              />
+            </>
+          }
+        />
         {filtered.length === 0 ? (
-          <div className="py-12 text-center">
+          <div className="rounded-xl border border-border bg-card py-12 text-center">
             <p className="text-sm text-muted-foreground">
               No tasks match your filters.
             </p>
           </div>
         ) : (
-          <DataTable
-            columns={columns}
-            data={filtered}
-            pageSize={10}
-            toolbar={
-              <div className="flex flex-wrap items-center gap-3">
-                <Input
-                  placeholder="Search node or task..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="h-9 w-64 text-xs"
-                />
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="h-9 w-36 rounded-lg border border-border bg-card px-3 text-xs font-medium text-foreground"
-                >
-                  <option value="all">All Statuses</option>
-                  <option value="pending">Pending</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-                <select
-                  value={typeFilter}
-                  onChange={(e) => setTypeFilter(e.target.value)}
-                  className="h-9 w-44 rounded-lg border border-border bg-card px-3 text-xs font-medium text-foreground"
-                >
-                  <option value="all">All Types</option>
-                  <option value="Preventative Maintenance">
-                    Preventative Maintenance
-                  </option>
-                  <option value="Emergency Repair">Emergency Repair</option>
-                  <option value="General Record / Log">
-                    General Record / Log
-                  </option>
-                  <option value="Safety Inspection">Safety Inspection</option>
-                </select>
-              </div>
-            }
-          />
+          <DataTable columns={columns} data={filtered} pageSize={10} />
         )}
       </div>
 

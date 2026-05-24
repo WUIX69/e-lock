@@ -10,10 +10,11 @@ import {
   MoreHorizontal,
 } from "lucide-react"
 import { Device } from "@/types/devices"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { DataTable } from "@/components/ui/data-table"
+import { ToolbarRow } from "@/components/primitives/toolbar-row"
+import { FilterInput } from "@/components/primitives/filter-input"
+import { FilterSelect } from "@/components/primitives/filter-select"
 
 interface SignalIconProps {
   strength: number
@@ -143,59 +144,51 @@ export const DeviceTable = ({ devices }: DeviceTableProps) => {
   })
 
   return (
-    <Card className="overflow-hidden rounded-[2rem] border border-border/50 shadow-lg">
-      <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 bg-card p-8">
-        <CardTitle className="text-2xl font-bold text-foreground">
-          Hardware Fleet
-        </CardTitle>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-9 w-9 rounded-lg"
-          aria-label="More fleet actions"
-        >
-          <MoreHorizontal className="size-4 text-muted-foreground" />
-        </Button>
-      </CardHeader>
-
-      <CardContent className="p-0">
-        <DataTable
-          columns={columns}
-          data={filtered}
-          pageSize={6}
-          toolbar={
-            <div className="flex flex-wrap items-center gap-3">
-              <Input
-                placeholder="Search device ID or machine..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="h-9 w-64 text-xs"
-              />
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="h-9 w-32 rounded-lg border border-border bg-card px-3 text-xs font-medium text-foreground"
-              >
-                <option value="all">All Statuses</option>
-                <option value="active">Active</option>
-                <option value="warning">Warning</option>
-                <option value="offline">Offline</option>
-                <option value="maintenance">Maintenance</option>
-              </select>
-              <select
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-                className="h-9 w-36 rounded-lg border border-border bg-card px-3 text-xs font-medium text-foreground"
-              >
-                <option value="all">All Types</option>
-                <option value="field_controller">Field Controller</option>
-                <option value="shunt_trip">Shunt Trip</option>
-                <option value="gateway">Gateway</option>
-              </select>
-            </div>
-          }
-        />
-      </CardContent>
-    </Card>
+    <div className="space-y-4">
+      <ToolbarRow
+        title="Hardware Fleet"
+        filters={
+          <>
+            <FilterInput
+              placeholder="Search device ID or machine..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <FilterSelect
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              options={[
+                { value: "all", label: "All Statuses" },
+                { value: "active", label: "Active" },
+                { value: "warning", label: "Warning" },
+                { value: "offline", label: "Offline" },
+                { value: "maintenance", label: "Maintenance" },
+              ]}
+            />
+            <FilterSelect
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              options={[
+                { value: "all", label: "All Types" },
+                { value: "field_controller", label: "Field Controller" },
+                { value: "shunt_trip", label: "Shunt Trip" },
+                { value: "gateway", label: "Gateway" },
+              ]}
+            />
+          </>
+        }
+        actions={
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 rounded-lg"
+            aria-label="More fleet actions"
+          >
+            <MoreHorizontal className="size-4 text-muted-foreground" />
+          </Button>
+        }
+      />
+      <DataTable columns={columns} data={filtered} pageSize={6} />
+    </div>
   )
 }

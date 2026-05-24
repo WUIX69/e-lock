@@ -2,19 +2,12 @@
 
 import * as React from "react"
 import { ColumnDef } from "@tanstack/react-table"
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Zap, Wind, Droplets, Flame, Sliders } from "lucide-react"
+import { Zap, Wind, Droplets, Flame, Circle } from "lucide-react"
 import { MOCK_ENERGY_SOURCES, EnergySource } from "@/data/mock/energy"
 import { DataTable } from "@/components/ui/data-table"
-import { cn } from "@/lib/utils"
+import { ToolbarRow } from "@/components/primitives/toolbar-row"
+import { FilterSelect } from "@/components/primitives/filter-select"
 
 const typeIcons = {
   electrical: Zap,
@@ -23,13 +16,17 @@ const typeIcons = {
   chemical: Flame,
 }
 
-const statusStyles = {
-  connected:
-    "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20",
-  isolated:
-    "bg-blue-500/10 text-blue-500 border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20",
-  warning:
-    "bg-amber-500/10 text-amber-500 border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20",
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case "connected":
+      return "text-emerald-500 bg-emerald-500/10"
+    case "isolated":
+      return "text-blue-500 bg-blue-500/10"
+    case "warning":
+      return "text-amber-500 bg-amber-500/10"
+    default:
+      return "text-muted-foreground bg-muted"
+  }
 }
 
 const columns: ColumnDef<EnergySource>[] = [
@@ -95,16 +92,11 @@ const columns: ColumnDef<EnergySource>[] = [
     header: "Status",
     enableSorting: true,
     cell: ({ row }) => (
-      <div className="text-right">
-        <Badge
-          variant="outline"
-          className={cn(
-            "text-xs font-bold tracking-wide uppercase",
-            statusStyles[row.original.status]
-          )}
-        >
-          {row.original.status}
-        </Badge>
+      <div
+        className={`flex w-fit items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-black tracking-widest uppercase ${getStatusColor(row.original.status)}`}
+      >
+        <Circle className="size-2 fill-current" />
+        {row.original.status}
       </div>
     ),
   },
@@ -121,54 +113,36 @@ export const EnergyTable = () => {
   })
 
   return (
-    <Card className="border border-border/50 bg-card text-card-foreground shadow-sm">
-      <CardHeader className="flex flex-row items-center justify-between border-b border-border/40 pb-4">
-        <div>
-          <CardTitle className="text-xl font-bold tracking-tight">
-            Source Registry
-          </CardTitle>
-          <CardDescription className="text-sm text-muted-foreground">
-            List of primary isolation checkpoints
-          </CardDescription>
-        </div>
-        <Button variant="outline" size="icon" className="h-8 w-8">
-          <Sliders className="h-4 w-4" />
-          <span className="sr-only">Table Settings</span>
-        </Button>
-      </CardHeader>
-
-      <CardContent className="p-0">
-        <DataTable
-          columns={columns}
-          data={filtered}
-          pageSize={5}
-          toolbar={
-            <div className="flex flex-wrap gap-3">
-              <select
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-                className="w-36 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground"
-              >
-                <option value="all">All Types</option>
-                <option value="electrical">Electrical</option>
-                <option value="pneumatic">Pneumatic</option>
-                <option value="hydraulic">Hydraulic</option>
-                <option value="chemical">Chemical</option>
-              </select>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-36 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground"
-              >
-                <option value="all">All Statuses</option>
-                <option value="connected">Connected</option>
-                <option value="isolated">Isolated</option>
-                <option value="warning">Warning</option>
-              </select>
-            </div>
-          }
-        />
-      </CardContent>
-    </Card>
+    <div className="space-y-4">
+      <ToolbarRow
+        title="Source Registry"
+        filters={
+          <>
+            <FilterSelect
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              options={[
+                { value: "all", label: "All Types" },
+                { value: "electrical", label: "Electrical" },
+                { value: "pneumatic", label: "Pneumatic" },
+                { value: "hydraulic", label: "Hydraulic" },
+                { value: "chemical", label: "Chemical" },
+              ]}
+            />
+            <FilterSelect
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              options={[
+                { value: "all", label: "All Statuses" },
+                { value: "connected", label: "Connected" },
+                { value: "isolated", label: "Isolated" },
+                { value: "warning", label: "Warning" },
+              ]}
+            />
+          </>
+        }
+      />
+      <DataTable columns={columns} data={filtered} pageSize={5} />
+    </div>
   )
 }
