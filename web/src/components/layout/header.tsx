@@ -86,10 +86,13 @@ export function Header() {
 
         <div className="flex items-center gap-2 md:gap-4 lg:border-l lg:border-border lg:pl-6">
           <ModeToggle />
-          <button className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-muted-foreground transition-colors hover:bg-muted">
+          <Link
+            href="/notifications"
+            className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-muted-foreground transition-colors hover:bg-muted"
+          >
             <Bell className="size-5" />
             <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-destructive shadow-sm" />
-          </button>
+          </Link>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

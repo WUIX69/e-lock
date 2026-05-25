@@ -34,6 +34,7 @@ const getNavigation = (role: string | undefined) => {
       { name: "Lockout Devices", href: "/devices", icon: Lock },
       { name: "Safety Logs", href: "/admin/audit", icon: History },
       { name: "Task Records", href: "/tasks", icon: ClipboardList },
+      { name: "Notifications", href: "/notifications", icon: Bell },
       { name: "Team Access", href: "/admin/personnel", icon: Users },
       { name: "System Settings", href: "/admin/settings", icon: Settings },
     ]
@@ -43,6 +44,7 @@ const getNavigation = (role: string | undefined) => {
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
     { name: "Devices", href: "/devices", icon: Network },
     { name: "Task Records", href: "/tasks", icon: ClipboardList },
+    { name: "Notifications", href: "/notifications", icon: Bell },
     { name: "My Activity", href: "/user/my-activity", icon: Activity },
   ]
 }
@@ -84,7 +86,8 @@ function SidebarContent() {
         {navigation.map((item) => {
           const isActive = pathname === item.href ||
             (item.href === "/tasks" && pathname.startsWith("/tasks")) ||
-            (item.href === "/devices" && pathname.startsWith("/devices"))
+            (item.href === "/devices" && pathname.startsWith("/devices")) ||
+            (item.href === "/notifications" && pathname.startsWith("/notifications"))
           return (
             <Link
               key={item.name}
