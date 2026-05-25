@@ -13,6 +13,10 @@ import {
 } from "@/features/tasks/server/db/tasks"
 import { getDeviceById } from "@/features/devices/server/db/devices"
 import { getSessionAction } from "@/features/auth/server/actions/auth"
+import { createNotification } from "@/features/notifications/server/db/notifications"
+import { db } from "@/drizzle/db"
+import { UserTable } from "@/drizzle/schema"
+import { eq } from "drizzle-orm"
 import { AddTaskResult } from "@/types/tasks"
 
 const RESTRICTED_DEVICE_STATUSES = ["offline", "maintenance"]
@@ -71,6 +75,37 @@ export async function submitTaskAction(
     if (deviceError) return { error: deviceError }
 
     await insertTask(parsed.data, session.sub)
+
+    if (parsed.data.coWorkerIds.length > 0) {
+      for (const coworkerId of parsed.data.coWorkerIds) {
+        await createNotification({
+          recipientId: coworkerId,
+          title: "Verification Request",
+          description: `${session.name} has requested your verification for task: ${parsed.data.subject}.`,
+          category: "task_update",
+          severity: "warning",
+          actionLabel: "Verify Task",
+          actorName: session.name,
+        })
+      }
+    }
+
+    const admins = await db
+      .select({ id: UserTable.id })
+      .from(UserTable)
+      .where(eq(UserTable.role, "admin"))
+
+    for (const admin of admins) {
+      await createNotification({
+        recipientId: admin.id,
+        title: "Verification Needed",
+        description: `${session.name} has submitted a new task: ${parsed.data.subject} which requires verification.`,
+        category: "task_update",
+        severity: "info",
+        actionLabel: "Review Task",
+        actorName: session.name,
+      })
+    }
 
     revalidatePath("/user/my-activity")
     revalidatePath("/tasks")

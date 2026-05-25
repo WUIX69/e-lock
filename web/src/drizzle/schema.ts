@@ -48,6 +48,19 @@ export const UserStatusEnum = pgEnum("user_status", [
   "on-leave",
 ])
 
+export const NotificationCategoryEnum = pgEnum("notification_category", [
+  "safety_alert",
+  "task_update",
+  "system_health",
+])
+
+export const NotificationSeverityEnum = pgEnum("notification_severity", [
+  "critical",
+  "warning",
+  "info",
+  "default",
+])
+
 // ─── Tables ──────────────────────────────────────────────────────────────────
 
 export const UserTable = pgTable(
@@ -162,6 +175,30 @@ export const AuditLogTable = pgTable(
   ]
 )
 
+export const NotificationTable = pgTable(
+  "notifications",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    recipientId: uuid("recipient_id")
+      .notNull()
+      .references(() => UserTable.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    category: NotificationCategoryEnum("category").notNull(),
+    severity: NotificationSeverityEnum("severity").notNull().default("default"),
+    isRead: boolean("is_read").notNull().default(false),
+    actionLabel: text("action_label"),
+    actorName: text("actor_name"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("notifications.recipient_id_index").on(table.recipientId),
+    index("notifications.is_read_index").on(table.isRead),
+  ]
+)
+
 // ─── Relations ────────────────────────────────────────────────────────────────
 
 export const deviceRelations = relations(DeviceTable, ({ many }) => ({
@@ -173,6 +210,14 @@ export const userRelations = relations(UserTable, ({ many }) => ({
   auditLogs: many(AuditLogTable),
   tasks: many(TaskTable),
   taskCoWorkers: many(TaskCoWorkerTable),
+  notifications: many(NotificationTable),
+}))
+
+export const notificationRelations = relations(NotificationTable, ({ one }) => ({
+  recipient: one(UserTable, {
+    fields: [NotificationTable.recipientId],
+    references: [UserTable.id],
+  }),
 }))
 
 export const auditLogRelations = relations(AuditLogTable, ({ one }) => ({

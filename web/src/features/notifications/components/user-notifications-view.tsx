@@ -4,17 +4,39 @@ import * as React from "react"
 import { NotificationPageHeader } from "@/features/notifications/components/notification-page-header"
 import { NotificationCategoryFilter } from "@/features/notifications/components/notification-category-filter"
 import { NotificationList } from "@/features/notifications/components/notification-list"
-import { MOCK_NOTIFICATIONS } from "@/data/mock/notifications"
+import {
+  getNotificationsAction,
+  markAllNotificationsReadAction,
+  dismissNotificationAction,
+} from "@/features/notifications/server/actions/notifications"
 import type {
   NotificationCategory,
   NotificationItem,
 } from "@/types/notifications"
 
 export const UserNotificationsView = () => {
-  const [notifications, setNotifications] =
-    React.useState<NotificationItem[]>(MOCK_NOTIFICATIONS)
+  const [notifications, setNotifications] = React.useState<NotificationItem[]>(
+    []
+  )
   const [activeCategory, setActiveCategory] =
     React.useState<NotificationCategory>("all")
+  const [isLoading, setIsLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
+
+  React.useEffect(() => {
+    const fetchNotifications = async () => {
+      setIsLoading(true)
+      setError(null)
+      const result = await getNotificationsAction()
+      if (result.error) {
+        setError(result.error)
+      } else if (result.notifications) {
+        setNotifications(result.notifications)
+      }
+      setIsLoading(false)
+    }
+    fetchNotifications()
+  }, [])
 
   const filteredNotifications = React.useMemo(() => {
     if (activeCategory === "all") return notifications
@@ -47,17 +69,39 @@ export const UserNotificationsView = () => {
     setActiveCategory(category)
   }
 
-  const handleDismissNotification = () => {
-    // No-op for user view
+  const handleDismissNotification = async (id: string) => {
+    const result = await dismissNotificationAction(id)
+    if (result.success) {
+      setNotifications((prev) => prev.filter((n) => n.id !== id))
+    }
   }
 
   const handleEmergencyProtocol = () => {
     // No-op for user view
   }
 
-  const handleMarkAllRead = () => {
-    setNotifications((prev) =>
-      prev.map((notification) => ({ ...notification, isRead: true }))
+  const handleMarkAllRead = async () => {
+    const result = await markAllNotificationsReadAction()
+    if (result.success) {
+      setNotifications((prev) =>
+        prev.map((notification) => ({ ...notification, isRead: true }))
+      )
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="size-8 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-2xl border border-destructive/50 bg-destructive/10 p-6 text-center">
+        <p className="text-sm font-medium text-destructive">{error}</p>
+      </div>
     )
   }
 

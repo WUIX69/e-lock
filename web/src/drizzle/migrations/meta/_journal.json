@@ -22,6 +22,20 @@
       "when": 1779023200000,
       "tag": "0002_add_task_table",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1779055200000,
+      "tag": "0003_multi_coworkers",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1779141600000,
+      "tag": "0004_notifications",
+      "breakpoints": true
     }
   ]
 }
