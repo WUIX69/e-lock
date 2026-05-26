@@ -401,11 +401,11 @@ export const TaskDetailModal = ({
                           alt={att.fileName}
                           width={48}
                           height={48}
-                          unoptimized
-                          className="shrink-0 rounded object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-12 w-12 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
+unoptimized
+                            className="shrink-0 rounded object-cover h-12 w-12"
+                          />
+                        ) : (
+                          <div className="flex h-12 w-12 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
                           📄
                         </div>
                       )}
@@ -441,11 +441,11 @@ export const TaskDetailModal = ({
                           alt={att.fileName}
                           width={48}
                           height={48}
-                          unoptimized
-                          className="shrink-0 rounded object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-12 w-12 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
+unoptimized
+                            className="shrink-0 rounded object-cover h-12 w-12"
+                          />
+                        ) : (
+                          <div className="flex h-12 w-12 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
                           📄
                         </div>
                       )}
