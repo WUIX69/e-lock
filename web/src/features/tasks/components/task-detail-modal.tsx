@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useAuth } from "@/context/auth-context"
@@ -395,10 +396,13 @@ export const TaskDetailModal = ({
                       className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 p-2 text-xs transition-colors hover:bg-muted"
                     >
                       {isImage(att.fileName) ? (
-                        <img
+                        <Image
                           src={attachmentUrl(att.filePath)}
                           alt={att.fileName}
-                          className="h-12 w-12 rounded object-cover"
+                          width={48}
+                          height={48}
+                          unoptimized
+                          className="shrink-0 rounded object-cover"
                         />
                       ) : (
                         <div className="flex h-12 w-12 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
@@ -432,10 +436,13 @@ export const TaskDetailModal = ({
                       className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 p-2 text-xs transition-colors hover:bg-muted"
                     >
                       {isImage(att.fileName) ? (
-                        <img
+                        <Image
                           src={attachmentUrl(att.filePath)}
                           alt={att.fileName}
-                          className="h-12 w-12 rounded object-cover"
+                          width={48}
+                          height={48}
+                          unoptimized
+                          className="shrink-0 rounded object-cover"
                         />
                       ) : (
                         <div className="flex h-12 w-12 items-center justify-center rounded bg-muted text-muted-foreground text-lg">

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import {
   Dialog,
   DialogContent,
@@ -108,10 +109,13 @@ export const CompletionAttachmentsModal = ({
                         className="flex items-center gap-3 flex-1 min-w-0 text-left"
                       >
                         {isImg ? (
-                          <img
+                          <Image
                             src={objectUrl}
                             alt={file.name}
-                            className="h-12 w-12 shrink-0 rounded object-cover"
+                            width={48}
+                            height={48}
+                            unoptimized
+                            className="shrink-0 rounded object-cover"
                           />
                         ) : (
                           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-lg">

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { Camera, X } from "lucide-react"
 import { TaskPriority } from "@/types/tasks"
 import { ImagePreview } from "@/components/ui/image-preview"
@@ -146,10 +147,13 @@ export const TaskDetails = ({
                       className="flex items-center gap-3 flex-1 min-w-0 text-left"
                     >
                       {isImage(att.fileName) ? (
-                        <img
+                        <Image
                           src={url}
                           alt={att.fileName}
-                          className="h-12 w-12 shrink-0 rounded object-cover"
+                          width={48}
+                          height={48}
+                          unoptimized
+                          className="shrink-0 rounded object-cover"
                         />
                       ) : (
                         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
@@ -218,10 +222,13 @@ export const TaskDetails = ({
                     className="flex items-center gap-3 flex-1 min-w-0 text-left"
                   >
                     {isImage(file.name) ? (
-                      <img
+                      <Image
                         src={objectUrl}
                         alt={file.name}
-                        className="h-12 w-12 shrink-0 rounded object-cover"
+                        width={48}
+                        height={48}
+                        unoptimized
+                        className="shrink-0 rounded object-cover"
                       />
                     ) : (
                       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
