@@ -28,6 +28,7 @@ function AdminView() {
   } | null>(null)
   const [error, setError] = React.useState<string | null>(null)
   const [loaded, setLoaded] = React.useState(false)
+  const [refreshKey, setRefreshKey] = React.useState(0)
 
   React.useEffect(() => {
     Promise.all([getAllTasksAction(), getAdminTaskStatsAction()]).then(
@@ -39,7 +40,7 @@ function AdminView() {
         setLoaded(true)
       }
     )
-  }, [])
+  }, [refreshKey])
 
   if (!loaded) {
     return (
@@ -61,7 +62,11 @@ function AdminView() {
           {error}
         </div>
       )}
-      <AdminTasksTable tasks={tasks} stats={stats || { totalSubmissions: 0, criticalRepairs: 0, pendingVerifications: 0, verificationRate: 0, growth: 0 }} />
+      <AdminTasksTable
+        tasks={tasks}
+        stats={stats || { totalSubmissions: 0, criticalRepairs: 0, pendingVerifications: 0, verificationRate: 0, growth: 0 }}
+        onTaskUpdated={() => setRefreshKey((k) => k + 1)}
+      />
     </div>
   )
 }
@@ -76,6 +81,7 @@ function UserView() {
   } | null>(null)
   const [error, setError] = React.useState<string | null>(null)
   const [loaded, setLoaded] = React.useState(false)
+  const [refreshKey, setRefreshKey] = React.useState(0)
 
   React.useEffect(() => {
     Promise.all([getMyTasksAction(), getUserTaskStatsAction()]).then(
@@ -87,7 +93,7 @@ function UserView() {
         setLoaded(true)
       }
     )
-  }, [])
+  }, [refreshKey])
 
   if (!loaded) {
     return (
@@ -116,7 +122,10 @@ function UserView() {
         avgVerificationTime={stats?.avgVerificationTime ?? 0}
         accuracyScore={stats?.accuracyScore ?? 99.2}
       />
-      <UserTasksTable tasks={tasks as AdminTask[]} />
+      <UserTasksTable
+        tasks={tasks as AdminTask[]}
+        onTaskUpdated={() => setRefreshKey((k) => k + 1)}
+      />
       <UserTasksBottom />
     </div>
   )

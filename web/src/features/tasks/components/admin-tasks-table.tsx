@@ -61,6 +61,7 @@ interface AdminTasksTableProps {
     verificationRate: number
     growth: number
   }
+  onTaskUpdated?: () => void
 }
 
 const taskTypeStyles: Record<string, string> = {
@@ -85,7 +86,7 @@ const getStatusColor = (status: string) => {
   }
 }
 
-export const AdminTasksTable = ({ tasks, stats }: AdminTasksTableProps) => {
+export const AdminTasksTable = ({ tasks, stats, onTaskUpdated }: AdminTasksTableProps) => {
   const [workerFilter, setWorkerFilter] = useState("")
   const [typeFilter, setTypeFilter] = useState("all")
   const [search, setSearch] = useState("")
@@ -213,11 +214,30 @@ export const AdminTasksTable = ({ tasks, stats }: AdminTasksTableProps) => {
       },
     },
     {
+      accessorKey: "approvedByAdmin",
+      header: "Approved",
+      cell: ({ row }) => {
+        const task = row.original
+        const isStrict = ["Preventative Maintenance", "Emergency Repair"].includes(task.taskType)
+        if (!isStrict) return <span className="text-muted-foreground">—</span>
+        return task.approvedByAdmin ? (
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-green-600 dark:text-green-400">
+            <span className="size-1.5 rounded-full bg-green-500" />
+            Yes
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-yellow-600 dark:text-yellow-400">
+            <span className="size-1.5 rounded-full bg-yellow-500" />
+            No
+          </span>
+        )
+      },
+    },
+    {
       id: "actions",
       header: "",
       cell: ({ row }) => {
         const task = row.original
-        const isPending = task.status === "pending"
         return (
           <div className="flex justify-end">
             <DropdownMenu>
@@ -234,14 +254,12 @@ export const AdminTasksTable = ({ tasks, stats }: AdminTasksTableProps) => {
                   <Eye className="mr-2 size-4" />
                   View
                 </DropdownMenuItem>
-                {isPending && (
-                  <DropdownMenuItem asChild>
-                    <Link href={`/tasks/submit?taskId=${task.id}`}>
-                      <Pencil className="mr-2 size-4" />
-                      Edit
-                    </Link>
-                  </DropdownMenuItem>
-                )}
+                <DropdownMenuItem asChild>
+                  <Link href={`/tasks/submit?taskId=${task.id}`}>
+                    <Pencil className="mr-2 size-4" />
+                    Edit
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   onSelect={() => handleDelete(task.id)}
                   disabled={deletingId === task.id}
@@ -407,6 +425,7 @@ export const AdminTasksTable = ({ tasks, stats }: AdminTasksTableProps) => {
           onOpenChange={(open) => {
             if (!open) setViewTask(null)
           }}
+          onTaskUpdated={onTaskUpdated}
           task={{
             id: viewTask.id,
             subject: viewTask.subject,

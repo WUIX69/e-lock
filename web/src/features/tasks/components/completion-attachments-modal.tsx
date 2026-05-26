@@ -16,6 +16,7 @@ interface CompletionAttachmentsModalProps {
   onOpenChange: (open: boolean) => void
   onConfirm: (files: File[]) => void
   isSubmitting: boolean
+  requireAttachments?: boolean
 }
 
 export const CompletionAttachmentsModal = ({
@@ -23,6 +24,7 @@ export const CompletionAttachmentsModal = ({
   onOpenChange,
   onConfirm,
   isSubmitting,
+  requireAttachments = true,
 }: CompletionAttachmentsModalProps) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
 
@@ -50,8 +52,9 @@ export const CompletionAttachmentsModal = ({
       <DialogContent className="sm:max-w-md">
         <DialogTitle>Completion Attachments</DialogTitle>
         <DialogDescription>
-          Upload proof of completion for this task. At least one file is
-          required.
+          {requireAttachments
+            ? "Upload proof of completion for this task. At least one file is required."
+            : "Upload proof of completion for this task (optional)."}
         </DialogDescription>
 
         <div className="space-y-4 py-4">
@@ -153,10 +156,14 @@ export const CompletionAttachmentsModal = ({
           <button
             type="button"
             onClick={handleConfirm}
-            disabled={selectedFiles.length === 0 || isSubmitting}
+            disabled={(selectedFiles.length === 0 && requireAttachments) || isSubmitting}
             className="flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-xs font-bold text-primary-foreground transition-all hover:brightness-110 disabled:opacity-50"
           >
-            {isSubmitting ? "Submitting..." : "Submit Proof"}
+            {isSubmitting
+              ? "Submitting..."
+              : selectedFiles.length === 0 && !requireAttachments
+                ? "Mark as Complete"
+                : "Submit Proof"}
           </button>
         </div>
       </DialogContent>

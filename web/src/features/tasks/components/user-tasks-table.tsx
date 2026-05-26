@@ -40,6 +40,7 @@ type TaskItem = {
 
 interface UserTasksTableProps {
   tasks: TaskItem[]
+  onTaskUpdated?: () => void
 }
 
 const taskTypeColors: Record<string, string> = {
@@ -76,7 +77,7 @@ const getCodeColor = (label: string | null) => {
   return codeColors[hash % codeColors.length]
 }
 
-export const UserTasksTable = ({ tasks }: UserTasksTableProps) => {
+export const UserTasksTable = ({ tasks, onTaskUpdated }: UserTasksTableProps) => {
   const [viewTask, setViewTask] = useState<TaskItem | null>(null)
   const [cancellingId, setCancellingId] = useState<string | null>(null)
   const [search, setSearch] = useState("")
@@ -290,6 +291,7 @@ export const UserTasksTable = ({ tasks }: UserTasksTableProps) => {
           onOpenChange={(open) => {
             if (!open) setViewTask(null)
           }}
+          onTaskUpdated={onTaskUpdated}
           task={{
             id: viewTask.id,
             subject: viewTask.subject,

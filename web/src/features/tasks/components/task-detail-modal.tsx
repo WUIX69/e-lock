@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useAuth } from "@/context/auth-context"
@@ -22,6 +23,7 @@ interface TaskAttachment {
 interface TaskDetailModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onTaskUpdated?: () => void
   task: {
     id: string
     subject: string
@@ -64,6 +66,7 @@ function isStrictTask(taskType: string): boolean {
 export const TaskDetailModal = ({
   open,
   onOpenChange,
+  onTaskUpdated,
   task,
 }: TaskDetailModalProps) => {
   const { currentUser } = useAuth()
@@ -94,7 +97,8 @@ export const TaskDetailModal = ({
   const strict = isStrictTask(task.taskType)
   const isAdmin = currentUser?.role === "admin"
   const isPending = task.status === "pending"
-  const needsAdminApproval = strict && isPending && !task.approvedByAdmin
+  const userSecurityLevel = currentUser?.securityLevel ?? 0
+  const needsAdminApproval = strict && isPending && !task.approvedByAdmin && userSecurityLevel >= 4
 
   const handleApprove = async () => {
     setError(null)
@@ -102,17 +106,14 @@ export const TaskDetailModal = ({
     if (result.error) {
       setError(result.error)
     } else {
+      onTaskUpdated?.()
       onOpenChange(false)
     }
   }
 
   const handleCompleteRequest = () => {
-    if (strict) {
-      if (!task.approvedByAdmin) return
-      setShowCompletionModal(true)
-    } else {
-      handleComplete([])
-    }
+    if (strict && userSecurityLevel >= 4 && !task.approvedByAdmin) return
+    setShowCompletionModal(true)
   }
 
   const handleComplete = async (files: File[]) => {
@@ -132,6 +133,7 @@ export const TaskDetailModal = ({
       setError(result.error)
     } else {
       setShowCompletionModal(false)
+      onTaskUpdated?.()
       onOpenChange(false)
     }
   }
@@ -483,6 +485,17 @@ unoptimized
                   Export PDF
                 </span>
               </button>
+              {(isAdmin || isPending) && (
+                <Link
+                  href={`/tasks/submit?taskId=${task.id}`}
+                  className="flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 text-sm text-foreground transition-all hover:bg-muted active:scale-95"
+                >
+                  <span className="text-base">✏️</span>
+                  <span className="text-[10px] font-bold tracking-wider uppercase">
+                    Edit
+                  </span>
+                </Link>
+              )}
             </div>
             <div className="flex items-center gap-2">
               {isAdmin && strict && isPending && !task.approvedByAdmin && (
@@ -528,6 +541,7 @@ unoptimized
         onOpenChange={setShowCompletionModal}
         onConfirm={handleComplete}
         isSubmitting={isCompleting}
+        requireAttachments={strict && userSecurityLevel >= 4}
       />
 
       <ImagePreview
