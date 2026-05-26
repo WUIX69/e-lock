@@ -130,6 +130,7 @@ export const TaskCoWorkerTable = pgTable(
       onDelete: "set null",
     }),
     name: text("name").notNull(),
+    status: text("status").notNull().default("pending"),
   },
   (table) => [index("task_coworkers.task_id_index").on(table.taskId)]
 )

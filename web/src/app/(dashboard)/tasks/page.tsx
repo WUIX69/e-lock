@@ -14,6 +14,7 @@ import {
   getMyTasksAction,
   getAdminTaskStatsAction,
   getUserTaskStatsAction,
+  getPendingInvitationsAction,
 } from "@/features/tasks/server/actions/tasks"
 import type { AdminTask } from "@/features/tasks/components/admin-tasks-table"
 
@@ -82,18 +83,26 @@ function UserView() {
   const [error, setError] = React.useState<string | null>(null)
   const [loaded, setLoaded] = React.useState(false)
   const [refreshKey, setRefreshKey] = React.useState(0)
+  const [pendingInvitationCount, setPendingInvitationCount] = React.useState(0)
 
   React.useEffect(() => {
-    Promise.all([getMyTasksAction(), getUserTaskStatsAction()]).then(
-      ([tasksRes, statsRes]) => {
-        if (tasksRes.error) setError(tasksRes.error)
-        else setTasks(tasksRes.tasks ?? [])
-        if (statsRes.error) setError(statsRes.error)
-        else setStats(statsRes as typeof stats)
-        setLoaded(true)
-      }
-    )
+    Promise.all([
+      getMyTasksAction(),
+      getUserTaskStatsAction(),
+      getPendingInvitationsAction(),
+    ]).then(([tasksRes, statsRes, invRes]) => {
+      if (tasksRes.error) setError(tasksRes.error)
+      else setTasks(tasksRes.tasks ?? [])
+      if (statsRes.error) setError(statsRes.error)
+      else setStats(statsRes as typeof stats)
+      setPendingInvitationCount(invRes.invitations?.length ?? 0)
+      setLoaded(true)
+    })
   }, [refreshKey])
+
+  const handleInvitationsRefresh = React.useCallback(() => {
+    setRefreshKey((k) => k + 1)
+  }, [])
 
   if (!loaded) {
     return (
@@ -115,7 +124,10 @@ function UserView() {
           {error}
         </div>
       )}
-      <UserTasksHeader />
+      <UserTasksHeader
+        pendingInvitationCount={pendingInvitationCount}
+        onInvitationsRefresh={handleInvitationsRefresh}
+      />
       <UserTasksStats
         completedThisMonth={stats?.completedThisMonth ?? 0}
         pendingCount={stats?.pendingCount ?? 0}

@@ -50,6 +50,13 @@
       "when": 1748250000000,
       "tag": "0006_security_level_integer",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1748300000000,
+      "tag": "0007_coworker_status",
+      "breakpoints": true
     }
   ]
 }

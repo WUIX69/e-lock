@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache"
 import { getSessionAction } from "@/features/auth/server/actions/auth"
 import {
   getNotificationsForUser,
+  getUnreadNotificationsCountForUser,
   markNotificationAsRead,
   markAllNotificationsAsReadForUser,
   deleteNotification,
@@ -99,6 +100,24 @@ export async function markAllNotificationsReadAction(): Promise<{
   } catch (error) {
     console.error("Mark all notifications read error:", error)
     return { error: "Failed to mark all notifications as read." }
+  }
+}
+
+export async function getUnreadNotificationsCountAction(): Promise<{
+  count?: number
+  error?: string
+}> {
+  try {
+    const session = await getSessionAction()
+    if (!session) {
+      return { error: "You must be logged in." }
+    }
+
+    const count = await getUnreadNotificationsCountForUser(session.sub)
+    return { count }
+  } catch (error) {
+    console.error("Get unread count error:", error)
+    return { error: "Failed to get unread count." }
   }
 }
 

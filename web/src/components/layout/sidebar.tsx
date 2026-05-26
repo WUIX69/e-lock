@@ -54,6 +54,25 @@ function SidebarContent() {
   const router = useRouter()
   const { setIsOpen } = useSidebar()
   const { currentUser } = useAuth()
+  const [unreadCount, setUnreadCount] = React.useState(0)
+
+  React.useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        const { getUnreadNotificationsCountAction } = await import(
+          "@/features/notifications/server/actions/notifications"
+        )
+        const res = await getUnreadNotificationsCountAction()
+        if (res.count !== undefined) setUnreadCount(res.count)
+      } catch {
+        // ignore
+      }
+    }
+
+    fetchCount()
+    const interval = setInterval(fetchCount, 10000)
+    return () => clearInterval(interval)
+  }, [])
 
   const navigation = getNavigation(currentUser?.role)
 
@@ -111,7 +130,14 @@ function SidebarContent() {
                 />
                 {item.name}
               </div>
-              {isActive && <ChevronRight className="size-4 opacity-50" />}
+              <div className="flex items-center gap-2">
+                {item.name === "Notifications" && unreadCount > 0 && (
+                  <span className="flex size-5 items-center justify-center rounded-full bg-destructive text-[10px] font-black text-destructive-foreground shadow-sm">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
+                {isActive && <ChevronRight className="size-4 opacity-50" />}
+              </div>
             </Link>
           )
         })}

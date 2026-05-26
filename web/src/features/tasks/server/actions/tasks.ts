@@ -13,6 +13,8 @@ import {
   updateTaskApproval,
   completeTaskWithAttachments,
   insertSubmissionAttachments,
+  getPendingInvitationsForUser,
+  updateTaskCoWorkerStatus,
 } from "@/features/tasks/server/db/tasks"
 import { getDeviceById } from "@/features/devices/server/db/devices"
 import { getSessionAction } from "@/features/auth/server/actions/auth"
@@ -129,11 +131,11 @@ export async function submitTaskAction(
       for (const coworkerId of parsed.data.coWorkerIds) {
         await createNotification({
           recipientId: coworkerId,
-          title: "Verification Request",
-          description: `${session.name} has requested your verification for task: ${parsed.data.subject}.`,
+          title: "Invitation Request",
+          description: `${session.name} has invited you to collaborate on task: ${parsed.data.subject}.`,
           category: "task_update",
           severity: "warning",
-          actionLabel: "Verify Task",
+          actionLabel: "View Invitation",
           actorName: session.name,
         })
       }
@@ -503,6 +505,70 @@ export async function getAllTasksAction() {
     return { tasks }
   } catch {
     return { error: "Failed to load tasks." }
+  }
+}
+
+export async function getPendingInvitationsAction(): Promise<{
+  invitations?: Array<{
+    id: string
+    taskId: string
+    taskSubject: string
+    taskType: string
+    taskPriority: string
+    taskDescription: string | null
+    creatorName: string
+    deviceName: string | null
+    deviceLabel: string | null
+    submittedAt: Date
+  }>
+  error?: string
+}> {
+  try {
+    const session = await getSessionAction()
+    if (!session) return { error: "You must be logged in." }
+
+    const invitations = await getPendingInvitationsForUser(session.sub)
+    return { invitations }
+  } catch {
+    return { error: "Failed to load invitations." }
+  }
+}
+
+export async function respondToInvitationAction(
+  taskId: string,
+  accept: boolean
+): Promise<{ success?: boolean; error?: string }> {
+  try {
+    const session = await getSessionAction()
+    if (!session) return { error: "You must be logged in." }
+
+    const newStatus = accept ? "accepted" : "declined"
+    await updateTaskCoWorkerStatus(taskId, session.sub, newStatus)
+
+    const task = await getTaskById(taskId)
+    if (task) {
+      const notificationTitle = accept ? "Invitation Accepted" : "Invitation Declined"
+      const notificationDesc = accept
+        ? `${session.name} has accepted your invitation to collaborate on task: ${task.subject}.`
+        : `${session.name} has declined your invitation to collaborate on task: ${task.subject}.`
+
+      await createNotification({
+        recipientId: task.userId,
+        title: notificationTitle,
+        description: notificationDesc,
+        category: "task_update",
+        severity: accept ? "info" : "default",
+        actionLabel: "View Task",
+        actorName: session.name,
+      })
+    }
+
+    revalidatePath("/user/my-activity")
+    revalidatePath("/tasks")
+    return { success: true }
+  } catch (error) {
+    console.error("Respond to invitation error:", error)
+    return { error: "An unexpected error occurred." }
   }
 }
 

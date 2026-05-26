@@ -1,6 +1,6 @@
 import { db } from "@/drizzle/db"
 import { NotificationTable } from "@/drizzle/schema"
-import { eq, and, desc } from "drizzle-orm"
+import { eq, and, desc, count } from "drizzle-orm"
 
 export interface CreateNotificationInput {
   recipientId: string
@@ -59,6 +59,20 @@ export async function markAllNotificationsAsReadForUser(userId: string) {
     .update(NotificationTable)
     .set({ isRead: true })
     .where(eq(NotificationTable.recipientId, userId))
+}
+
+export async function getUnreadNotificationsCountForUser(userId: string) {
+  const [result] = await db
+    .select({ count: count() })
+    .from(NotificationTable)
+    .where(
+      and(
+        eq(NotificationTable.recipientId, userId),
+        eq(NotificationTable.isRead, false)
+      )
+    )
+
+  return result?.count ?? 0
 }
 
 export async function deleteNotification(id: string, userId: string) {

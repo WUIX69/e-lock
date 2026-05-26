@@ -6,7 +6,7 @@ import {
   UserTable,
   AttachmentTable,
 } from "@/drizzle/schema"
-import { eq, desc, inArray, and } from "drizzle-orm"
+import { eq, desc, inArray, and, or } from "drizzle-orm"
 import { z } from "zod"
 import { submitTaskSchema } from "@/features/tasks/schemas/tasks"
 
@@ -146,6 +146,16 @@ export async function getTaskById(id: string) {
 }
 
 export async function getTasksByUser(userId: string) {
+  const cwTaskIds = await db
+    .select({ taskId: TaskCoWorkerTable.taskId })
+    .from(TaskCoWorkerTable)
+    .where(
+      and(
+        eq(TaskCoWorkerTable.userId, userId),
+        eq(TaskCoWorkerTable.status, "accepted")
+      )
+    )
+
   const tasks = await db
     .select({
       id: TaskTable.id,
@@ -168,7 +178,12 @@ export async function getTasksByUser(userId: string) {
     .from(TaskTable)
     .leftJoin(DeviceTable, eq(TaskTable.deviceId, DeviceTable.id))
     .leftJoin(UserTable, eq(TaskTable.userId, UserTable.id))
-    .where(eq(TaskTable.userId, userId))
+    .where(
+      or(
+        eq(TaskTable.userId, userId),
+        inArray(TaskTable.id, cwTaskIds.map((r) => r.taskId))
+      )
+    )
     .orderBy(desc(TaskTable.submittedAt))
 
   if (tasks.length === 0) return []
@@ -435,6 +450,55 @@ export async function completeTaskWithAttachments(
       }))
     )
   }
+
+  return updated
+}
+
+export async function getPendingInvitationsForUser(userId: string) {
+  const invitations = await db
+    .select({
+      id: TaskCoWorkerTable.id,
+      taskId: TaskCoWorkerTable.taskId,
+      status: TaskCoWorkerTable.status,
+      taskSubject: TaskTable.subject,
+      taskType: TaskTable.taskType,
+      taskPriority: TaskTable.priority,
+      taskDescription: TaskTable.description,
+      creatorName: UserTable.name,
+      deviceName: DeviceTable.assignedMachine,
+      deviceLabel: DeviceTable.deviceId,
+      submittedAt: TaskTable.submittedAt,
+    })
+    .from(TaskCoWorkerTable)
+    .innerJoin(TaskTable, eq(TaskCoWorkerTable.taskId, TaskTable.id))
+    .innerJoin(UserTable, eq(TaskTable.userId, UserTable.id))
+    .leftJoin(DeviceTable, eq(TaskTable.deviceId, DeviceTable.id))
+    .where(
+      and(
+        eq(TaskCoWorkerTable.userId, userId),
+        eq(TaskCoWorkerTable.status, "pending")
+      )
+    )
+    .orderBy(desc(TaskTable.submittedAt))
+
+  return invitations
+}
+
+export async function updateTaskCoWorkerStatus(
+  taskId: string,
+  userId: string,
+  status: string
+) {
+  const [updated] = await db
+    .update(TaskCoWorkerTable)
+    .set({ status })
+    .where(
+      and(
+        eq(TaskCoWorkerTable.taskId, taskId),
+        eq(TaskCoWorkerTable.userId, userId)
+      )
+    )
+    .returning()
 
   return updated
 }
