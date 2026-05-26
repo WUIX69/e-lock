@@ -12,7 +12,11 @@ import { submitTaskSchema } from "@/features/tasks/schemas/tasks"
 
 type SubmitTaskData = z.infer<typeof submitTaskSchema>
 
-export async function insertTask(data: SubmitTaskData, userId: string) {
+export async function insertTask(
+  data: SubmitTaskData,
+  userId: string,
+  attachmentRecords?: { fileName: string; filePath: string }[]
+) {
   const [newTask] = await db
     .insert(TaskTable)
     .values({
@@ -35,11 +39,11 @@ export async function insertTask(data: SubmitTaskData, userId: string) {
     )
   }
 
-  if (data.attachments.length > 0) {
+  if (attachmentRecords && attachmentRecords.length > 0) {
     await db.insert(AttachmentTable).values(
-      data.attachments.map((fileName) => ({
-        fileName,
-        filePath: `/uploads/tasks/${newTask.id}/${fileName}`,
+      attachmentRecords.map((r) => ({
+        fileName: r.fileName,
+        filePath: r.filePath,
         referenceId: newTask.id,
         referenceModel: "tasks",
         category: "submission",
@@ -84,14 +88,14 @@ async function getTaskAttachments(taskId: string): Promise<{
 
 export async function insertSubmissionAttachments(
   taskId: string,
-  fileNames: string[],
+  records: { fileName: string; filePath: string }[],
   userId: string
 ) {
-  if (fileNames.length === 0) return
+  if (records.length === 0) return
   await db.insert(AttachmentTable).values(
-    fileNames.map((fileName) => ({
-      fileName,
-      filePath: `/uploads/tasks/${taskId}/${fileName}`,
+    records.map((r) => ({
+      fileName: r.fileName,
+      filePath: r.filePath,
       referenceId: taskId,
       referenceModel: "tasks",
       category: "submission",
@@ -102,14 +106,14 @@ export async function insertSubmissionAttachments(
 
 export async function insertCompletionAttachments(
   taskId: string,
-  fileNames: string[],
+  records: { fileName: string; filePath: string }[],
   userId: string
 ) {
-  if (fileNames.length === 0) return
+  if (records.length === 0) return
   await db.insert(AttachmentTable).values(
-    fileNames.map((fileName) => ({
-      fileName,
-      filePath: `/uploads/tasks/${taskId}/${fileName}`,
+    records.map((r) => ({
+      fileName: r.fileName,
+      filePath: r.filePath,
       referenceId: taskId,
       referenceModel: "tasks",
       category: "completion",
@@ -410,7 +414,7 @@ export async function updateTaskApproval(id: string, approved: boolean) {
 
 export async function completeTaskWithAttachments(
   id: string,
-  fileNames: string[],
+  records: { fileName: string; filePath: string }[],
   userId: string
 ) {
   const [updated] = await db
@@ -419,11 +423,11 @@ export async function completeTaskWithAttachments(
     .where(eq(TaskTable.id, id))
     .returning()
 
-  if (fileNames.length > 0) {
+  if (records.length > 0) {
     await db.insert(AttachmentTable).values(
-      fileNames.map((fileName) => ({
-        fileName,
-        filePath: `/uploads/tasks/${id}/${fileName}`,
+      records.map((r) => ({
+        fileName: r.fileName,
+        filePath: r.filePath,
         referenceId: id,
         referenceModel: "tasks",
         category: "completion",

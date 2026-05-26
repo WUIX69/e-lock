@@ -8,11 +8,12 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Camera, X } from "lucide-react"
+import { ImagePreview } from "@/components/ui/image-preview"
 
 interface CompletionAttachmentsModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onConfirm: (fileNames: string[]) => void
+  onConfirm: (files: File[]) => void
   isSubmitting: boolean
 }
 
@@ -22,24 +23,28 @@ export const CompletionAttachmentsModal = ({
   onConfirm,
   isSubmitting,
 }: CompletionAttachmentsModalProps) => {
-  const [selectedFiles, setSelectedFiles] = useState<string[]>([])
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files) return
-    const newFiles = Array.from(files).map((f) => f.name)
+    const newFiles = Array.from(files)
     setSelectedFiles((prev) => [...prev, ...newFiles])
   }
 
-  const removeFile = (fileName: string) => {
-    setSelectedFiles((prev) => prev.filter((f) => f !== fileName))
+  const removeFile = (file: File) => {
+    setSelectedFiles((prev) => prev.filter((f) => f !== file))
   }
+
+  const [previewSrc, setPreviewSrc] = useState<string | null>(null)
+  const [previewFileName, setPreviewFileName] = useState<string>("")
 
   const handleConfirm = () => {
     onConfirm(selectedFiles)
   }
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogTitle>Completion Attachments</DialogTitle>
@@ -82,21 +87,51 @@ export const CompletionAttachmentsModal = ({
                 Selected Files ({selectedFiles.length})
               </p>
               <div className="flex flex-wrap gap-2">
-                {selectedFiles.map((fileName) => (
-                  <div
-                    key={fileName}
-                    className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-1.5 text-xs"
-                  >
-                    <span className="text-foreground">{fileName}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeFile(fileName)}
-                      className="text-muted-foreground hover:text-destructive"
+                {selectedFiles.map((file) => {
+                  const objectUrl = URL.createObjectURL(file)
+                  const isImg = /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(file.name)
+                  return (
+                    <div
+                      key={file.name}
+                      className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 p-2 text-xs"
                     >
-                      <X className="size-3" />
-                    </button>
-                  </div>
-                ))}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (isImg) {
+                            setPreviewSrc(objectUrl)
+                            setPreviewFileName(file.name)
+                          } else {
+                            window.open(objectUrl, "_blank")
+                          }
+                        }}
+                        className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                      >
+                        {isImg ? (
+                          <img
+                            src={objectUrl}
+                            alt={file.name}
+                            className="h-12 w-12 shrink-0 rounded object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
+                            📄
+                          </div>
+                        )}
+                        <span className="flex-1 truncate text-foreground">
+                          {file.name}
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeFile(file)}
+                        className="shrink-0 text-muted-foreground hover:text-destructive"
+                      >
+                        <X className="size-3" />
+                      </button>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           )}
@@ -122,5 +157,13 @@ export const CompletionAttachmentsModal = ({
         </div>
       </DialogContent>
     </Dialog>
+
+    <ImagePreview
+      open={!!previewSrc}
+      onOpenChange={(open) => { if (!open) setPreviewSrc(null) }}
+      src={previewSrc || ""}
+      fileName={previewFileName}
+    />
+    </>
   )
 }

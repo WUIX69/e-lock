@@ -47,6 +47,9 @@ everything-claude-code/
 .temp
 opencode.json
 
+# Uploads (user-generated files)
+web/uploads/
+
 # Docker / Infra
 infra/.env
 mosquitto/data/

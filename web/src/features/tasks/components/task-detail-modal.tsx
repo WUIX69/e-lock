@@ -9,6 +9,7 @@ import {
   completeTaskAction,
 } from "@/features/tasks/server/actions/tasks"
 import { CompletionAttachmentsModal } from "./completion-attachments-modal"
+import { ImagePreview } from "@/components/ui/image-preview"
 
 interface TaskAttachment {
   id: string
@@ -113,10 +114,18 @@ export const TaskDetailModal = ({
     }
   }
 
-  const handleComplete = async (attachments: string[]) => {
+  const handleComplete = async (files: File[]) => {
     setError(null)
     setIsCompleting(true)
-    const result = await completeTaskAction(task.id, attachments)
+
+    const formData = new FormData()
+    formData.set("taskId", task.id)
+    formData.set("fileNames", JSON.stringify(files.map((f) => f.name)))
+    for (const file of files) {
+      formData.append("files", file)
+    }
+
+    const result = await completeTaskAction(formData)
     setIsCompleting(false)
     if (result.error) {
       setError(result.error)
@@ -128,6 +137,25 @@ export const TaskDetailModal = ({
 
   const submissionAttachments = task.submissionAttachments || []
   const completionAttachments = task.completionAttachments || []
+
+  const [previewSrc, setPreviewSrc] = useState<string | null>(null)
+  const [previewFileName, setPreviewFileName] = useState<string>("")
+
+  const attachmentUrl = (filePath: string) => {
+    const clean = filePath.replace(/^\/?(uploads\/)?/, "")
+    return `/api/uploads/${clean}`
+  }
+
+  const isImage = (name: string) => /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(name)
+
+  const openPreview = (filePath: string, fileName: string) => {
+    if (isImage(fileName)) {
+      setPreviewSrc(attachmentUrl(filePath))
+      setPreviewFileName(fileName)
+    } else {
+      window.open(attachmentUrl(filePath), "_blank")
+    }
+  }
 
   return (
     <>
@@ -360,12 +388,27 @@ export const TaskDetailModal = ({
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {submissionAttachments.map((att) => (
-                    <div
+                    <button
                       key={att.id}
-                      className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-1.5 text-xs"
+                      type="button"
+                      onClick={() => openPreview(att.filePath, att.fileName)}
+                      className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 p-2 text-xs transition-colors hover:bg-muted"
                     >
-                      <span className="text-foreground">{att.fileName}</span>
-                    </div>
+                      {isImage(att.fileName) ? (
+                        <img
+                          src={attachmentUrl(att.filePath)}
+                          alt={att.fileName}
+                          className="h-12 w-12 rounded object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-12 w-12 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
+                          📄
+                        </div>
+                      )}
+                      <span className="text-foreground hover:text-primary">
+                        {att.fileName}
+                      </span>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -382,12 +425,27 @@ export const TaskDetailModal = ({
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {completionAttachments.map((att) => (
-                    <div
+                    <button
                       key={att.id}
-                      className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-1.5 text-xs"
+                      type="button"
+                      onClick={() => openPreview(att.filePath, att.fileName)}
+                      className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 p-2 text-xs transition-colors hover:bg-muted"
                     >
-                      <span className="text-foreground">{att.fileName}</span>
-                    </div>
+                      {isImage(att.fileName) ? (
+                        <img
+                          src={attachmentUrl(att.filePath)}
+                          alt={att.fileName}
+                          className="h-12 w-12 rounded object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-12 w-12 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
+                          📄
+                        </div>
+                      )}
+                      <span className="text-foreground hover:text-primary">
+                        {att.fileName}
+                      </span>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -463,6 +521,13 @@ export const TaskDetailModal = ({
         onOpenChange={setShowCompletionModal}
         onConfirm={handleComplete}
         isSubmitting={isCompleting}
+      />
+
+      <ImagePreview
+        open={!!previewSrc}
+        onOpenChange={(open) => { if (!open) setPreviewSrc(null) }}
+        src={previewSrc || ""}
+        fileName={previewFileName}
       />
     </>
   )

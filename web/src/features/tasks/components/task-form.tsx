@@ -40,7 +40,11 @@ export const TaskForm = ({
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [loading, setLoading] = useState(!!taskId)
-  const [attachments, setAttachments] = useState<string[]>([])
+  const [attachments, setAttachments] = useState<File[]>([])
+  const [existingAttachments, setExistingAttachments] = useState<
+    { id: string; fileName: string; filePath: string }[]
+  >([])
+  const [deletedAttachmentIds, setDeletedAttachmentIds] = useState<string[]>([])
 
   useEffect(() => {
     if (!taskId) return
@@ -59,12 +63,24 @@ export const TaskForm = ({
         priority: string
         description: string | null
         coWorkers: { id: string; name: string }[]
+        submissionAttachments?: { id: string; fileName: string; filePath: string; category: string }[]
       }
       setDeviceId(task.deviceId)
       setTaskType(task.taskType)
       setSubject(task.subject)
       setPriority(task.priority as TaskPriority)
       setDescription(task.description || "")
+
+      const atts = task.submissionAttachments
+      if (atts && atts.length > 0) {
+        setExistingAttachments(
+          atts.map((a) => ({
+            id: a.id,
+            fileName: a.fileName,
+            filePath: a.filePath,
+          }))
+        )
+      }
 
       if (task.coWorkers?.length > 0) {
         const matched: CoWorker[] = task.coWorkers
@@ -85,6 +101,11 @@ export const TaskForm = ({
       setLoading(false)
     })
   }, [taskId, coworkers])
+
+  const handleRemoveExisting = (id: string) => {
+    setDeletedAttachmentIds((prev) => [...prev, id])
+    setExistingAttachments((prev) => prev.filter((a) => a.id !== id))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -112,11 +133,18 @@ export const TaskForm = ({
       formData.set("coWorkerNames", "[]")
     }
 
-    formData.set("attachments", JSON.stringify(attachments))
+    formData.set("attachments", JSON.stringify(attachments.map((f) => f.name)))
+    for (const file of attachments) {
+      formData.append("files", file)
+    }
 
     let result
     if (taskId) {
       formData.set("id", taskId)
+      formData.set(
+        "deletedAttachmentIds",
+        JSON.stringify(deletedAttachmentIds)
+      )
       result = await updateTaskAction(formData)
     } else {
       result = await submitTaskAction(formData)
@@ -179,12 +207,14 @@ export const TaskForm = ({
           priority={priority}
           description={description}
           attachments={attachments}
+          existingAttachments={existingAttachments}
           taskType={taskType}
           userSecurityLevel={currentUser?.securityLevel}
           onSubjectChange={setSubject}
           onPriorityChange={setPriority}
           onDescriptionChange={setDescription}
           onAttachmentsChange={setAttachments}
+          onRemoveExisting={handleRemoveExisting}
         />
       </section>
 

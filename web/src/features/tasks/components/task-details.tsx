@@ -1,19 +1,29 @@
 "use client"
 
+import { useState } from "react"
 import { Camera, X } from "lucide-react"
 import { TaskPriority } from "@/types/tasks"
+import { ImagePreview } from "@/components/ui/image-preview"
+
+interface ExistingAttachment {
+  id: string
+  fileName: string
+  filePath: string
+}
 
 interface TaskDetailsProps {
   subject: string
   priority: TaskPriority
   description: string
-  attachments: string[]
+  attachments: File[]
+  existingAttachments?: ExistingAttachment[]
   taskType: string
   userSecurityLevel?: number
   onSubjectChange: (value: string) => void
   onPriorityChange: (value: TaskPriority) => void
   onDescriptionChange: (value: string) => void
-  onAttachmentsChange: (value: string[]) => void
+  onAttachmentsChange: (value: File[]) => void
+  onRemoveExisting?: (id: string) => void
 }
 
 const priorities: TaskPriority[] = ["Routine", "High", "Critical"]
@@ -25,26 +35,40 @@ export const TaskDetails = ({
   priority,
   description,
   attachments,
+  existingAttachments,
   taskType,
   userSecurityLevel,
   onSubjectChange,
   onPriorityChange,
   onDescriptionChange,
   onAttachmentsChange,
+  onRemoveExisting,
 }: TaskDetailsProps) => {
   const securityLevel = userSecurityLevel ?? 0
   const isStrict = STRICT_TASK_TYPES.includes(taskType)
   const requiresAttachments = securityLevel >= 4 && isStrict
+  const isImage = (name: string) => /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(name)
+  const [previewSrc, setPreviewSrc] = useState<string | null>(null)
+  const [previewFileName, setPreviewFileName] = useState<string>("")
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files) return
-    const newFiles = Array.from(files).map((f) => f.name)
+    const newFiles = Array.from(files)
     onAttachmentsChange([...attachments, ...newFiles])
   }
 
-  const removeFile = (fileName: string) => {
-    onAttachmentsChange(attachments.filter((f) => f !== fileName))
+  const removeFile = (file: File) => {
+    onAttachmentsChange(attachments.filter((f) => f !== file))
+  }
+
+  const openPreview = (url: string, fileName: string) => {
+    if (isImage(fileName)) {
+      setPreviewSrc(url)
+      setPreviewFileName(fileName)
+    } else {
+      window.open(url, "_blank")
+    }
   }
 
   return (
@@ -102,6 +126,56 @@ export const TaskDetails = ({
         <label className="block px-1 text-[10px] font-black tracking-widest text-muted-foreground uppercase">
           Attachments {requiresAttachments ? "(Required)" : "(Optional)"}
         </label>
+
+        {existingAttachments && existingAttachments.length > 0 && (
+          <div className="space-y-1.5">
+            <p className="text-[10px] font-bold text-muted-foreground">
+              Existing Files
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {existingAttachments.map((att) => {
+                const url = `/api/uploads/${att.filePath.replace(/^\/?(uploads\/)?/, "")}`
+                return (
+                  <div
+                    key={att.id}
+                    className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 p-2 text-xs"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => openPreview(url, att.fileName)}
+                      className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                    >
+                      {isImage(att.fileName) ? (
+                        <img
+                          src={url}
+                          alt={att.fileName}
+                          className="h-12 w-12 shrink-0 rounded object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
+                          📄
+                        </div>
+                      )}
+                      <span className="truncate text-foreground hover:text-primary">
+                        {att.fileName}
+                      </span>
+                    </button>
+                    {onRemoveExisting && (
+                      <button
+                        type="button"
+                        onClick={() => onRemoveExisting(att.id)}
+                        className="shrink-0 text-muted-foreground hover:text-destructive"
+                      >
+                        <X className="size-4" />
+                      </button>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
         <div className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-card p-8 transition-colors hover:bg-accent-green/10">
           <Camera className="mb-3 size-10 text-primary" />
           <label className="cursor-pointer">
@@ -131,24 +205,53 @@ export const TaskDetails = ({
             Selected Files ({attachments.length})
           </p>
           <div className="flex flex-wrap gap-2">
-            {attachments.map((fileName) => (
-              <div
-                key={fileName}
-                className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-1.5 text-xs"
-              >
-                <span className="text-foreground">{fileName}</span>
-                <button
-                  type="button"
-                  onClick={() => removeFile(fileName)}
-                  className="text-muted-foreground hover:text-destructive"
+            {attachments.map((file) => {
+              const objectUrl = URL.createObjectURL(file)
+              return (
+                <div
+                  key={file.name}
+                  className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 p-2 text-xs"
                 >
-                  <X className="size-3" />
-                </button>
-              </div>
-            ))}
+                  <button
+                    type="button"
+                    onClick={() => openPreview(objectUrl, file.name)}
+                    className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                  >
+                    {isImage(file.name) ? (
+                      <img
+                        src={objectUrl}
+                        alt={file.name}
+                        className="h-12 w-12 shrink-0 rounded object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
+                        📄
+                      </div>
+                    )}
+                    <span className="flex-1 truncate text-foreground">
+                      {file.name}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(file)}
+                    className="shrink-0 text-muted-foreground hover:text-destructive"
+                  >
+                    <X className="size-3" />
+                  </button>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}
+
+      <ImagePreview
+        open={!!previewSrc}
+        onOpenChange={(open) => { if (!open) setPreviewSrc(null) }}
+        src={previewSrc || ""}
+        fileName={previewFileName}
+      />
     </div>
   )
 }

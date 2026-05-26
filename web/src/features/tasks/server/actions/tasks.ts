@@ -12,14 +12,16 @@ import {
   getTasksByUser,
   updateTaskApproval,
   completeTaskWithAttachments,
+  insertSubmissionAttachments,
 } from "@/features/tasks/server/db/tasks"
 import { getDeviceById } from "@/features/devices/server/db/devices"
 import { getSessionAction } from "@/features/auth/server/actions/auth"
 import { createNotification } from "@/features/notifications/server/db/notifications"
 import { db } from "@/drizzle/db"
-import { UserTable } from "@/drizzle/schema"
-import { eq } from "drizzle-orm"
+import { UserTable, AttachmentTable } from "@/drizzle/schema"
+import { eq, inArray } from "drizzle-orm"
 import { AddTaskResult } from "@/types/tasks"
+import { storeFile, deleteStoredFile } from "@/lib/file-storage"
 
 const RESTRICTED_DEVICE_STATUSES = ["offline", "maintenance"]
 const STRICT_TASK_TYPES = ["Preventative Maintenance", "Emergency Repair"]
@@ -105,7 +107,23 @@ export async function submitTaskAction(
       }
     }
 
-    await insertTask(parsed.data, session.sub)
+    const files = formData.getAll("files") as File[]
+
+    const attachmentRecords: { fileName: string; filePath: string }[] = []
+
+    const newTask = await insertTask(parsed.data, session.sub, [])
+
+    if (files.length > 0) {
+      for (const file of files) {
+        const storedPath = await storeFile("tasks", newTask.id, file)
+        attachmentRecords.push({ fileName: file.name, filePath: storedPath })
+      }
+      await insertSubmissionAttachments(
+        newTask.id,
+        attachmentRecords,
+        session.sub
+      )
+    }
 
     if (parsed.data.coWorkerIds.length > 0) {
       for (const coworkerId of parsed.data.coWorkerIds) {
@@ -210,6 +228,34 @@ export async function updateTaskAction(
       )
     }
 
+    const newFiles = formData.getAll("files") as File[]
+    if (newFiles.length > 0) {
+      const records: { fileName: string; filePath: string }[] = []
+      for (const file of newFiles) {
+        const storedPath = await storeFile("tasks", id, file)
+        records.push({ fileName: file.name, filePath: storedPath })
+      }
+      await insertSubmissionAttachments(id, records, session.sub)
+    }
+
+    const deletedIds: string[] = JSON.parse(
+      (formData.get("deletedAttachmentIds") as string) || "[]"
+    )
+    if (deletedIds.length > 0) {
+      const records = await db
+        .select({ filePath: AttachmentTable.filePath })
+        .from(AttachmentTable)
+        .where(inArray(AttachmentTable.id, deletedIds))
+
+      for (const id of deletedIds) {
+        await db.delete(AttachmentTable).where(eq(AttachmentTable.id, id))
+      }
+
+      for (const rec of records) {
+        await deleteStoredFile(rec.filePath)
+      }
+    }
+
     revalidatePath("/user/my-activity")
     revalidatePath("/tasks")
     return { success: true }
@@ -263,12 +309,18 @@ export async function approveTaskAction(
 }
 
 export async function completeTaskAction(
-  taskId: string,
-  attachments: string[]
+  formData: FormData
 ): Promise<AddTaskResult> {
   try {
     const session = await getSessionAction()
     if (!session) return { error: "You must be logged in." }
+
+    const taskId = formData.get("taskId") as string
+    if (!taskId) return { error: "Task ID is required." }
+
+    const fileNames: string[] = JSON.parse(
+      (formData.get("fileNames") as string) || "[]"
+    )
 
     const task = await getTaskById(taskId)
     if (!task) return { error: "Task not found." }
@@ -291,14 +343,24 @@ export async function completeTaskAction(
         }
       }
 
-      if (attachments.length === 0) {
+      if (fileNames.length === 0) {
         return {
           error: "Completion attachments are required for this task type. Please upload at least one file.",
         }
       }
     }
 
-    await completeTaskWithAttachments(taskId, attachments, session.sub)
+    const files = formData.getAll("files") as File[]
+    const attachmentRecords: { fileName: string; filePath: string }[] = []
+
+    if (files.length > 0) {
+      for (const file of files) {
+        const storedPath = await storeFile("tasks", taskId, file)
+        attachmentRecords.push({ fileName: file.name, filePath: storedPath })
+      }
+    }
+
+    await completeTaskWithAttachments(taskId, attachmentRecords, session.sub)
 
     revalidatePath("/user/my-activity")
     revalidatePath("/tasks")
