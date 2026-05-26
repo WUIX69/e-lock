@@ -9,6 +9,7 @@ import { useAuth } from "@/context/auth-context"
 import {
   approveTaskAction,
   completeTaskAction,
+  denyTaskAction,
 } from "@/features/tasks/server/actions/tasks"
 import { CompletionAttachmentsModal } from "./completion-attachments-modal"
 import { ImagePreview } from "@/components/ui/image-preview"
@@ -103,6 +104,17 @@ export const TaskDetailModal = ({
   const handleApprove = async () => {
     setError(null)
     const result = await approveTaskAction(task.id)
+    if (result.error) {
+      setError(result.error)
+    } else {
+      onTaskUpdated?.()
+      onOpenChange(false)
+    }
+  }
+
+  const handleDeny = async () => {
+    setError(null)
+    const result = await denyTaskAction(task.id)
     if (result.error) {
       setError(result.error)
     } else {
@@ -499,13 +511,22 @@ unoptimized
             </div>
             <div className="flex items-center gap-2">
               {isAdmin && strict && isPending && !task.approvedByAdmin && (
-                <button
-                  type="button"
-                  onClick={handleApprove}
-                  className="flex items-center gap-2 rounded-lg bg-green-600 px-6 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:brightness-110 active:scale-95"
-                >
-                  Approve Task
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={handleApprove}
+                    className="flex items-center gap-2 rounded-lg bg-green-600 px-6 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:brightness-110 active:scale-95"
+                  >
+                    Approve Task
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDeny}
+                    className="flex items-center gap-2 rounded-lg border border-destructive/40 bg-card px-6 py-2.5 text-xs font-bold text-destructive shadow-md transition-all hover:bg-destructive/10 active:scale-95"
+                  >
+                    Deny
+                  </button>
+                </>
               )}
               {!isAdmin && isPending && (
                 <button

@@ -13,5 +13,5 @@ export const submitTaskSchema = z.object({
 
 export const updateTaskSchema = submitTaskSchema.extend({
   id: z.string().uuid(),
-  status: z.enum(["pending", "completed", "cancelled"]).optional(),
+  status: z.enum(["pending", "completed", "cancelled", "denied"]).optional(),
 })

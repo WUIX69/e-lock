@@ -3,9 +3,17 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ColumnDef } from "@tanstack/react-table"
-import { ExternalLink, Pencil, XCircle, Circle } from "lucide-react"
+import { MoreVertical, Eye, Pencil, XCircle, Circle } from "lucide-react"
 import { cancelTaskAction } from "@/features/tasks/server/actions/tasks"
 import { TaskDetailModal } from "@/features/tasks/components/task-detail-modal"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { DataTable } from "@/components/ui/data-table"
 import { ToolbarRow } from "@/components/primitives/toolbar-row"
 import { FilterInput } from "@/components/primitives/filter-input"
@@ -52,6 +60,12 @@ const taskTypeColors: Record<string, string> = {
     "bg-yellow-50 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400 font-bold",
 }
 
+const STRICT_TASK_TYPES = ["Preventative Maintenance", "Emergency Repair"]
+
+function isStrictTask(taskType: string): boolean {
+  return STRICT_TASK_TYPES.includes(taskType)
+}
+
 const getStatusColor = (status: string) => {
   switch (status) {
     case "completed":
@@ -60,9 +74,19 @@ const getStatusColor = (status: string) => {
       return "text-yellow-500 bg-yellow-500/10"
     case "cancelled":
       return "text-muted-foreground bg-muted"
+    case "denied":
+      return "text-red-500 bg-red-500/10"
     default:
       return "text-muted-foreground bg-muted"
   }
+}
+
+function getStatusLabel(status: string, taskType: string): string {
+  if (status === "completed") return "Verified"
+  if (status === "cancelled") return "Cancelled"
+  if (status === "denied") return "Denied"
+  if (isStrictTask(taskType)) return "Awaiting Approval"
+  return "Awaiting Completion"
 }
 
 const codeColors = [
@@ -187,11 +211,11 @@ export const UserTasksTable = ({ tasks, onTaskUpdated }: UserTasksTableProps) =>
       header: "Status",
       enableSorting: true,
       cell: ({ row }) => {
-        const status = row.original.status
-        const label = status === "completed" ? "Verified" : status === "pending" ? "Awaiting Supervisor" : "Cancelled"
+        const task = row.original
+        const label = getStatusLabel(task.status, task.taskType)
         return (
           <div
-            className={`flex w-fit items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-black tracking-widest uppercase ${getStatusColor(status)}`}
+            className={`flex w-fit items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-black tracking-widest uppercase ${getStatusColor(task.status)}`}
           >
             <Circle className="size-2 fill-current" />
             {label}
@@ -201,37 +225,49 @@ export const UserTasksTable = ({ tasks, onTaskUpdated }: UserTasksTableProps) =>
     },
     {
       id: "actions",
-      header: "",
+      header: "Actions",
       cell: ({ row }) => {
         const task = row.original
         const isPending = task.status === "pending"
         return (
-          <div className="flex items-center justify-end gap-1">
-            <button
-              type="button"
-              onClick={() => setViewTask(task)}
-              className="rounded-full p-2 text-muted-foreground transition-all hover:bg-muted"
-            >
-              <ExternalLink className="size-4" />
-            </button>
-            {isPending && (
-              <>
-                <Link
-                  href={`/tasks/submit?taskId=${task.id}`}
-                  className="rounded-full p-2 text-muted-foreground transition-all hover:bg-muted"
-                >
-                  <Pencil className="size-4" />
-                </Link>
+          <div className="flex justify-end">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  onClick={() => handleCancel(task.id)}
-                  disabled={cancellingId === task.id}
-                  className="rounded-full p-2 text-destructive/70 transition-all hover:bg-destructive/10 disabled:opacity-50"
+                  className="rounded-lg p-1 text-muted-foreground transition-colors hover:text-primary"
                 >
-                  <XCircle className="size-4" />
+                  <MoreVertical className="size-5" />
                 </button>
-              </>
-            )}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem onSelect={() => setViewTask(task)}>
+                  <Eye className="mr-2 size-4" />
+                  View Details
+                </DropdownMenuItem>
+                {isPending && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuLabel>Management</DropdownMenuLabel>
+                    <DropdownMenuItem asChild>
+                      <Link href={`/tasks/submit?taskId=${task.id}`}>
+                        <Pencil className="mr-2 size-4" />
+                        Edit
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onSelect={() => handleCancel(task.id)}
+                      disabled={cancellingId === task.id}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <XCircle className="mr-2 size-4" />
+                      {cancellingId === task.id ? "..." : "Cancel"}
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         )
       },
@@ -258,6 +294,7 @@ export const UserTasksTable = ({ tasks, onTaskUpdated }: UserTasksTableProps) =>
                   { value: "pending", label: "Pending" },
                   { value: "completed", label: "Completed" },
                   { value: "cancelled", label: "Cancelled" },
+                  { value: "denied", label: "Denied" },
                 ]}
               />
               <FilterSelect

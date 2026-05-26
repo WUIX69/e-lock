@@ -6,7 +6,7 @@ export type TaskCategory =
   | "General Record / Log"
   | "Safety Inspection"
 
-export type TaskStatus = "pending" | "completed" | "cancelled"
+export type TaskStatus = "pending" | "completed" | "cancelled" | "denied"
 
 export interface CoWorker {
   id: string

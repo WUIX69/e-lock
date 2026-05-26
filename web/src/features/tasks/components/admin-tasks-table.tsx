@@ -11,8 +11,14 @@ import {
   Download,
   Printer,
   Circle,
+  CheckCircle,
+  XCircle,
 } from "lucide-react"
-import { deleteTaskAction } from "@/features/tasks/server/actions/tasks"
+import {
+  deleteTaskAction,
+  approveTaskAction,
+  denyTaskAction,
+} from "@/features/tasks/server/actions/tasks"
 import { TaskDetailModal } from "@/features/tasks/components/task-detail-modal"
 import { DataTable } from "@/components/ui/data-table"
 import { ToolbarRow } from "@/components/primitives/toolbar-row"
@@ -22,6 +28,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
@@ -81,6 +89,8 @@ const getStatusColor = (status: string) => {
       return "text-yellow-500 bg-yellow-500/10"
     case "cancelled":
       return "text-muted-foreground bg-muted"
+    case "denied":
+      return "text-red-500 bg-red-500/10"
     default:
       return "text-muted-foreground bg-muted"
   }
@@ -127,6 +137,20 @@ export const AdminTasksTable = ({ tasks, stats, onTaskUpdated }: AdminTasksTable
     const result = await deleteTaskAction(formData)
     if (result.error) setError(result.error)
     setDeletingId(null)
+  }
+
+  const handleApprove = async (id: string) => {
+    setError(null)
+    const result = await approveTaskAction(id)
+    if (result.error) setError(result.error)
+    else onTaskUpdated?.()
+  }
+
+  const handleDeny = async (id: string) => {
+    setError(null)
+    const result = await denyTaskAction(id)
+    if (result.error) setError(result.error)
+    else onTaskUpdated?.()
   }
 
   const columns: ColumnDef<AdminTask>[] = [
@@ -202,7 +226,7 @@ export const AdminTasksTable = ({ tasks, stats, onTaskUpdated }: AdminTasksTable
       enableSorting: true,
       cell: ({ row }) => {
         const status = row.original.status
-        const label = status === "completed" ? "Verified" : status === "pending" ? "Pending" : "Cancelled"
+        const label = status === "completed" ? "Verified" : status === "pending" ? "Pending" : status === "denied" ? "Denied" : "Cancelled"
         return (
           <div
             className={`flex w-fit items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-black tracking-widest uppercase ${getStatusColor(status)}`}
@@ -235,9 +259,12 @@ export const AdminTasksTable = ({ tasks, stats, onTaskUpdated }: AdminTasksTable
     },
     {
       id: "actions",
-      header: "",
+      header: "Actions",
       cell: ({ row }) => {
         const task = row.original
+        const isPending = task.status === "pending"
+        const isStrict = ["Preventative Maintenance", "Emergency Repair"].includes(task.taskType)
+        const canApproveOrDeny = isStrict && isPending && !task.approvedByAdmin
         return (
           <div className="flex justify-end">
             <DropdownMenu>
@@ -249,10 +276,11 @@ export const AdminTasksTable = ({ tasks, stats, onTaskUpdated }: AdminTasksTable
                   <MoreVertical className="size-5" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-36">
+              <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem onSelect={() => setViewTask(task)}>
                   <Eye className="mr-2 size-4" />
-                  View
+                  View Details
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href={`/tasks/submit?taskId=${task.id}`}>
@@ -260,6 +288,25 @@ export const AdminTasksTable = ({ tasks, stats, onTaskUpdated }: AdminTasksTable
                     Edit
                   </Link>
                 </DropdownMenuItem>
+                {canApproveOrDeny && <DropdownMenuSeparator />}
+                {canApproveOrDeny && <DropdownMenuLabel>Moderation</DropdownMenuLabel>}
+                {canApproveOrDeny && (
+                  <DropdownMenuItem onSelect={() => handleApprove(task.id)}>
+                    <CheckCircle className="mr-2 size-4 text-green-600" />
+                    Approve
+                  </DropdownMenuItem>
+                )}
+                {canApproveOrDeny && (
+                  <DropdownMenuItem
+                    onSelect={() => handleDeny(task.id)}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    <XCircle className="mr-2 size-4" />
+                    Deny
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Danger Zone</DropdownMenuLabel>
                 <DropdownMenuItem
                   onSelect={() => handleDelete(task.id)}
                   disabled={deletingId === task.id}

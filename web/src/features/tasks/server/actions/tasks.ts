@@ -308,6 +308,49 @@ export async function approveTaskAction(
   }
 }
 
+export async function denyTaskAction(
+  taskId: string
+): Promise<AddTaskResult> {
+  try {
+    const session = await getSessionAction()
+    if (!session) return { error: "You must be logged in." }
+
+    if (session.role !== "admin") {
+      return { error: "Only admins can deny tasks." }
+    }
+
+    const task = await getTaskById(taskId)
+    if (!task) return { error: "Task not found." }
+
+    if (task.status !== "pending") {
+      return { error: "Only pending tasks can be denied." }
+    }
+
+    if (!isStrictTask(task.taskType)) {
+      return { error: "Non-strict tasks do not require admin approval." }
+    }
+
+    await updateTask(taskId, { status: "denied" })
+
+    await createNotification({
+      recipientId: task.userId,
+      title: "Task Denied",
+      description: `Your task "${task.subject}" has been denied by ${session.name}. Please review and resubmit if needed.`,
+      category: "task_update",
+      severity: "warning",
+      actionLabel: "View Task",
+      actorName: session.name,
+    })
+
+    revalidatePath("/user/my-activity")
+    revalidatePath("/tasks")
+    return { success: true }
+  } catch (error) {
+    console.error("Deny task error:", error)
+    return { error: "An unexpected error occurred." }
+  }
+}
+
 export async function completeTaskAction(
   formData: FormData
 ): Promise<AddTaskResult> {
