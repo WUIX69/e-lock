@@ -25,11 +25,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+interface TaskAttachment {
+  id: string
+  fileName: string
+  filePath: string
+  category: string
+}
+
 export interface AdminTask {
   id: string
   deviceName: string | null
   deviceLabel: string | null
   deviceType: string | null
+  userId: string | null
   userName: string | null
   userPosition: string | null
   taskType: string
@@ -39,6 +47,9 @@ export interface AdminTask {
   status: string
   submittedAt: Date
   coWorkers: { id: string | null; name: string }[]
+  approvedByAdmin?: boolean
+  submissionAttachments?: TaskAttachment[]
+  completionAttachments?: TaskAttachment[]
 }
 
 interface AdminTasksTableProps {
@@ -406,10 +417,14 @@ export const AdminTasksTable = ({ tasks, stats }: AdminTasksTableProps) => {
             deviceName: viewTask.deviceName,
             deviceLabel: viewTask.deviceLabel,
             deviceType: viewTask.deviceType,
+            userId: viewTask.userId,
             userName: viewTask.userName,
             userPosition: viewTask.userPosition,
             submittedAt: viewTask.submittedAt,
+            approvedByAdmin: viewTask.approvedByAdmin,
             coWorkers: viewTask.coWorkers,
+            submissionAttachments: viewTask.submissionAttachments,
+            completionAttachments: viewTask.completionAttachments,
           }}
         />
       )}

@@ -22,6 +22,7 @@ export interface TaskFormData {
   priority: TaskPriority
   description: string
   coWorkers: CoWorker[]
+  attachments?: string[]
 }
 
 export interface AddTaskResult {

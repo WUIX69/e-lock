@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers"
 import * as bcrypt from "bcryptjs"
-import { getUserByEmail } from "@/features/auth/server/db/auth"
+import { getUserByEmail, getUserById } from "@/features/auth/server/db/auth"
 import {
   createAccessToken,
   createRefreshToken,
@@ -55,6 +55,8 @@ export async function loginAction(formData: FormData) {
       email: user.email,
       name: user.name,
       role: user.role,
+      position: user.position,
+      securityLevel: user.securityLevel,
     }
 
     const accessToken = await createAccessToken(payload)
@@ -107,6 +109,13 @@ export async function getSessionAction(): Promise<SessionUser | null> {
     if (!payload) {
       return refreshSession()
     }
+
+    const user = await getUserById(payload.sub)
+    if (user) {
+      payload.position = user.position
+      payload.securityLevel = user.securityLevel
+    }
+
     return payload
   } catch {
     return refreshSession()

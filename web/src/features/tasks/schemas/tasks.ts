@@ -8,6 +8,7 @@ export const submitTaskSchema = z.object({
   description: z.string().optional(),
   coWorkerIds: z.array(z.string().uuid()).default([]),
   coWorkerNames: z.array(z.string()).default([]),
+  attachments: z.array(z.string()).default([]),
 })
 
 export const updateTaskSchema = submitTaskSchema.extend({

@@ -73,7 +73,7 @@ export const UserTable = pgTable(
     passwordHash: text("password_hash").notNull(),
     role: UserRoleEnum("role").notNull().default("user"),
     position: text("position").notNull(),
-    securityLevel: text("security_level").notNull(),
+    securityLevel: integer("security_level").notNull(),
     status: UserStatusEnum("status").notNull().default("active"),
     lastLocation: text("last_location").default("N/A"),
     lastActiveAt: timestamp("last_active_at", {
@@ -103,6 +103,7 @@ export const TaskTable = pgTable(
     priority: text("priority").notNull(),
     description: text("description"),
     status: text("status").notNull().default("pending"),
+    approvedByAdmin: boolean("approved_by_admin").notNull().default(false),
     submittedAt: timestamp("submitted_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -199,6 +200,31 @@ export const NotificationTable = pgTable(
   ]
 )
 
+export const AttachmentTable = pgTable(
+  "attachments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    fileName: text("file_name").notNull(),
+    filePath: text("file_path").notNull(),
+    referenceId: uuid("reference_id").notNull(),
+    referenceModel: text("reference_model").notNull(),
+    category: text("category").notNull(),
+    uploadedById: uuid("uploaded_by_id")
+      .notNull()
+      .references(() => UserTable.id, { onDelete: "cascade" }),
+    uploadedAt: timestamp("uploaded_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("attachments.reference_id_index").on(
+      table.referenceId,
+      table.referenceModel,
+      table.category
+    ),
+  ]
+)
+
 // ─── Relations ────────────────────────────────────────────────────────────────
 
 export const deviceRelations = relations(DeviceTable, ({ many }) => ({
@@ -211,6 +237,14 @@ export const userRelations = relations(UserTable, ({ many }) => ({
   tasks: many(TaskTable),
   taskCoWorkers: many(TaskCoWorkerTable),
   notifications: many(NotificationTable),
+  attachments: many(AttachmentTable),
+}))
+
+export const attachmentRelations = relations(AttachmentTable, ({ one }) => ({
+  uploadedBy: one(UserTable, {
+    fields: [AttachmentTable.uploadedById],
+    references: [UserTable.id],
+  }),
 }))
 
 export const notificationRelations = relations(NotificationTable, ({ one }) => ({

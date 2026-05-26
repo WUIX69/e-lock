@@ -170,7 +170,7 @@ async function seed() {
       role: "admin" as const,
       employeeId: "P-104",
       position: "SYSTEM ADMIN",
-      securityLevel: "Level 5 (Admin)",
+      securityLevel: 5,
       status: "active" as const,
     },
     {
@@ -180,7 +180,7 @@ async function seed() {
       role: "admin" as const,
       employeeId: "P-102",
       position: "SAFETY SUPERVISOR",
-      securityLevel: "Level 5 (Admin)",
+      securityLevel: 5,
       status: "active" as const,
     },
     {
@@ -190,7 +190,7 @@ async function seed() {
       role: "senior_engineer" as const,
       employeeId: "P-101",
       position: "SENIOR ELECTRICIAN",
-      securityLevel: "Level 4 (LOTO)",
+      securityLevel: 4,
       status: "active" as const,
     },
     {
@@ -200,7 +200,7 @@ async function seed() {
       role: "user" as const,
       employeeId: "P-103",
       position: "MAINTENANCE ENGINEER",
-      securityLevel: "Level 3",
+      securityLevel: 3,
       status: "off-site" as const,
     },
     {
@@ -210,7 +210,7 @@ async function seed() {
       role: "user" as const,
       employeeId: "P-105",
       position: "JUNIOR TECHNICIAN",
-      securityLevel: "Level 2",
+      securityLevel: 2,
       status: "active" as const,
     },
   ]

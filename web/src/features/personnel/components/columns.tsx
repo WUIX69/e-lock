@@ -29,7 +29,7 @@ export type PersonnelRow = {
   email: string
   role: "admin" | "senior_engineer" | "user"
   position: string
-  securityLevel: string
+  securityLevel: number
   status: "active" | "inactive" | "off-site" | "on-leave"
   lastLocation: string | null
   lastActiveAt: Date | null
@@ -78,9 +78,14 @@ export const columns: ColumnDef<PersonnelRow>[] = [
     accessorKey: "securityLevel",
     header: "Access Level",
     cell: ({ row }) => {
-      const level = row.getValue("securityLevel") as string
+      const level = row.getValue("securityLevel") as number
       const role = row.original.role
       const isAdmin = role === "admin"
+      const levelLabel = level === 5
+        ? `Level ${level} (Admin)`
+        : level >= 4
+          ? `Level ${level} (LOTO)`
+          : `Level ${level}`
 
       return (
         <div className="flex items-center gap-2">
@@ -92,7 +97,7 @@ export const columns: ColumnDef<PersonnelRow>[] = [
           <span
             className={cn("text-sm font-medium", isAdmin && "text-primary")}
           >
-            {level}
+            {levelLabel}
           </span>
         </div>
       )

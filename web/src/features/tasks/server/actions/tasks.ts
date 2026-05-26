@@ -10,6 +10,8 @@ import {
   deleteTask,
   getAllTasks,
   getTasksByUser,
+  updateTaskApproval,
+  completeTaskWithAttachments,
 } from "@/features/tasks/server/db/tasks"
 import { getDeviceById } from "@/features/devices/server/db/devices"
 import { getSessionAction } from "@/features/auth/server/actions/auth"
@@ -20,9 +22,14 @@ import { eq } from "drizzle-orm"
 import { AddTaskResult } from "@/types/tasks"
 
 const RESTRICTED_DEVICE_STATUSES = ["offline", "maintenance"]
+const STRICT_TASK_TYPES = ["Preventative Maintenance", "Emergency Repair"]
 
 function canBypassDeviceRestriction(role: string): boolean {
   return role === "admin" || role === "senior_engineer"
+}
+
+function isStrictTask(taskType: string): boolean {
+  return STRICT_TASK_TYPES.includes(taskType)
 }
 
 async function checkDeviceAccess(
@@ -50,6 +57,10 @@ export async function submitTaskAction(
       return { error: "You must be logged in to submit a task." }
     }
 
+    const rawAttachments: string[] = JSON.parse(
+      (formData.get("attachments") as string) || "[]"
+    )
+
     const raw = {
       deviceId: formData.get("deviceId"),
       taskType: formData.get("taskType"),
@@ -60,6 +71,7 @@ export async function submitTaskAction(
       coWorkerNames: JSON.parse(
         (formData.get("coWorkerNames") as string) || "[]"
       ),
+      attachments: rawAttachments,
     }
 
     const parsed = submitTaskSchema.safeParse(raw)
@@ -73,6 +85,25 @@ export async function submitTaskAction(
       session.role
     )
     if (deviceError) return { error: deviceError }
+
+    const userSecurityLevel = session.securityLevel ?? 0
+
+    if (userSecurityLevel < 4) {
+      const allowedTypes = ["General Record / Log", "Safety Inspection"]
+      if (!allowedTypes.includes(parsed.data.taskType)) {
+        return {
+          error: "Your security level does not allow submitting this task type.",
+        }
+      }
+    }
+
+    if (userSecurityLevel >= 4 && isStrictTask(parsed.data.taskType)) {
+      if (parsed.data.attachments.length === 0) {
+        return {
+          error: "Attachments are required for this task type. Please upload at least one file.",
+        }
+      }
+    }
 
     await insertTask(parsed.data, session.sub)
 
@@ -184,6 +215,96 @@ export async function updateTaskAction(
     return { success: true }
   } catch (error) {
     console.error("Update task error:", error)
+    return { error: "An unexpected error occurred." }
+  }
+}
+
+export async function approveTaskAction(
+  taskId: string
+): Promise<AddTaskResult> {
+  try {
+    const session = await getSessionAction()
+    if (!session) return { error: "You must be logged in." }
+
+    if (session.role !== "admin") {
+      return { error: "Only admins can approve tasks." }
+    }
+
+    const task = await getTaskById(taskId)
+    if (!task) return { error: "Task not found." }
+
+    if (task.status !== "pending") {
+      return { error: "Only pending tasks can be approved." }
+    }
+
+    if (!isStrictTask(task.taskType)) {
+      return { error: "Non-strict tasks do not require admin approval." }
+    }
+
+    await updateTaskApproval(taskId, true)
+
+    await createNotification({
+      recipientId: task.userId,
+      title: "Task Approved",
+      description: `Your task "${task.subject}" has been approved by ${session.name}. You may now mark it as complete.`,
+      category: "task_update",
+      severity: "info",
+      actionLabel: "View Task",
+      actorName: session.name,
+    })
+
+    revalidatePath("/user/my-activity")
+    revalidatePath("/tasks")
+    return { success: true }
+  } catch (error) {
+    console.error("Approve task error:", error)
+    return { error: "An unexpected error occurred." }
+  }
+}
+
+export async function completeTaskAction(
+  taskId: string,
+  attachments: string[]
+): Promise<AddTaskResult> {
+  try {
+    const session = await getSessionAction()
+    if (!session) return { error: "You must be logged in." }
+
+    const task = await getTaskById(taskId)
+    if (!task) return { error: "Task not found." }
+
+    if (task.userId !== session.sub && session.role !== "admin") {
+      return { error: "You can only complete your own tasks." }
+    }
+
+    if (task.status !== "pending") {
+      return { error: "Only pending tasks can be completed." }
+    }
+
+    const strict = isStrictTask(task.taskType)
+    const userSecurityLevel = session.securityLevel ?? 0
+
+    if (strict && userSecurityLevel >= 4) {
+      if (!task.approvedByAdmin) {
+        return {
+          error: "This task must be approved by an admin before it can be marked as complete.",
+        }
+      }
+
+      if (attachments.length === 0) {
+        return {
+          error: "Completion attachments are required for this task type. Please upload at least one file.",
+        }
+      }
+    }
+
+    await completeTaskWithAttachments(taskId, attachments, session.sub)
+
+    revalidatePath("/user/my-activity")
+    revalidatePath("/tasks")
+    return { success: true }
+  } catch (error) {
+    console.error("Complete task error:", error)
     return { error: "An unexpected error occurred." }
   }
 }

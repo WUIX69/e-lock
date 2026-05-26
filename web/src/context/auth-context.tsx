@@ -8,6 +8,8 @@ export interface SessionUser {
   email: string
   name: string
   role: "admin" | "senior_engineer" | "user"
+  position?: string
+  securityLevel?: number
 }
 
 interface AuthContextValue {
@@ -34,6 +36,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             email: session.email,
             name: session.name,
             role: session.role,
+            position: session.position,
+            securityLevel: session.securityLevel,
           })
         }
       } catch (error) {

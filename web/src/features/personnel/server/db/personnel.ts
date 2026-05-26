@@ -57,7 +57,7 @@ export async function updatePersonnel(
     email: string
     role: "admin" | "user"
     position: string
-    securityLevel: string
+    securityLevel: number
     status: "active" | "inactive" | "off-site" | "on-leave"
     passwordHash?: string
   } = {

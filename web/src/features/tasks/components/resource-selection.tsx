@@ -9,6 +9,7 @@ interface ResourceSelectionProps {
   taskType: string
   devices: Device[]
   defaultDeviceId?: string
+  userSecurityLevel?: number
   onDeviceIdChange: (value: string) => void
   onTaskTypeChange: (value: string) => void
 }
@@ -20,6 +21,7 @@ export const ResourceSelection = ({
   taskType,
   devices,
   defaultDeviceId = "",
+  userSecurityLevel,
   onDeviceIdChange,
   onTaskTypeChange,
 }: ResourceSelectionProps) => {
@@ -31,6 +33,16 @@ export const ResourceSelection = ({
   const isRestricted =
     selectedDevice &&
     RESTRICTED_STATUSES.includes(selectedDevice.status)
+
+  const securityLevel = userSecurityLevel ?? 0
+  const availableTaskTypes =
+    securityLevel < 4
+      ? MOCK_TASK_TYPES.filter(
+          (t) =>
+            t.value === "General Record / Log" ||
+            t.value === "Safety Inspection"
+        )
+      : MOCK_TASK_TYPES
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -79,7 +91,7 @@ export const ResourceSelection = ({
           className="w-full rounded-lg border border-border bg-muted p-3 font-body-md text-foreground transition-all focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
         >
           <option value="">Select Category...</option>
-          {MOCK_TASK_TYPES.map((opt) => (
+          {availableTaskTypes.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>

@@ -9,6 +9,7 @@ import { ResourceSelection } from "./resource-selection"
 import { TaskDetails } from "./task-details"
 import { VerificationSection } from "./verification-section"
 import { BiometricAuth } from "./biometric-auth"
+import { useAuth } from "@/context/auth-context"
 import {
   submitTaskAction,
   updateTaskAction,
@@ -29,6 +30,7 @@ export const TaskForm = ({
   taskId,
 }: TaskFormProps) => {
   const router = useRouter()
+  const { currentUser } = useAuth()
   const [deviceId, setDeviceId] = useState(defaultDeviceId)
   const [taskType, setTaskType] = useState("")
   const [subject, setSubject] = useState("")
@@ -38,6 +40,7 @@ export const TaskForm = ({
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [loading, setLoading] = useState(!!taskId)
+  const [attachments, setAttachments] = useState<string[]>([])
 
   useEffect(() => {
     if (!taskId) return
@@ -109,6 +112,8 @@ export const TaskForm = ({
       formData.set("coWorkerNames", "[]")
     }
 
+    formData.set("attachments", JSON.stringify(attachments))
+
     let result
     if (taskId) {
       formData.set("id", taskId)
@@ -156,6 +161,7 @@ export const TaskForm = ({
           taskType={taskType}
           devices={devices}
           defaultDeviceId={defaultDeviceId}
+          userSecurityLevel={currentUser?.securityLevel}
           onDeviceIdChange={setDeviceId}
           onTaskTypeChange={setTaskType}
         />
@@ -172,9 +178,13 @@ export const TaskForm = ({
           subject={subject}
           priority={priority}
           description={description}
+          attachments={attachments}
+          taskType={taskType}
+          userSecurityLevel={currentUser?.securityLevel}
           onSubjectChange={setSubject}
           onPriorityChange={setPriority}
           onDescriptionChange={setDescription}
+          onAttachmentsChange={setAttachments}
         />
       </section>
 

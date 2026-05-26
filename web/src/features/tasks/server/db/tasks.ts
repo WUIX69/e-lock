@@ -4,8 +4,9 @@ import {
   TaskCoWorkerTable,
   DeviceTable,
   UserTable,
+  AttachmentTable,
 } from "@/drizzle/schema"
-import { eq, desc, inArray } from "drizzle-orm"
+import { eq, desc, inArray, and } from "drizzle-orm"
 import { z } from "zod"
 import { submitTaskSchema } from "@/features/tasks/schemas/tasks"
 
@@ -34,7 +35,87 @@ export async function insertTask(data: SubmitTaskData, userId: string) {
     )
   }
 
+  if (data.attachments.length > 0) {
+    await db.insert(AttachmentTable).values(
+      data.attachments.map((fileName) => ({
+        fileName,
+        filePath: `/uploads/tasks/${newTask.id}/${fileName}`,
+        referenceId: newTask.id,
+        referenceModel: "tasks",
+        category: "submission",
+        uploadedById: userId,
+      }))
+    )
+  }
+
   return newTask
+}
+
+type AttachmentRow = {
+  id: string
+  fileName: string
+  filePath: string
+  referenceId: string
+  referenceModel: string
+  category: string
+  uploadedById: string
+  uploadedAt: Date
+}
+
+async function getTaskAttachments(taskId: string): Promise<{
+  submissionAttachments: AttachmentRow[]
+  completionAttachments: AttachmentRow[]
+}> {
+  const attachments = await db
+    .select()
+    .from(AttachmentTable)
+    .where(
+      and(
+        eq(AttachmentTable.referenceId, taskId),
+        eq(AttachmentTable.referenceModel, "tasks")
+      )
+    )
+
+  return {
+    submissionAttachments: attachments.filter((a) => a.category === "submission"),
+    completionAttachments: attachments.filter((a) => a.category === "completion"),
+  }
+}
+
+export async function insertSubmissionAttachments(
+  taskId: string,
+  fileNames: string[],
+  userId: string
+) {
+  if (fileNames.length === 0) return
+  await db.insert(AttachmentTable).values(
+    fileNames.map((fileName) => ({
+      fileName,
+      filePath: `/uploads/tasks/${taskId}/${fileName}`,
+      referenceId: taskId,
+      referenceModel: "tasks",
+      category: "submission",
+      uploadedById: userId,
+    }))
+  )
+}
+
+export async function insertCompletionAttachments(
+  taskId: string,
+  fileNames: string[],
+  userId: string
+) {
+  if (fileNames.length === 0) return
+  await db.insert(AttachmentTable).values(
+    fileNames.map((fileName) => ({
+      fileName,
+      filePath: `/uploads/tasks/${taskId}/${fileName}`,
+      referenceId: taskId,
+      referenceModel: "tasks",
+      category: "completion",
+      uploadedById: userId,
+    }))
+  )
 }
 
 export async function getTaskById(id: string) {
@@ -46,15 +127,18 @@ export async function getTaskById(id: string) {
 
   if (!task) return null
 
-  const coWorkers = await db
-    .select({
-      id: TaskCoWorkerTable.userId,
-      name: TaskCoWorkerTable.name,
-    })
-    .from(TaskCoWorkerTable)
-    .where(eq(TaskCoWorkerTable.taskId, id))
+  const [coWorkers, attachments] = await Promise.all([
+    db
+      .select({
+        id: TaskCoWorkerTable.userId,
+        name: TaskCoWorkerTable.name,
+      })
+      .from(TaskCoWorkerTable)
+      .where(eq(TaskCoWorkerTable.taskId, id)),
+    getTaskAttachments(id),
+  ])
 
-  return { ...task, coWorkers }
+  return { ...task, coWorkers, ...attachments }
 }
 
 export async function getTasksByUser(userId: string) {
@@ -73,6 +157,7 @@ export async function getTasksByUser(userId: string) {
       priority: TaskTable.priority,
       description: TaskTable.description,
       status: TaskTable.status,
+      approvedByAdmin: TaskTable.approvedByAdmin,
       submittedAt: TaskTable.submittedAt,
       updatedAt: TaskTable.updatedAt,
     })
@@ -85,10 +170,21 @@ export async function getTasksByUser(userId: string) {
   if (tasks.length === 0) return []
 
   const taskIds = tasks.map((t) => t.id)
-  const allCoWorkers = await db
-    .select()
-    .from(TaskCoWorkerTable)
-    .where(inArray(TaskCoWorkerTable.taskId, taskIds))
+  const [allCoWorkers, allAttachments] = await Promise.all([
+    db
+      .select()
+      .from(TaskCoWorkerTable)
+      .where(inArray(TaskCoWorkerTable.taskId, taskIds)),
+    db
+      .select()
+      .from(AttachmentTable)
+      .where(
+        and(
+          inArray(AttachmentTable.referenceId, taskIds),
+          eq(AttachmentTable.referenceModel, "tasks")
+        )
+      ),
+  ])
 
   const coWorkerMap: Record<string, { id: string | null; name: string }[]> = {}
   for (const cw of allCoWorkers) {
@@ -96,9 +192,26 @@ export async function getTasksByUser(userId: string) {
     coWorkerMap[cw.taskId].push({ id: cw.userId, name: cw.name })
   }
 
+  const attachmentMap: Record<
+    string,
+    { submissionAttachments: AttachmentRow[]; completionAttachments: AttachmentRow[] }
+  > = {}
+  for (const a of allAttachments) {
+    if (!attachmentMap[a.referenceId]) {
+      attachmentMap[a.referenceId] = { submissionAttachments: [], completionAttachments: [] }
+    }
+    if (a.category === "submission") {
+      attachmentMap[a.referenceId].submissionAttachments.push(a)
+    } else {
+      attachmentMap[a.referenceId].completionAttachments.push(a)
+    }
+  }
+
   return tasks.map((t) => ({
     ...t,
     coWorkers: coWorkerMap[t.id] || [],
+    submissionAttachments: attachmentMap[t.id]?.submissionAttachments || [],
+    completionAttachments: attachmentMap[t.id]?.completionAttachments || [],
   }))
 }
 
@@ -118,6 +231,7 @@ export async function getTasksByDevice(deviceId: string) {
       priority: TaskTable.priority,
       description: TaskTable.description,
       status: TaskTable.status,
+      approvedByAdmin: TaskTable.approvedByAdmin,
       submittedAt: TaskTable.submittedAt,
       updatedAt: TaskTable.updatedAt,
     })
@@ -130,10 +244,21 @@ export async function getTasksByDevice(deviceId: string) {
   if (tasks.length === 0) return []
 
   const taskIds = tasks.map((t) => t.id)
-  const allCoWorkers = await db
-    .select()
-    .from(TaskCoWorkerTable)
-    .where(inArray(TaskCoWorkerTable.taskId, taskIds))
+  const [allCoWorkers, allAttachments] = await Promise.all([
+    db
+      .select()
+      .from(TaskCoWorkerTable)
+      .where(inArray(TaskCoWorkerTable.taskId, taskIds)),
+    db
+      .select()
+      .from(AttachmentTable)
+      .where(
+        and(
+          inArray(AttachmentTable.referenceId, taskIds),
+          eq(AttachmentTable.referenceModel, "tasks")
+        )
+      ),
+  ])
 
   const coWorkerMap: Record<string, { id: string | null; name: string }[]> = {}
   for (const cw of allCoWorkers) {
@@ -141,9 +266,26 @@ export async function getTasksByDevice(deviceId: string) {
     coWorkerMap[cw.taskId].push({ id: cw.userId, name: cw.name })
   }
 
+  const attachmentMap: Record<
+    string,
+    { submissionAttachments: AttachmentRow[]; completionAttachments: AttachmentRow[] }
+  > = {}
+  for (const a of allAttachments) {
+    if (!attachmentMap[a.referenceId]) {
+      attachmentMap[a.referenceId] = { submissionAttachments: [], completionAttachments: [] }
+    }
+    if (a.category === "submission") {
+      attachmentMap[a.referenceId].submissionAttachments.push(a)
+    } else {
+      attachmentMap[a.referenceId].completionAttachments.push(a)
+    }
+  }
+
   return tasks.map((t) => ({
     ...t,
     coWorkers: coWorkerMap[t.id] || [],
+    submissionAttachments: attachmentMap[t.id]?.submissionAttachments || [],
+    completionAttachments: attachmentMap[t.id]?.completionAttachments || [],
   }))
 }
 
@@ -163,6 +305,7 @@ export async function getAllTasks() {
       priority: TaskTable.priority,
       description: TaskTable.description,
       status: TaskTable.status,
+      approvedByAdmin: TaskTable.approvedByAdmin,
       submittedAt: TaskTable.submittedAt,
       updatedAt: TaskTable.updatedAt,
     })
@@ -174,10 +317,21 @@ export async function getAllTasks() {
   if (tasks.length === 0) return []
 
   const taskIds = tasks.map((t) => t.id)
-  const allCoWorkers = await db
-    .select()
-    .from(TaskCoWorkerTable)
-    .where(inArray(TaskCoWorkerTable.taskId, taskIds))
+  const [allCoWorkers, allAttachments] = await Promise.all([
+    db
+      .select()
+      .from(TaskCoWorkerTable)
+      .where(inArray(TaskCoWorkerTable.taskId, taskIds)),
+    db
+      .select()
+      .from(AttachmentTable)
+      .where(
+        and(
+          inArray(AttachmentTable.referenceId, taskIds),
+          eq(AttachmentTable.referenceModel, "tasks")
+        )
+      ),
+  ])
 
   const coWorkerMap: Record<string, { id: string | null; name: string }[]> = {}
   for (const cw of allCoWorkers) {
@@ -185,9 +339,26 @@ export async function getAllTasks() {
     coWorkerMap[cw.taskId].push({ id: cw.userId, name: cw.name })
   }
 
+  const attachmentMap: Record<
+    string,
+    { submissionAttachments: AttachmentRow[]; completionAttachments: AttachmentRow[] }
+  > = {}
+  for (const a of allAttachments) {
+    if (!attachmentMap[a.referenceId]) {
+      attachmentMap[a.referenceId] = { submissionAttachments: [], completionAttachments: [] }
+    }
+    if (a.category === "submission") {
+      attachmentMap[a.referenceId].submissionAttachments.push(a)
+    } else {
+      attachmentMap[a.referenceId].completionAttachments.push(a)
+    }
+  }
+
   return tasks.map((t) => ({
     ...t,
     coWorkers: coWorkerMap[t.id] || [],
+    submissionAttachments: attachmentMap[t.id]?.submissionAttachments || [],
+    completionAttachments: attachmentMap[t.id]?.completionAttachments || [],
   }))
 }
 
@@ -215,6 +386,7 @@ export async function updateTask(
     status: string
     subject: string
     description: string | null
+    approvedByAdmin: boolean
   }>
 ) {
   const [updated] = await db
@@ -222,6 +394,43 @@ export async function updateTask(
     .set(data)
     .where(eq(TaskTable.id, id))
     .returning()
+
+  return updated
+}
+
+export async function updateTaskApproval(id: string, approved: boolean) {
+  const [updated] = await db
+    .update(TaskTable)
+    .set({ approvedByAdmin: approved })
+    .where(eq(TaskTable.id, id))
+    .returning()
+
+  return updated
+}
+
+export async function completeTaskWithAttachments(
+  id: string,
+  fileNames: string[],
+  userId: string
+) {
+  const [updated] = await db
+    .update(TaskTable)
+    .set({ status: "completed" })
+    .where(eq(TaskTable.id, id))
+    .returning()
+
+  if (fileNames.length > 0) {
+    await db.insert(AttachmentTable).values(
+      fileNames.map((fileName) => ({
+        fileName,
+        filePath: `/uploads/tasks/${id}/${fileName}`,
+        referenceId: id,
+        referenceModel: "tasks",
+        category: "completion",
+        uploadedById: userId,
+      }))
+    )
+  }
 
   return updated
 }

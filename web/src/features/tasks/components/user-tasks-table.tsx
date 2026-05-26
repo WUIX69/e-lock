@@ -11,11 +11,19 @@ import { ToolbarRow } from "@/components/primitives/toolbar-row"
 import { FilterInput } from "@/components/primitives/filter-input"
 import { FilterSelect } from "@/components/primitives/filter-select"
 
+interface TaskAttachment {
+  id: string
+  fileName: string
+  filePath: string
+  category: string
+}
+
 type TaskItem = {
   id: string
   deviceName: string | null
   deviceLabel: string | null
   deviceType: string | null
+  userId: string | null
   userName: string | null
   userPosition: string | null
   taskType: string
@@ -25,6 +33,9 @@ type TaskItem = {
   status: string
   submittedAt: Date
   coWorkers: { id: string | null; name: string }[]
+  approvedByAdmin?: boolean
+  submissionAttachments?: TaskAttachment[]
+  completionAttachments?: TaskAttachment[]
 }
 
 interface UserTasksTableProps {
@@ -289,10 +300,14 @@ export const UserTasksTable = ({ tasks }: UserTasksTableProps) => {
             deviceName: viewTask.deviceName,
             deviceLabel: viewTask.deviceLabel,
             deviceType: viewTask.deviceType,
+            userId: viewTask.userId,
             userName: viewTask.userName,
             userPosition: viewTask.userPosition,
             submittedAt: viewTask.submittedAt,
+            approvedByAdmin: viewTask.approvedByAdmin,
             coWorkers: viewTask.coWorkers,
+            submissionAttachments: viewTask.submissionAttachments,
+            completionAttachments: viewTask.completionAttachments,
           }}
         />
       )}

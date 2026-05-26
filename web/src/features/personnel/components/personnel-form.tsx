@@ -203,18 +203,18 @@ export const PersonnelForm = ({
           </Label>
           <Select
             name="securityLevel"
-            defaultValue={isEditMode ? personnel?.securityLevel : "Level 2"}
+            defaultValue={isEditMode ? String(personnel?.securityLevel ?? 2) : "2"}
             disabled={isLoading}
           >
             <SelectTrigger className="h-14 w-full rounded-2xl border-border bg-muted px-4 py-6 font-mono text-sm focus:ring-primary">
               <SelectValue placeholder="Select level" />
             </SelectTrigger>
             <SelectContent className="p-2">
-              <SelectItem value="Level 1">Level 1</SelectItem>
-              <SelectItem value="Level 2">Level 2</SelectItem>
-              <SelectItem value="Level 3">Level 3</SelectItem>
-              <SelectItem value="Level 4 (LOTO)">Level 4 (LOTO)</SelectItem>
-              <SelectItem value="Level 5 (Admin)">Level 5 (Admin)</SelectItem>
+              <SelectItem value="1">Level 1</SelectItem>
+              <SelectItem value="2">Level 2</SelectItem>
+              <SelectItem value="3">Level 3</SelectItem>
+              <SelectItem value="4">Level 4 (LOTO)</SelectItem>
+              <SelectItem value="5">Level 5 (Admin)</SelectItem>
             </SelectContent>
           </Select>
         </div>

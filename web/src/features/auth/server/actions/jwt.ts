@@ -11,6 +11,8 @@ export interface SessionUser {
   email: string
   name: string
   role: "admin" | "senior_engineer" | "user"
+  position?: string
+  securityLevel?: number
 }
 
 function parseExpiresInToSeconds(expiresIn: string): number {
@@ -90,6 +92,8 @@ export async function refreshSession(): Promise<SessionUser | null> {
     email: payload.email,
     name: payload.name,
     role: payload.role,
+    position: payload.position,
+    securityLevel: payload.securityLevel,
   })
 
   const accessAge = parseExpiresInToSeconds(env.JWT_EXPIRES_IN)

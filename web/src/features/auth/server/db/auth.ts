@@ -10,3 +10,12 @@ export async function getUserByEmail(email: string) {
     .limit(1)
   return users[0] || null
 }
+
+export async function getUserById(id: string) {
+  const users = await db
+    .select()
+    .from(UserTable)
+    .where(eq(UserTable.id, id))
+    .limit(1)
+  return users[0] || null
+}
