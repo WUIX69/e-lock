@@ -13,8 +13,8 @@ constexpr const char* kWifiPassword = "YOUR_WIFI_PASSWORD";
 constexpr const char* kMqttBrokerHost = "YOUR_MQTT_BROKER_IP";
 constexpr uint16_t kMqttBrokerPort = 1883;
 constexpr const char* kMqttClientId = "elock-esp32-001";
-constexpr const char* kMqttUsername = "";
-constexpr const char* kMqttPassword = "";
+constexpr const char* kMqttUsername = "elock_mqtt";
+constexpr const char* kMqttPassword = "elock_mqtt_2026";
 
 // --- Fingerprint Sensor Pins (UART) ---
 constexpr uint8_t kFingerprintRxPin = 16;

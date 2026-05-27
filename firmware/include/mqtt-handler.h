@@ -32,4 +32,8 @@ private:
     const char* m_host;
     uint16_t m_port;
     MessageCallback m_callback;
+    const char* m_clientId;
+    const char* m_username;
+    const char* m_password;
+    uint32_t m_lastReconnectAttempt;
 };
