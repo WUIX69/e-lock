@@ -99,7 +99,8 @@ export const TaskDetailModal = ({
   const isAdmin = currentUser?.role === "admin"
   const isPending = task.status === "pending"
   const userSecurityLevel = currentUser?.securityLevel ?? 0
-  const needsAdminApproval = strict && isPending && !task.approvedByAdmin && userSecurityLevel >= 4
+  const needsAdminApproval =
+    strict && isPending && !task.approvedByAdmin && userSecurityLevel >= 4
 
   const handleApprove = async () => {
     setError(null)
@@ -161,7 +162,8 @@ export const TaskDetailModal = ({
     return `/api/uploads/${clean}`
   }
 
-  const isImage = (name: string) => /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(name)
+  const isImage = (name: string) =>
+    /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(name)
 
   const openPreview = (filePath: string, fileName: string) => {
     if (isImage(fileName)) {
@@ -175,7 +177,7 @@ export const TaskDetailModal = ({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="flex max-h-[90vh] sm:max-w-2xl flex-col gap-0 p-0">
+        <DialogContent className="flex max-h-[90vh] flex-col gap-0 p-0 sm:max-w-2xl">
           {/* Header */}
           <div className="flex flex-col gap-4 border-b border-border bg-muted/30 px-6 py-6">
             <div className="flex items-start justify-between">
@@ -415,11 +417,11 @@ export const TaskDetailModal = ({
                           alt={att.fileName}
                           width={48}
                           height={48}
-unoptimized
-                            className="shrink-0 rounded object-cover h-12 w-12"
-                          />
-                        ) : (
-                          <div className="flex h-12 w-12 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
+                          unoptimized
+                          className="h-12 w-12 shrink-0 rounded object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-12 w-12 items-center justify-center rounded bg-muted text-lg text-muted-foreground">
                           📄
                         </div>
                       )}
@@ -455,11 +457,11 @@ unoptimized
                           alt={att.fileName}
                           width={48}
                           height={48}
-unoptimized
-                            className="shrink-0 rounded object-cover h-12 w-12"
-                          />
-                        ) : (
-                          <div className="flex h-12 w-12 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
+                          unoptimized
+                          className="h-12 w-12 shrink-0 rounded object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-12 w-12 items-center justify-center rounded bg-muted text-lg text-muted-foreground">
                           📄
                         </div>
                       )}
@@ -567,7 +569,9 @@ unoptimized
 
       <ImagePreview
         open={!!previewSrc}
-        onOpenChange={(open) => { if (!open) setPreviewSrc(null) }}
+        onOpenChange={(open) => {
+          if (!open) setPreviewSrc(null)
+        }}
         src={previewSrc || ""}
         fileName={previewFileName}
       />

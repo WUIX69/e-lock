@@ -29,10 +29,7 @@ export default function NotificationsPage() {
     )
   }
 
-  if (
-    currentUser.role === "admin" ||
-    currentUser.role === "senior_engineer"
-  ) {
+  if (currentUser.role === "admin" || currentUser.role === "senior_engineer") {
     return (
       <div className="container mx-auto px-4 py-8 md:px-8">
         <AdminNotificationsView />

@@ -65,7 +65,15 @@ function AdminView() {
       )}
       <AdminTasksTable
         tasks={tasks}
-        stats={stats || { totalSubmissions: 0, criticalRepairs: 0, pendingVerifications: 0, verificationRate: 0, growth: 0 }}
+        stats={
+          stats || {
+            totalSubmissions: 0,
+            criticalRepairs: 0,
+            pendingVerifications: 0,
+            verificationRate: 0,
+            growth: 0,
+          }
+        }
         onTaskUpdated={() => setRefreshKey((k) => k + 1)}
       />
     </div>

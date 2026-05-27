@@ -1,7 +1,10 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { submitTaskSchema, updateTaskSchema } from "@/features/tasks/schemas/tasks"
+import {
+  submitTaskSchema,
+  updateTaskSchema,
+} from "@/features/tasks/schemas/tasks"
 import {
   insertTask,
   getTaskById,
@@ -96,7 +99,8 @@ export async function submitTaskAction(
       const allowedTypes = ["General Record / Log", "Safety Inspection"]
       if (!allowedTypes.includes(parsed.data.taskType)) {
         return {
-          error: "Your security level does not allow submitting this task type.",
+          error:
+            "Your security level does not allow submitting this task type.",
         }
       }
     }
@@ -104,7 +108,8 @@ export async function submitTaskAction(
     if (userSecurityLevel >= 4 && isStrictTask(parsed.data.taskType)) {
       if (parsed.data.attachments.length === 0) {
         return {
-          error: "Attachments are required for this task type. Please upload at least one file.",
+          error:
+            "Attachments are required for this task type. Please upload at least one file.",
         }
       }
     }
@@ -195,9 +200,7 @@ export async function updateTaskAction(
       subject: formData.get("subject") || existing.subject,
       priority: formData.get("priority") || existing.priority,
       description: formData.get("description") || existing.description,
-      coWorkerIds: JSON.parse(
-        (formData.get("coWorkerIds") as string) || "[]"
-      ),
+      coWorkerIds: JSON.parse((formData.get("coWorkerIds") as string) || "[]"),
       coWorkerNames: JSON.parse(
         (formData.get("coWorkerNames") as string) || "[]"
       ),
@@ -310,9 +313,7 @@ export async function approveTaskAction(
   }
 }
 
-export async function denyTaskAction(
-  taskId: string
-): Promise<AddTaskResult> {
+export async function denyTaskAction(taskId: string): Promise<AddTaskResult> {
   try {
     const session = await getSessionAction()
     if (!session) return { error: "You must be logged in." }
@@ -384,13 +385,15 @@ export async function completeTaskAction(
     if (strict && userSecurityLevel >= 4) {
       if (!task.approvedByAdmin) {
         return {
-          error: "This task must be approved by an admin before it can be marked as complete.",
+          error:
+            "This task must be approved by an admin before it can be marked as complete.",
         }
       }
 
       if (fileNames.length === 0) {
         return {
-          error: "Completion attachments are required for this task type. Please upload at least one file.",
+          error:
+            "Completion attachments are required for this task type. Please upload at least one file.",
         }
       }
     }
@@ -547,7 +550,9 @@ export async function respondToInvitationAction(
 
     const task = await getTaskById(taskId)
     if (task) {
-      const notificationTitle = accept ? "Invitation Accepted" : "Invitation Declined"
+      const notificationTitle = accept
+        ? "Invitation Accepted"
+        : "Invitation Declined"
       const notificationDesc = accept
         ? `${session.name} has accepted your invitation to collaborate on task: ${task.subject}.`
         : `${session.name} has declined your invitation to collaborate on task: ${task.subject}.`
@@ -588,7 +593,13 @@ export async function getUserTaskStatsAction() {
   try {
     const session = await getSessionAction()
     if (!session) {
-      return { completedThisMonth: 0, pendingCount: 0, avgVerificationTime: 0, accuracyScore: 99.2, error: "You must be logged in." }
+      return {
+        completedThisMonth: 0,
+        pendingCount: 0,
+        avgVerificationTime: 0,
+        accuracyScore: 99.2,
+        error: "You must be logged in.",
+      }
     }
 
     const tasks = await getTasksByUser(session.sub)
@@ -639,7 +650,14 @@ export async function getAdminTaskStatsAction() {
   try {
     const session = await getSessionAction()
     if (!session) {
-      return { totalSubmissions: 0, criticalRepairs: 0, pendingVerifications: 0, verificationRate: 0, growth: 0, error: "You must be logged in." }
+      return {
+        totalSubmissions: 0,
+        criticalRepairs: 0,
+        pendingVerifications: 0,
+        verificationRate: 0,
+        growth: 0,
+        error: "You must be logged in.",
+      }
     }
 
     const tasks = await getAllTasks()
@@ -652,26 +670,27 @@ export async function getAdminTaskStatsAction() {
     ).length
     const verifiedCount = tasks.filter((t) => t.status === "completed").length
     const verificationRate =
-      tasks.length > 0
-        ? Math.round((verifiedCount / tasks.length) * 100)
-        : 0
+      tasks.length > 0 ? Math.round((verifiedCount / tasks.length) * 100) : 0
 
     const lastMonth = new Date()
     lastMonth.setMonth(lastMonth.getMonth() - 1)
     const thisMonthCount = tasks.filter((t) => {
       const d = new Date(t.submittedAt)
       const now = new Date()
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+      return (
+        d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+      )
     }).length
     const lastMonthCount = tasks.filter((t) => {
       const d = new Date(t.submittedAt)
-      return d.getMonth() === lastMonth.getMonth() && d.getFullYear() === lastMonth.getFullYear()
+      return (
+        d.getMonth() === lastMonth.getMonth() &&
+        d.getFullYear() === lastMonth.getFullYear()
+      )
     }).length
     const growth =
       lastMonthCount > 0
-        ? Math.round(
-            ((thisMonthCount - lastMonthCount) / lastMonthCount) * 100
-          )
+        ? Math.round(((thisMonthCount - lastMonthCount) / lastMonthCount) * 100)
         : 12
 
     return {

@@ -38,7 +38,7 @@ export default async function TaskSubmitPage({
     <div className="mx-auto space-y-8 pb-12">
       <div className="mb-8">
         <nav className="mb-2 flex items-center gap-2 text-[10px] font-black tracking-wider text-muted-foreground uppercase">
-          <Link href="/" className="hover:text-primary transition-colors">
+          <Link href="/" className="transition-colors hover:text-primary">
             Dashboard
           </Link>
           <ChevronRight className="size-3" />
@@ -52,7 +52,7 @@ export default async function TaskSubmitPage({
             {isEditing ? "Edit Task Record" : "Submit Task Record"}
           </h2>
         </div>
-        <p className="ml-4 mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 ml-4 text-sm text-muted-foreground">
           {isEditing
             ? "Update your pending maintenance task."
             : "Complete all steps to securely log industrial maintenance actions."}

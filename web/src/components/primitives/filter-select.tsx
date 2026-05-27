@@ -6,7 +6,11 @@ interface FilterSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement
   options: { value: string; label: string }[]
 }
 
-export function FilterSelect({ options, className, ...props }: FilterSelectProps) {
+export function FilterSelect({
+  options,
+  className,
+  ...props
+}: FilterSelectProps) {
   return (
     <select
       className={`h-9 rounded-xl border border-border bg-card px-3 text-xs font-medium text-foreground ${className || ""}`}

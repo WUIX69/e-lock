@@ -63,7 +63,12 @@ export const TaskForm = ({
         priority: string
         description: string | null
         coWorkers: { id: string; name: string }[]
-        submissionAttachments?: { id: string; fileName: string; filePath: string; category: string }[]
+        submissionAttachments?: {
+          id: string
+          fileName: string
+          filePath: string
+          category: string
+        }[]
       }
       setDeviceId(task.deviceId)
       setTaskType(task.taskType)
@@ -120,10 +125,7 @@ export const TaskForm = ({
     formData.set("description", description)
 
     if (coWorkers.length > 0) {
-      formData.set(
-        "coWorkerIds",
-        JSON.stringify(coWorkers.map((cw) => cw.id))
-      )
+      formData.set("coWorkerIds", JSON.stringify(coWorkers.map((cw) => cw.id)))
       formData.set(
         "coWorkerNames",
         JSON.stringify(coWorkers.map((cw) => cw.name))
@@ -141,10 +143,7 @@ export const TaskForm = ({
     let result
     if (taskId) {
       formData.set("id", taskId)
-      formData.set(
-        "deletedAttachmentIds",
-        JSON.stringify(deletedAttachmentIds)
-      )
+      formData.set("deletedAttachmentIds", JSON.stringify(deletedAttachmentIds))
       result = await updateTaskAction(formData)
     } else {
       result = await submitTaskAction(formData)
@@ -177,7 +176,7 @@ export const TaskForm = ({
 
       <section className="form-card rounded-xl border border-border/30 bg-card p-6 shadow-md transition-all">
         <div className="mb-6 flex items-center gap-3">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-green text-xs font-black text-primary">
+          <span className="bg-accent-green flex h-8 w-8 items-center justify-center rounded-full text-xs font-black text-primary">
             1
           </span>
           <h3 className="text-xl font-bold tracking-tight">
@@ -197,7 +196,7 @@ export const TaskForm = ({
 
       <section className="form-card rounded-xl border border-border/30 bg-card p-6 shadow-md transition-all">
         <div className="mb-6 flex items-center gap-3">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-green text-xs font-black text-primary">
+          <span className="bg-accent-green flex h-8 w-8 items-center justify-center rounded-full text-xs font-black text-primary">
             2
           </span>
           <h3 className="text-xl font-bold tracking-tight">Task Details</h3>
@@ -221,7 +220,7 @@ export const TaskForm = ({
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <section className="form-card flex h-full flex-col rounded-xl border border-border/30 bg-card p-6 shadow-md transition-all">
           <div className="mb-6 flex items-center gap-3">
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-green text-xs font-black text-primary">
+            <span className="bg-accent-green flex h-8 w-8 items-center justify-center rounded-full text-xs font-black text-primary">
               3
             </span>
             <h3 className="text-xl font-bold tracking-tight">Verification</h3>
@@ -235,7 +234,7 @@ export const TaskForm = ({
 
         <section className="form-card flex h-full flex-col rounded-xl border border-border/30 bg-card p-6 shadow-md transition-all">
           <div className="mb-6 flex items-center gap-3">
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-green text-xs font-black text-primary">
+            <span className="bg-accent-green flex h-8 w-8 items-center justify-center rounded-full text-xs font-black text-primary">
               4
             </span>
             <h3 className="text-xl font-bold tracking-tight">Biometric Auth</h3>

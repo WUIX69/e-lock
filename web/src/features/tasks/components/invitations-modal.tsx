@@ -27,9 +27,11 @@ interface InvitationsModalProps {
 
 const taskTypeColors: Record<string, string> = {
   "Preventative Maintenance": "bg-primary/10 text-primary",
-  "Emergency Repair": "bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400",
+  "Emergency Repair":
+    "bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400",
   "General Record / Log": "bg-muted text-muted-foreground",
-  "Safety Inspection": "bg-yellow-50 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400",
+  "Safety Inspection":
+    "bg-yellow-50 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400",
 }
 
 export function InvitationsModal({
@@ -57,7 +59,7 @@ export function InvitationsModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-lg">
         <DialogTitle className="text-lg font-black tracking-tight">
           Pending Invitations ({invitations.length})
         </DialogTitle>
@@ -65,27 +67,28 @@ export function InvitationsModal({
           {invitations.map((inv) => (
             <div
               key={inv.id}
-              className="rounded-xl border border-border bg-card p-4 space-y-3"
+              className="space-y-3 rounded-xl border border-border bg-card p-4"
             >
               <div className="flex items-start justify-between gap-4">
-                <div className="space-y-1 min-w-0">
-                  <h4 className="font-bold text-foreground truncate">
+                <div className="min-w-0 space-y-1">
+                  <h4 className="truncate font-bold text-foreground">
                     {inv.taskSubject}
                   </h4>
                   <span
                     className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
-                      taskTypeColors[inv.taskType] || "bg-muted text-muted-foreground"
+                      taskTypeColors[inv.taskType] ||
+                      "bg-muted text-muted-foreground"
                     }`}
                   >
                     {inv.taskType}
                   </span>
                 </div>
-                <span className="shrink-0 rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-black tracking-wider uppercase text-muted-foreground">
+                <span className="shrink-0 rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-black tracking-wider text-muted-foreground uppercase">
                   {inv.taskPriority}
                 </span>
               </div>
 
-              <div className="text-xs text-muted-foreground space-y-1">
+              <div className="space-y-1 text-xs text-muted-foreground">
                 <p>
                   <span className="font-medium text-foreground">Creator: </span>
                   {inv.creatorName}

@@ -8,10 +8,12 @@ export const addDeviceSchema = z.object({
     message: "Please select a hardware type",
   }),
   assignedMachine: z.string().min(1, "Assigned machine is required"),
-  macAddress: z.string().regex(
-    /^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$/,
-    "MAC address must be in format A1:B2:C3:D4:E5:F6"
-  ),
+  macAddress: z
+    .string()
+    .regex(
+      /^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$/,
+      "MAC address must be in format A1:B2:C3:D4:E5:F6"
+    ),
   isHighPriority: z.boolean().default(false),
 })
 

@@ -10,7 +10,8 @@ const basePersonnelSchema = z.object({
     message: "Please select a role",
   }),
   position: z.string().min(2, "Position must be at least 2 characters"),
-  securityLevel: z.coerce.number({ message: "Security level must be a number" })
+  securityLevel: z.coerce
+    .number({ message: "Security level must be a number" })
     .min(1, "Security level is required"),
 
   status: z.enum(STATUSES, {

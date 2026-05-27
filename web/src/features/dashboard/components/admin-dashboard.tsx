@@ -13,9 +13,8 @@ import Link from "next/link"
 import { MOCK_COMPLIANCE_STATS } from "@/data/mock/dashboard"
 
 export const AdminDashboard = () => {
-  const [deviceDiagnosticsPosition, setDeviceDiagnosticsPosition] = React.useState<
-    "top" | "bottom"
-  >("bottom")
+  const [deviceDiagnosticsPosition, setDeviceDiagnosticsPosition] =
+    React.useState<"top" | "bottom">("bottom")
 
   return (
     <div className="space-y-12 pb-12">

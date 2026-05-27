@@ -38,8 +38,8 @@ export const UserTasksHeader = ({
           </h1>
           <p className="max-w-2xl text-lg text-muted-foreground">
             A detailed record of your safety verifications and LOTO procedures.
-            Your contributions ensure the facility operates with maximum precision
-            and zero risk.
+            Your contributions ensure the facility operates with maximum
+            precision and zero risk.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">

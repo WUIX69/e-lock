@@ -28,10 +28,7 @@ export const RegisterHardwareDialog = ({
           </DialogTitle>
         </DialogHeader>
 
-        <RegisterHardwareForm
-          onSuccess={handleClose}
-          onCancel={handleClose}
-        />
+        <RegisterHardwareForm onSuccess={handleClose} onCancel={handleClose} />
       </DialogContent>
     </Dialog>
   )

@@ -1,4 +1,8 @@
-export type NotificationCategory = "all" | "safety_alert" | "task_update" | "system_health"
+export type NotificationCategory =
+  | "all"
+  | "safety_alert"
+  | "task_update"
+  | "system_health"
 
 export type NotificationSeverity = "critical" | "warning" | "info" | "default"
 

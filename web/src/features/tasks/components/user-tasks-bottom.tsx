@@ -19,11 +19,11 @@ export const UserTasksBottom = () => {
             80% to Gold Safety Badge
           </p>
         </div>
-        <Award className="absolute -bottom-4 -right-4 size-36 rotate-12 text-white/5" />
+        <Award className="absolute -right-4 -bottom-4 size-36 rotate-12 text-white/5" />
       </div>
 
       <div className="flex flex-col items-center justify-center rounded-3xl border border-border/20 bg-card p-8 text-center">
-        <div className="mb-4 flex size-16 items-center justify-center rounded-2xl bg-white dark:bg-card shadow-sm">
+        <div className="mb-4 flex size-16 items-center justify-center rounded-2xl bg-white shadow-sm dark:bg-card">
           <Upload className="size-8 text-primary" />
         </div>
         <h4 className="mb-2 text-2xl font-black tracking-tighter text-foreground">
@@ -35,7 +35,7 @@ export const UserTasksBottom = () => {
         </p>
         <button
           type="button"
-          className="rounded-xl border border-border bg-white dark:bg-card px-6 py-2 font-bold text-foreground transition-all hover:bg-muted active:scale-95"
+          className="rounded-xl border border-border bg-white px-6 py-2 font-bold text-foreground transition-all hover:bg-muted active:scale-95 dark:bg-card"
         >
           Start Digital Scan
         </button>

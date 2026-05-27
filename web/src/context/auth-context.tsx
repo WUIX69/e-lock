@@ -18,9 +18,7 @@ interface AuthContextValue {
   isLoading: boolean
 }
 
-const AuthContext = React.createContext<AuthContextValue | undefined>(
-  undefined
-)
+const AuthContext = React.createContext<AuthContextValue | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = React.useState<SessionUser | null>(null)

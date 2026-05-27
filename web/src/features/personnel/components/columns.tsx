@@ -81,11 +81,12 @@ export const columns: ColumnDef<PersonnelRow>[] = [
       const level = row.getValue("securityLevel") as number
       const role = row.original.role
       const isAdmin = role === "admin"
-      const levelLabel = level === 5
-        ? `Level ${level} (Admin)`
-        : level >= 4
-          ? `Level ${level} (LOTO)`
-          : `Level ${level}`
+      const levelLabel =
+        level === 5
+          ? `Level ${level} (Admin)`
+          : level >= 4
+            ? `Level ${level} (LOTO)`
+            : `Level ${level}`
 
       return (
         <div className="flex items-center gap-2">

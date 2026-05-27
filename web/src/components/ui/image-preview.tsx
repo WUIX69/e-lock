@@ -1,11 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 
 interface ImagePreviewProps {
   open: boolean
@@ -22,21 +18,21 @@ export const ImagePreview = ({
 }: ImagePreviewProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] max-w-4xl border-border bg-background p-0 overflow-hidden">
+      <DialogContent className="max-h-[90vh] max-w-4xl overflow-hidden border-border bg-background p-0">
         <DialogTitle className="sr-only">{fileName}</DialogTitle>
         {src && (
-          <div className="flex items-center justify-center p-2 bg-black/5">
+          <div className="flex items-center justify-center bg-black/5 p-2">
             <Image
               src={src}
               alt={fileName}
               width={1280}
               height={800}
               unoptimized
-              className="max-h-[80vh] max-w-full rounded object-contain h-auto w-auto"
+              className="h-auto max-h-[80vh] w-auto max-w-full rounded object-contain"
             />
           </div>
         )}
-        <p className="px-4 pb-3 pt-1 text-center text-xs text-muted-foreground truncate">
+        <p className="truncate px-4 pt-1 pb-3 text-center text-xs text-muted-foreground">
           {fileName}
         </p>
       </DialogContent>

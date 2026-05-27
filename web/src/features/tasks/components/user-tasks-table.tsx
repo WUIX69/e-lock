@@ -101,7 +101,10 @@ const getCodeColor = (label: string | null) => {
   return codeColors[hash % codeColors.length]
 }
 
-export const UserTasksTable = ({ tasks, onTaskUpdated }: UserTasksTableProps) => {
+export const UserTasksTable = ({
+  tasks,
+  onTaskUpdated,
+}: UserTasksTableProps) => {
   const [viewTask, setViewTask] = useState<TaskItem | null>(null)
   const [cancellingId, setCancellingId] = useState<string | null>(null)
   const [search, setSearch] = useState("")
@@ -302,9 +305,15 @@ export const UserTasksTable = ({ tasks, onTaskUpdated }: UserTasksTableProps) =>
                 onChange={(e) => setTypeFilter(e.target.value)}
                 options={[
                   { value: "all", label: "All Types" },
-                  { value: "Preventative Maintenance", label: "Preventative Maintenance" },
+                  {
+                    value: "Preventative Maintenance",
+                    label: "Preventative Maintenance",
+                  },
                   { value: "Emergency Repair", label: "Emergency Repair" },
-                  { value: "General Record / Log", label: "General Record / Log" },
+                  {
+                    value: "General Record / Log",
+                    label: "General Record / Log",
+                  },
                   { value: "Safety Inspection", label: "Safety Inspection" },
                 ]}
               />

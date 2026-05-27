@@ -81,8 +81,12 @@ async function getTaskAttachments(taskId: string): Promise<{
     )
 
   return {
-    submissionAttachments: attachments.filter((a) => a.category === "submission"),
-    completionAttachments: attachments.filter((a) => a.category === "completion"),
+    submissionAttachments: attachments.filter(
+      (a) => a.category === "submission"
+    ),
+    completionAttachments: attachments.filter(
+      (a) => a.category === "completion"
+    ),
   }
 }
 
@@ -181,7 +185,10 @@ export async function getTasksByUser(userId: string) {
     .where(
       or(
         eq(TaskTable.userId, userId),
-        inArray(TaskTable.id, cwTaskIds.map((r) => r.taskId))
+        inArray(
+          TaskTable.id,
+          cwTaskIds.map((r) => r.taskId)
+        )
       )
     )
     .orderBy(desc(TaskTable.submittedAt))
@@ -213,11 +220,17 @@ export async function getTasksByUser(userId: string) {
 
   const attachmentMap: Record<
     string,
-    { submissionAttachments: AttachmentRow[]; completionAttachments: AttachmentRow[] }
+    {
+      submissionAttachments: AttachmentRow[]
+      completionAttachments: AttachmentRow[]
+    }
   > = {}
   for (const a of allAttachments) {
     if (!attachmentMap[a.referenceId]) {
-      attachmentMap[a.referenceId] = { submissionAttachments: [], completionAttachments: [] }
+      attachmentMap[a.referenceId] = {
+        submissionAttachments: [],
+        completionAttachments: [],
+      }
     }
     if (a.category === "submission") {
       attachmentMap[a.referenceId].submissionAttachments.push(a)
@@ -287,11 +300,17 @@ export async function getTasksByDevice(deviceId: string) {
 
   const attachmentMap: Record<
     string,
-    { submissionAttachments: AttachmentRow[]; completionAttachments: AttachmentRow[] }
+    {
+      submissionAttachments: AttachmentRow[]
+      completionAttachments: AttachmentRow[]
+    }
   > = {}
   for (const a of allAttachments) {
     if (!attachmentMap[a.referenceId]) {
-      attachmentMap[a.referenceId] = { submissionAttachments: [], completionAttachments: [] }
+      attachmentMap[a.referenceId] = {
+        submissionAttachments: [],
+        completionAttachments: [],
+      }
     }
     if (a.category === "submission") {
       attachmentMap[a.referenceId].submissionAttachments.push(a)
@@ -360,11 +379,17 @@ export async function getAllTasks() {
 
   const attachmentMap: Record<
     string,
-    { submissionAttachments: AttachmentRow[]; completionAttachments: AttachmentRow[] }
+    {
+      submissionAttachments: AttachmentRow[]
+      completionAttachments: AttachmentRow[]
+    }
   > = {}
   for (const a of allAttachments) {
     if (!attachmentMap[a.referenceId]) {
-      attachmentMap[a.referenceId] = { submissionAttachments: [], completionAttachments: [] }
+      attachmentMap[a.referenceId] = {
+        submissionAttachments: [],
+        completionAttachments: [],
+      }
     }
     if (a.category === "submission") {
       attachmentMap[a.referenceId].submissionAttachments.push(a)

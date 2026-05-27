@@ -248,12 +248,15 @@ export const attachmentRelations = relations(AttachmentTable, ({ one }) => ({
   }),
 }))
 
-export const notificationRelations = relations(NotificationTable, ({ one }) => ({
-  recipient: one(UserTable, {
-    fields: [NotificationTable.recipientId],
-    references: [UserTable.id],
-  }),
-}))
+export const notificationRelations = relations(
+  NotificationTable,
+  ({ one }) => ({
+    recipient: one(UserTable, {
+      fields: [NotificationTable.recipientId],
+      references: [UserTable.id],
+    }),
+  })
+)
 
 export const auditLogRelations = relations(AuditLogTable, ({ one }) => ({
   device: one(DeviceTable, {

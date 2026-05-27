@@ -33,7 +33,7 @@ export const ActiveLockoutsPanel = ({ lockouts }: ActiveLockoutsPanelProps) => {
   }
 
   return (
-    <div className="rounded-3xl h-full border border-border bg-card p-8 shadow-sm">
+    <div className="h-full rounded-3xl border border-border bg-card p-8 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
         <h3 className="text-2xl font-black tracking-tight text-foreground">
           My Active Lockouts
@@ -55,23 +55,24 @@ export const ActiveLockoutsPanel = ({ lockouts }: ActiveLockoutsPanelProps) => {
             <div key={lockout.id} className="flex items-center gap-4">
               <div className="relative flex size-12 shrink-0 items-center justify-center rounded-xl bg-secondary/20 text-lg font-black text-secondary">
                 {lockout.zoneId}
-                <span className="absolute -bottom-0.5 -right-0.5 flex size-3.5 items-center justify-center rounded-full bg-primary ring-2 ring-card">
+                <span className="absolute -right-0.5 -bottom-0.5 flex size-3.5 items-center justify-center rounded-full bg-primary ring-2 ring-card">
                   <Check className="size-2.5 text-primary-foreground" />
                 </span>
               </div>
 
               <div className="min-w-0 flex-1">
-                <p className="font-bold text-foreground truncate">
+                <p className="truncate font-bold text-foreground">
                   {lockout.assetName}
                 </p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  Isolated: {lockout.isolatedAt} &bull; Duration: {lockout.duration}
+                  Isolated: {lockout.isolatedAt} &bull; Duration:{" "}
+                  {lockout.duration}
                 </p>
               </div>
 
               <span
                 className={cn(
-                  "rounded px-3 py-1.5 text-[10px] font-black tracking-widest uppercase whitespace-nowrap shrink-0",
+                  "shrink-0 rounded px-3 py-1.5 text-[10px] font-black tracking-widest whitespace-nowrap uppercase",
                   status.pillClass
                 )}
               >

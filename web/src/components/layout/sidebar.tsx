@@ -59,9 +59,8 @@ function SidebarContent() {
   React.useEffect(() => {
     const fetchCount = async () => {
       try {
-        const { getUnreadNotificationsCountAction } = await import(
-          "@/features/notifications/server/actions/notifications"
-        )
+        const { getUnreadNotificationsCountAction } =
+          await import("@/features/notifications/server/actions/notifications")
         const res = await getUnreadNotificationsCountAction()
         if (res.count !== undefined) setUnreadCount(res.count)
       } catch {
@@ -103,10 +102,12 @@ function SidebarContent() {
       {/* Navigation */}
       <nav className="flex-1 space-y-1 overflow-y-auto px-4 py-6">
         {navigation.map((item) => {
-          const isActive = pathname === item.href ||
+          const isActive =
+            pathname === item.href ||
             (item.href === "/tasks" && pathname.startsWith("/tasks")) ||
             (item.href === "/devices" && pathname.startsWith("/devices")) ||
-            (item.href === "/notifications" && pathname.startsWith("/notifications"))
+            (item.href === "/notifications" &&
+              pathname.startsWith("/notifications"))
           return (
             <Link
               key={item.name}

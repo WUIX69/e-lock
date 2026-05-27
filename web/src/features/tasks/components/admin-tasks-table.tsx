@@ -96,7 +96,11 @@ const getStatusColor = (status: string) => {
   }
 }
 
-export const AdminTasksTable = ({ tasks, stats, onTaskUpdated }: AdminTasksTableProps) => {
+export const AdminTasksTable = ({
+  tasks,
+  stats,
+  onTaskUpdated,
+}: AdminTasksTableProps) => {
   const [workerFilter, setWorkerFilter] = useState("")
   const [typeFilter, setTypeFilter] = useState("all")
   const [search, setSearch] = useState("")
@@ -226,7 +230,14 @@ export const AdminTasksTable = ({ tasks, stats, onTaskUpdated }: AdminTasksTable
       enableSorting: true,
       cell: ({ row }) => {
         const status = row.original.status
-        const label = status === "completed" ? "Verified" : status === "pending" ? "Pending" : status === "denied" ? "Denied" : "Cancelled"
+        const label =
+          status === "completed"
+            ? "Verified"
+            : status === "pending"
+              ? "Pending"
+              : status === "denied"
+                ? "Denied"
+                : "Cancelled"
         return (
           <div
             className={`flex w-fit items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-black tracking-widest uppercase ${getStatusColor(status)}`}
@@ -242,7 +253,10 @@ export const AdminTasksTable = ({ tasks, stats, onTaskUpdated }: AdminTasksTable
       header: "Approved",
       cell: ({ row }) => {
         const task = row.original
-        const isStrict = ["Preventative Maintenance", "Emergency Repair"].includes(task.taskType)
+        const isStrict = [
+          "Preventative Maintenance",
+          "Emergency Repair",
+        ].includes(task.taskType)
         if (!isStrict) return <span className="text-muted-foreground">—</span>
         return task.approvedByAdmin ? (
           <span className="inline-flex items-center gap-1.5 text-xs font-bold text-green-600 dark:text-green-400">
@@ -263,7 +277,10 @@ export const AdminTasksTable = ({ tasks, stats, onTaskUpdated }: AdminTasksTable
       cell: ({ row }) => {
         const task = row.original
         const isPending = task.status === "pending"
-        const isStrict = ["Preventative Maintenance", "Emergency Repair"].includes(task.taskType)
+        const isStrict = [
+          "Preventative Maintenance",
+          "Emergency Repair",
+        ].includes(task.taskType)
         const canApproveOrDeny = isStrict && isPending && !task.approvedByAdmin
         return (
           <div className="flex justify-end">
@@ -289,7 +306,9 @@ export const AdminTasksTable = ({ tasks, stats, onTaskUpdated }: AdminTasksTable
                   </Link>
                 </DropdownMenuItem>
                 {canApproveOrDeny && <DropdownMenuSeparator />}
-                {canApproveOrDeny && <DropdownMenuLabel>Moderation</DropdownMenuLabel>}
+                {canApproveOrDeny && (
+                  <DropdownMenuLabel>Moderation</DropdownMenuLabel>
+                )}
                 {canApproveOrDeny && (
                   <DropdownMenuItem onSelect={() => handleApprove(task.id)}>
                     <CheckCircle className="mr-2 size-4 text-green-600" />
@@ -369,15 +388,13 @@ export const AdminTasksTable = ({ tasks, stats, onTaskUpdated }: AdminTasksTable
               card.bg || "bg-card"
             } border border-border/30`}
           >
-            <div className="absolute -right-4 -top-4 opacity-5 transition-transform duration-700 group-hover:scale-110">
+            <div className="absolute -top-4 -right-4 opacity-5 transition-transform duration-700 group-hover:scale-110">
               <span className="text-[120px]">{card.icon}</span>
             </div>
             <div className="relative">
               <div className="mb-4 flex items-center justify-between">
                 <div className={`rounded-xl p-2 ${card.iconBg}`}>
-                  <span className="material-symbols-outlined">
-                    {card.icon}
-                  </span>
+                  <span className="material-symbols-outlined">{card.icon}</span>
                 </div>
                 <span className={card.badgeColor}>{card.badge}</span>
               </div>

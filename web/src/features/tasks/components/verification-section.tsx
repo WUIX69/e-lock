@@ -59,7 +59,7 @@ export const VerificationSection = ({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between rounded-lg border-border bg-muted px-3 py-6 font-body-md text-foreground hover:bg-muted/80"
+            className="font-body-md w-full justify-between rounded-lg border-border bg-muted px-3 py-6 text-foreground hover:bg-muted/80"
           >
             {selectedCoWorkers.length > 0
               ? `${selectedCoWorkers.length} co-worker${selectedCoWorkers.length > 1 ? "s" : ""} selected`
@@ -90,9 +90,7 @@ export const VerificationSection = ({
                           : "opacity-50"
                       )}
                     >
-                      {selectedIds.has(cw.id) && (
-                        <Check className="h-3 w-3" />
-                      )}
+                      {selectedIds.has(cw.id) && <Check className="h-3 w-3" />}
                     </div>
                     <Avatar className="mr-2 h-7 w-7 rounded-full">
                       <AvatarFallback className="text-[10px] font-bold">

@@ -76,7 +76,7 @@ export const NotificationCategoryFilter = ({
               "flex items-center gap-4 rounded-2xl border p-4 text-left transition-all duration-200",
               isActive
                 ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                : "border-border/50 bg-card text-foreground hover:bg-muted/50 hover:border-border"
+                : "border-border/50 bg-card text-foreground hover:border-border hover:bg-muted/50"
             )}
           >
             <div
@@ -92,7 +92,7 @@ export const NotificationCategoryFilter = ({
             <div className="min-w-0 flex-1">
               <p
                 className={cn(
-                  "text-sm font-bold truncate",
+                  "truncate text-sm font-bold",
                   isActive ? "text-primary-foreground" : "text-foreground"
                 )}
               >

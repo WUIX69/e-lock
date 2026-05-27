@@ -10,8 +10,8 @@ interface JoinLockoutCardProps {
 
 export const JoinLockoutCard = ({ invitation }: JoinLockoutCardProps) => {
   return (
-    <div className="relative flex flex-col rounded-3xl border border-sidebar-border bg-sidebar p-8 shadow-lg overflow-hidden">
-      <div className="absolute top-4 right-6 text-6xl font-black text-sidebar-foreground/5 select-none leading-none pointer-events-none">
+    <div className="relative flex flex-col overflow-hidden rounded-3xl border border-sidebar-border bg-sidebar p-8 shadow-lg">
+      <div className="pointer-events-none absolute top-4 right-6 text-6xl leading-none font-black text-sidebar-foreground/5 select-none">
         {invitation.zoneId}
       </div>
 

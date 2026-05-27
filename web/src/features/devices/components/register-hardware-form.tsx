@@ -59,7 +59,8 @@ export const RegisterHardwareForm = ({
 }: RegisterHardwareFormProps) => {
   const [isLoading, setIsLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
-  const [hardwareType, setHardwareType] = React.useState<HardwareType>("controller")
+  const [hardwareType, setHardwareType] =
+    React.useState<HardwareType>("controller")
 
   const [deviceId] = React.useState(
     () => `NODE-${Math.floor(100 + Math.random() * 900)}`
@@ -147,7 +148,7 @@ export const RegisterHardwareForm = ({
                 >
                   {opt.label}
                 </span>
-                <span className="text-[9px] text-muted-foreground/60 uppercase tracking-widest">
+                <span className="text-[9px] tracking-widest text-muted-foreground/60 uppercase">
                   {opt.desc}
                 </span>
               </button>
@@ -210,11 +211,11 @@ export const RegisterHardwareForm = ({
         <div>
           <Label
             htmlFor="espNowPriority"
-            className="text-xs font-black tracking-wider text-foreground cursor-pointer"
+            className="cursor-pointer text-xs font-black tracking-wider text-foreground"
           >
             ESP-NOW High-Priority Routing
           </Label>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
+          <p className="mt-0.5 text-[10px] text-muted-foreground">
             Enables dedicated safety channel with reduced latency for critical
             lockout commands.
           </p>

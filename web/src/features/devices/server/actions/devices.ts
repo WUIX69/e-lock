@@ -59,6 +59,8 @@ export async function addDeviceAction(
     return { success: true }
   } catch (error) {
     console.error("Add device error:", error)
-    return { error: "An unexpected error occurred while registering the device." }
+    return {
+      error: "An unexpected error occurred while registering the device.",
+    }
   }
 }

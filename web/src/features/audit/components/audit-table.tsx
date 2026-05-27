@@ -110,10 +110,14 @@ const columns: ColumnDef<AuditLog>[] = [
       const status = row.original.status
       const getColor = (s: string) => {
         switch (s) {
-          case "Secured": return "text-accent-foreground bg-accent"
-          case "Active": return "text-secondary-foreground bg-secondary"
-          case "Blocked": return "text-destructive-foreground bg-destructive"
-          default: return "text-muted-foreground bg-muted"
+          case "Secured":
+            return "text-accent-foreground bg-accent"
+          case "Active":
+            return "text-secondary-foreground bg-secondary"
+          case "Blocked":
+            return "text-destructive-foreground bg-destructive"
+          default:
+            return "text-muted-foreground bg-muted"
         }
       }
       return (

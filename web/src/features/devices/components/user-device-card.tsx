@@ -54,7 +54,7 @@ export const UserDeviceCard = ({ device }: UserDeviceCardProps) => {
         <div>
           <span
             className={cn(
-              "mb-2 inline-flex items-center rounded px-2 py-0.5 text-[10px] font-black uppercase tracking-tighter",
+              "mb-2 inline-flex items-center rounded px-2 py-0.5 text-[10px] font-black tracking-tighter uppercase",
               device.status === "operational" || device.status === "maintenance"
                 ? "bg-accent-green text-primary"
                 : "bg-muted text-muted-foreground"
@@ -78,7 +78,11 @@ export const UserDeviceCard = ({ device }: UserDeviceCardProps) => {
             )}
           >
             <span
-              className={cn("h-2 w-2 rounded-full", status.dotColor, status.pulse)}
+              className={cn(
+                "h-2 w-2 rounded-full",
+                status.dotColor,
+                status.pulse
+              )}
             />
             {status.label}
           </span>
@@ -90,7 +94,10 @@ export const UserDeviceCard = ({ device }: UserDeviceCardProps) => {
           <span className="text-muted-foreground">Last Technician</span>
           <div className="flex items-center gap-2">
             <Avatar className="h-6 w-6 rounded-full">
-              <AvatarImage src={device.lastTechnicianAvatar} alt={device.lastTechnician} />
+              <AvatarImage
+                src={device.lastTechnicianAvatar}
+                alt={device.lastTechnician}
+              />
               <AvatarFallback className="text-[10px] font-bold">
                 {initials}
               </AvatarFallback>
@@ -105,7 +112,11 @@ export const UserDeviceCard = ({ device }: UserDeviceCardProps) => {
 
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">
-            {device.status === "offline" ? "Status Alert" : device.uptime ? "Uptime" : "Details"}
+            {device.status === "offline"
+              ? "Status Alert"
+              : device.uptime
+                ? "Uptime"
+                : "Details"}
           </span>
           <span
             className={cn(
@@ -120,7 +131,7 @@ export const UserDeviceCard = ({ device }: UserDeviceCardProps) => {
 
       <button
         onClick={() => router.push(`/tasks/submit?deviceId=${device.id}`)}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 font-black tracking-widest text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 active:scale-95 group/btn"
+        className="group/btn flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 font-black tracking-widest text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 active:scale-95"
       >
         SUBMIT TASK
         <ArrowRight className="size-4 transition-transform group-hover/btn:translate-x-1" />

@@ -203,7 +203,9 @@ export const PersonnelForm = ({
           </Label>
           <Select
             name="securityLevel"
-            defaultValue={isEditMode ? String(personnel?.securityLevel ?? 2) : "2"}
+            defaultValue={
+              isEditMode ? String(personnel?.securityLevel ?? 2) : "2"
+            }
             disabled={isLoading}
           >
             <SelectTrigger className="h-14 w-full rounded-2xl border-border bg-muted px-4 py-6 font-mono text-sm focus:ring-primary">

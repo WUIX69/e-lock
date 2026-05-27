@@ -24,7 +24,8 @@ export const UserTasksStats = ({
     },
     {
       icon: Clock,
-      iconBg: "bg-yellow-50 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400",
+      iconBg:
+        "bg-yellow-50 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400",
       label: "CURRENT",
       value: String(pendingCount).padStart(2, "0"),
       sub: "Awaiting Approval",
@@ -50,11 +51,13 @@ export const UserTasksStats = ({
       {cards.map((card) => (
         <div
           key={card.sub}
-          className="flex flex-col justify-between rounded-2xl border border-border/50 bg-card p-6 shadow-sm h-32"
+          className="flex h-32 flex-col justify-between rounded-2xl border border-border/50 bg-card p-6 shadow-sm"
         >
           <div className="flex items-center justify-between">
             <div className={`rounded-lg p-2 ${card.iconBg}`}>
-              <card.icon className={`size-5 ${card.fill ? "fill-current" : ""}`} />
+              <card.icon
+                className={`size-5 ${card.fill ? "fill-current" : ""}`}
+              />
             </div>
             <span className="text-[10px] font-bold tracking-wider text-muted-foreground/60 uppercase">
               {card.label}
@@ -64,7 +67,7 @@ export const UserTasksStats = ({
             <p className="text-3xl font-black tracking-tighter text-foreground">
               {card.value}
             </p>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+            <p className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
               {card.sub}
             </p>
           </div>

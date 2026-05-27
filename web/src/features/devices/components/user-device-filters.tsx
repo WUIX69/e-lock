@@ -17,16 +17,16 @@ export const UserDeviceFilters = ({
 }: UserDeviceFiltersProps) => {
   return (
     <section className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-      <div className="flex-1 max-w-2xl">
+      <div className="max-w-2xl flex-1">
         <label className="mb-2 block text-[10px] font-black tracking-widest text-muted-foreground uppercase">
           Global Discovery
         </label>
-        <div className="relative group">
-          <Search className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+        <div className="group relative">
+          <Search className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
           <input
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full rounded-xl border border-border bg-background py-4 pl-12 pr-4 text-foreground shadow-md placeholder:text-muted-foreground/50 focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-border bg-background py-4 pr-4 pl-12 text-foreground shadow-md transition-all placeholder:text-muted-foreground/50 focus:ring-2 focus:ring-primary/20 focus:outline-none"
             placeholder="Search facilities or industrial devices..."
             type="text"
           />

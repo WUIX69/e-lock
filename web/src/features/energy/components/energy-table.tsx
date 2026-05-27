@@ -36,7 +36,9 @@ const columns: ColumnDef<EnergySource>[] = [
     enableSorting: true,
     cell: ({ row }) => (
       <div>
-        <div className="text-sm font-bold text-foreground">{row.original.name}</div>
+        <div className="text-sm font-bold text-foreground">
+          {row.original.name}
+        </div>
         <div className="mt-0.5 text-xs text-muted-foreground/80">
           ID: {row.original.id}
         </div>

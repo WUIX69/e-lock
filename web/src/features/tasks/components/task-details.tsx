@@ -48,7 +48,8 @@ export const TaskDetails = ({
   const securityLevel = userSecurityLevel ?? 0
   const isStrict = STRICT_TASK_TYPES.includes(taskType)
   const requiresAttachments = securityLevel >= 4 && isStrict
-  const isImage = (name: string) => /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(name)
+  const isImage = (name: string) =>
+    /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(name)
   const [previewSrc, setPreviewSrc] = useState<string | null>(null)
   const [previewFileName, setPreviewFileName] = useState<string>("")
 
@@ -82,7 +83,7 @@ export const TaskDetails = ({
           <input
             value={subject}
             onChange={(e) => onSubjectChange(e.target.value)}
-            className="w-full rounded-lg border border-border bg-muted p-3 font-body-md text-foreground transition-all placeholder:text-muted-foreground/50 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+            className="font-body-md w-full rounded-lg border border-border bg-muted p-3 text-foreground transition-all placeholder:text-muted-foreground/50 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
             placeholder="Brief summary of work..."
             type="text"
           />
@@ -117,7 +118,7 @@ export const TaskDetails = ({
         <textarea
           value={description}
           onChange={(e) => onDescriptionChange(e.target.value)}
-          className="w-full rounded-lg border border-border bg-muted p-3 font-body-md text-foreground transition-all placeholder:text-muted-foreground/50 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+          className="font-body-md w-full rounded-lg border border-border bg-muted p-3 text-foreground transition-all placeholder:text-muted-foreground/50 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
           placeholder="Document the specific steps taken, components replaced, or observations..."
           rows={5}
         />
@@ -144,7 +145,7 @@ export const TaskDetails = ({
                     <button
                       type="button"
                       onClick={() => openPreview(url, att.fileName)}
-                      className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                      className="flex min-w-0 flex-1 items-center gap-3 text-left"
                     >
                       {isImage(att.fileName) ? (
                         <Image
@@ -153,10 +154,10 @@ export const TaskDetails = ({
                           width={48}
                           height={48}
                           unoptimized
-                          className="shrink-0 rounded object-cover h-12 w-12"
+                          className="h-12 w-12 shrink-0 rounded object-cover"
                         />
                       ) : (
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-muted text-lg text-muted-foreground">
                           📄
                         </div>
                       )}
@@ -180,7 +181,7 @@ export const TaskDetails = ({
           </div>
         )}
 
-        <div className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-card p-8 transition-colors hover:bg-accent-green/10">
+        <div className="hover:bg-accent-green/10 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-card p-8 transition-colors">
           <Camera className="mb-3 size-10 text-primary" />
           <label className="cursor-pointer">
             <p className="font-body-md text-muted-foreground">
@@ -219,7 +220,7 @@ export const TaskDetails = ({
                   <button
                     type="button"
                     onClick={() => openPreview(objectUrl, file.name)}
-                    className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                    className="flex min-w-0 flex-1 items-center gap-3 text-left"
                   >
                     {isImage(file.name) ? (
                       <Image
@@ -228,10 +229,10 @@ export const TaskDetails = ({
                         width={48}
                         height={48}
                         unoptimized
-                        className="shrink-0 rounded object-cover h-12 w-12"
+                        className="h-12 w-12 shrink-0 rounded object-cover"
                       />
                     ) : (
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-muted text-muted-foreground text-lg">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-muted text-lg text-muted-foreground">
                         📄
                       </div>
                     )}
@@ -255,7 +256,9 @@ export const TaskDetails = ({
 
       <ImagePreview
         open={!!previewSrc}
-        onOpenChange={(open) => { if (!open) setPreviewSrc(null) }}
+        onOpenChange={(open) => {
+          if (!open) setPreviewSrc(null)
+        }}
         src={previewSrc || ""}
         fileName={previewFileName}
       />

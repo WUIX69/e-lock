@@ -31,8 +31,7 @@ export const ResourceSelection = ({
     : null
 
   const isRestricted =
-    selectedDevice &&
-    RESTRICTED_STATUSES.includes(selectedDevice.status)
+    selectedDevice && RESTRICTED_STATUSES.includes(selectedDevice.status)
 
   const securityLevel = userSecurityLevel ?? 0
   const availableTaskTypes =
@@ -52,7 +51,7 @@ export const ResourceSelection = ({
         </label>
         {isPreselected && selectedDevice ? (
           <div>
-            <div className="w-full rounded-lg border border-border bg-muted/50 p-3 font-body-md text-foreground">
+            <div className="font-body-md w-full rounded-lg border border-border bg-muted/50 p-3 text-foreground">
               {selectedDevice.assignedMachine} ({selectedDevice.deviceId})
             </div>
             {isRestricted && (
@@ -70,7 +69,7 @@ export const ResourceSelection = ({
           <select
             value={deviceId}
             onChange={(e) => onDeviceIdChange(e.target.value)}
-            className="w-full rounded-lg border border-border bg-muted p-3 font-body-md text-foreground transition-all focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+            className="font-body-md w-full rounded-lg border border-border bg-muted p-3 text-foreground transition-all focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
           >
             <option value="">Select a Device...</option>
             {devices.map((device) => (
@@ -88,7 +87,7 @@ export const ResourceSelection = ({
         <select
           value={taskType}
           onChange={(e) => onTaskTypeChange(e.target.value)}
-          className="w-full rounded-lg border border-border bg-muted p-3 font-body-md text-foreground transition-all focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+          className="font-body-md w-full rounded-lg border border-border bg-muted p-3 text-foreground transition-all focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
         >
           <option value="">Select Category...</option>
           {availableTaskTypes.map((opt) => (

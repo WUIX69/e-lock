@@ -58,8 +58,6 @@ export default async function MyActivityPage() {
           </p>
         </div>
       </div>
-
-
     </div>
   )
 }

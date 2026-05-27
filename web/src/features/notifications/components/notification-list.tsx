@@ -21,7 +21,9 @@ export const NotificationList = ({
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-20 text-muted-foreground">
         <Inbox className="size-12" />
-        <p className="text-sm font-medium">No notifications found in this category</p>
+        <p className="text-sm font-medium">
+          No notifications found in this category
+        </p>
       </div>
     )
   }

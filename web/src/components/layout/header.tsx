@@ -102,7 +102,9 @@ export function Header() {
                     {currentUser?.name || "Loading..."}
                   </span>
                   <span className="text-[10px] font-medium text-muted-foreground capitalize">
-                    {currentUser?.role === "admin" ? "Admin" : currentUser?.position || "User"}
+                    {currentUser?.role === "admin"
+                      ? "Admin"
+                      : currentUser?.position || "User"}
                   </span>
                 </div>
                 <Avatar className="h-10 w-10 shrink-0 rounded-2xl border-2 border-border transition-transform group-hover:scale-105">

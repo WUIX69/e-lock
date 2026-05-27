@@ -104,7 +104,9 @@ const columns: ColumnDef<Device>[] = [
     accessorKey: "lastHeartbeat",
     header: "Last Heartbeat",
     cell: ({ row }) => (
-      <span className="text-muted-foreground">{row.original.lastHeartbeat}</span>
+      <span className="text-muted-foreground">
+        {row.original.lastHeartbeat}
+      </span>
     ),
   },
   {

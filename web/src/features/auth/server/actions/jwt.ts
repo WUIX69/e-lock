@@ -105,8 +105,7 @@ export async function refreshSession(): Promise<SessionUser | null> {
       maxAge: accessAge,
       path: "/",
     })
-  } catch {
-  }
+  } catch {}
 
   return payload
 }
