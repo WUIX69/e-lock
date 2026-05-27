@@ -50,6 +50,26 @@ const getStatusColor = (status: PersonnelRow["status"]) => {
   }
 }
 
+const TimeAgo = ({ date }: { date: Date | string }) => {
+  const [relativeTime, setRelativeTime] = React.useState<string>("")
+
+  React.useEffect(() => {
+    const diffMs = Date.now() - new Date(date).getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+
+    let temp = ""
+    if (diffMins < 1) temp = "Just now"
+    else if (diffMins < 60) temp = `${diffMins}m ago`
+    else if (diffMins < 1440)
+      temp = `${Math.floor(diffMins / 60)}h ago`
+    else temp = `${Math.floor(diffMins / 1440)}d ago`
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setRelativeTime(temp)
+  }, [date])
+
+  return <span>{relativeTime || "..."}</span>
+}
+
 export const columns: ColumnDef<PersonnelRow>[] = [
   {
     accessorKey: "name",
@@ -133,21 +153,10 @@ export const columns: ColumnDef<PersonnelRow>[] = [
       if (!date)
         return <span className="text-sm text-muted-foreground">Unknown</span>
 
-      // Extremely simple relative time for demonstration
-      const diffMs = Date.now() - new Date(date).getTime()
-      const diffMins = Math.floor(diffMs / 60000)
-
-      let relativeTime = ""
-      if (diffMins < 1) relativeTime = "Just now"
-      else if (diffMins < 60) relativeTime = `${diffMins}m ago`
-      else if (diffMins < 1440)
-        relativeTime = `${Math.floor(diffMins / 60)}h ago`
-      else relativeTime = `${Math.floor(diffMins / 1440)}d ago`
-
       return (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Clock className="size-4" />
-          <span>{relativeTime}</span>
+          <TimeAgo date={date} />
         </div>
       )
     },

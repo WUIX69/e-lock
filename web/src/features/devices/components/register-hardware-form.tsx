@@ -62,9 +62,12 @@ export const RegisterHardwareForm = ({
   const [hardwareType, setHardwareType] =
     React.useState<HardwareType>("controller")
 
-  const [deviceId] = React.useState(
-    () => `NODE-${Math.floor(100 + Math.random() * 900)}`
-  )
+  const [deviceId, setDeviceId] = React.useState("")
+
+  React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDeviceId(`NODE-${Math.floor(100 + Math.random() * 900)}`)
+  }, [])
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()

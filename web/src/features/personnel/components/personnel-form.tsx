@@ -48,11 +48,16 @@ export const PersonnelForm = ({
   const [showPin, setShowPin] = React.useState<boolean>(false)
 
   const isEditMode = mode === "edit"
-  const [employeeId] = React.useState<string>(
-    () =>
-      personnel?.employeeId ??
-      `EL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
-  )
+  const [employeeId, setEmployeeId] = React.useState<string>("")
+
+  React.useEffect(() => {
+    if (mode === "add") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setEmployeeId(`EL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`)
+    } else {
+      setEmployeeId(personnel?.employeeId ?? "")
+    }
+  }, [mode, personnel])
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
