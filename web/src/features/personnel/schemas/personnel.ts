@@ -22,6 +22,7 @@ const basePersonnelSchema = z.object({
 export const addPersonnelSchema = basePersonnelSchema.extend({
   employeeId: z.string().min(1, "Employee ID is required"),
   pin: z.string().regex(/^\d{4}$/, "PIN must be exactly 4 digits"),
+  fingerprintId: z.coerce.number().int().min(1).max(162).optional().nullable(),
 })
 
 export const editPersonnelSchema = basePersonnelSchema.extend({
@@ -31,6 +32,7 @@ export const editPersonnelSchema = basePersonnelSchema.extend({
     .regex(/^\d{4}$/, "PIN must be exactly 4 digits")
     .optional()
     .or(z.literal("")),
+  fingerprintId: z.coerce.number().int().min(1).max(162).optional().nullable(),
 })
 
 export type AddPersonnelSchema = z.infer<typeof addPersonnelSchema>

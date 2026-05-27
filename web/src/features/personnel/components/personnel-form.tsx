@@ -46,6 +46,7 @@ export const PersonnelForm = ({
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [error, setError] = React.useState<string | null>(null)
   const [showPin, setShowPin] = React.useState<boolean>(false)
+  const [fingerprintId, setFingerprintId] = React.useState<number | null>(null)
 
   const isEditMode = mode === "edit"
   const [employeeId, setEmployeeId] = React.useState<string>("")
@@ -54,8 +55,10 @@ export const PersonnelForm = ({
     if (mode === "add") {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setEmployeeId(`EL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`)
+      setFingerprintId(null)
     } else {
       setEmployeeId(personnel?.employeeId ?? "")
+      setFingerprintId(personnel?.fingerprintId ?? null)
     }
   }, [mode, personnel])
 
@@ -291,7 +294,8 @@ export const PersonnelForm = ({
         </div>
       </div>
 
-      <BiometricEnrollmentSection />
+      <input type="hidden" name="fingerprintId" value={fingerprintId ?? ""} />
+      <BiometricEnrollmentSection fingerprintId={fingerprintId} setFingerprintId={setFingerprintId} />
 
       <div className="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <button

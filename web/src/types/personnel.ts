@@ -34,4 +34,5 @@ export interface AddPersonnelFormData {
 export interface AddPersonnelResult {
   success?: boolean
   error?: string
+  fingerprintId?: number
 }

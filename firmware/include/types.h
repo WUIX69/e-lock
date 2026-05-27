@@ -26,6 +26,16 @@ enum class SystemMode : uint8_t {
     kMaintenance = 2,
 };
 
+enum class EnrollStep : uint8_t {
+    kIdle = 0,
+    kNeedFirstFinger = 1,
+    kNeedRemoveFinger = 2,
+    kNeedSecondFinger = 3,
+    kCreatingModel = 4,
+    kSuccess = 5,
+    kFailed = 6,
+};
+
 struct LotoEvent {
     uint32_t timestamp;
     uint16_t fingerprintId;

@@ -6,11 +6,11 @@
 // ============================================================
 
 // --- WiFi Configuration ---
-constexpr const char* kWifiSsid = "YOUR_WIFI_SSID";
-constexpr const char* kWifiPassword = "YOUR_WIFI_PASSWORD";
+constexpr const char* kWifiSsid = "Mangalili family";
+constexpr const char* kWifiPassword = "mANG@LILI593646";
 
 // --- MQTT Broker Configuration ---
-constexpr const char* kMqttBrokerHost = "YOUR_MQTT_BROKER_IP";
+constexpr const char* kMqttBrokerHost = "192.168.5.101";
 constexpr uint16_t kMqttBrokerPort = 1883;
 constexpr const char* kMqttClientId = "elock-esp32-001";
 constexpr const char* kMqttUsername = "elock_mqtt";

@@ -30,6 +30,7 @@ export async function insertPersonnel(data: AddPersonnelSchema) {
       position: data.position,
       securityLevel: data.securityLevel,
       status: data.status,
+      fingerprintId: data.fingerprintId ?? null,
     })
     .returning()
 
@@ -60,6 +61,7 @@ export async function updatePersonnel(
     securityLevel: number
     status: "active" | "inactive" | "off-site" | "on-leave"
     passwordHash?: string
+    fingerprintId?: number | null
   } = {
     name: data.fullName,
     email: data.email,
@@ -67,6 +69,7 @@ export async function updatePersonnel(
     position: data.position,
     securityLevel: data.securityLevel,
     status: data.status,
+    fingerprintId: data.fingerprintId ?? null,
   }
 
   if (data.pin) {

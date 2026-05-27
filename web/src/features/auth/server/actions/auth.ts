@@ -121,3 +121,92 @@ export async function getSessionAction(): Promise<SessionUser | null> {
     return refreshSession()
   }
 }
+
+import { createChallenge, getChallenge, deleteChallenge } from "@/features/auth/server/challenges"
+import { getAllPersonnel } from "@/features/personnel/server/db/personnel"
+
+export async function requestBiometricChallengeAction(identifier: string) {
+  try {
+    const user = await getUserByEmail(identifier)
+    if (!user) {
+      return { error: "User not found" }
+    }
+
+    if (!user.fingerprintId) {
+      return { error: "No fingerprint registered for this user" }
+    }
+
+    const challengeToken = crypto.randomUUID()
+    createChallenge(challengeToken, user.fingerprintId)
+
+    return { success: true, fingerprintId: user.fingerprintId, challengeToken }
+  } catch {
+    return { error: "Failed to initiate biometric challenge" }
+  }
+}
+
+export async function checkBiometricStatusAction(challengeToken: string) {
+  try {
+    const challenge = getChallenge(challengeToken)
+    if (!challenge) {
+      return { status: "expired" as const }
+    }
+
+    if (!challenge.verified) {
+      return { status: "pending" as const }
+    }
+
+    deleteChallenge(challengeToken)
+
+    const allPersonnel = await getAllPersonnel()
+    const matchedUser = allPersonnel.find((u) => u.fingerprintId === challenge.fingerprintId)
+    if (!matchedUser) {
+      return { status: "expired" as const }
+    }
+
+    const payload: SessionUser = {
+      sub: matchedUser.id,
+      email: matchedUser.email,
+      name: matchedUser.name,
+      role: matchedUser.role,
+      position: matchedUser.position,
+      securityLevel: matchedUser.securityLevel,
+    }
+
+    const accessToken = await createAccessToken(payload)
+    const refreshToken = await createRefreshToken(payload)
+
+    const cookieStore = await cookies()
+    const accessAge = parseExpiresInToSeconds(env.JWT_EXPIRES_IN)
+    const refreshAge = parseExpiresInToSeconds(env.JWT_REFRESH_EXPIRES_IN)
+
+    cookieStore.set("elock_access_token", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: accessAge,
+      path: "/",
+    })
+
+    cookieStore.set("elock_refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: refreshAge,
+      path: "/",
+    })
+
+    return { status: "verified" as const, role: matchedUser.role }
+  } catch {
+    return { status: "expired" as const }
+  }
+}
+
+export async function cancelBiometricChallengeAction(challengeToken: string) {
+  try {
+    deleteChallenge(challengeToken)
+    return { success: true }
+  } catch {
+    return { error: "Failed to cancel challenge" }
+  }
+}

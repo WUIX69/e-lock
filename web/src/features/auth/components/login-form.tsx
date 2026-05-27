@@ -14,6 +14,9 @@ import {
   Network,
   Cpu,
   Wifi,
+  Loader2,
+  CheckCircle2,
+  User,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,11 +24,32 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Footer } from "@/components/layout/footer"
 
 import { loginAction } from "@/features/auth/server/actions/auth"
+import {
+  requestBiometricChallengeAction,
+  checkBiometricStatusAction,
+  cancelBiometricChallengeAction,
+} from "@/features/auth/server/actions/auth"
+
+type LoginTab = "standard" | "biometric"
 
 export function LoginForm() {
   const router = useRouter()
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [error, setError] = React.useState<string | null>(null)
+  const [activeTab, setActiveTab] = React.useState<LoginTab>("standard")
+
+  const [identifier, setIdentifier] = React.useState("")
+  const [challengeToken, setChallengeToken] = React.useState<string | null>(null)
+  const [biometricStatus, setBiometricStatus] = React.useState<"idle" | "pending" | "verified" | "expired">("idle")
+  const pollingRef = React.useRef<ReturnType<typeof setInterval> | null>(null)
+
+  React.useEffect(() => {
+    return () => {
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current)
+      }
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -43,9 +67,57 @@ export function LoginForm() {
     }
   }
 
+  const handleBiometricInitiate = async () => {
+    if (!identifier) {
+      setError("Please enter your email or employee ID")
+      return
+    }
+
+    setIsLoading(true)
+    setError(null)
+    setBiometricStatus("pending")
+
+    const result = await requestBiometricChallengeAction(identifier)
+
+    if (result.error || !result.challengeToken) {
+      setError(result.error || "Failed to initiate biometric challenge")
+      setIsLoading(false)
+      setBiometricStatus("idle")
+      return
+    }
+
+    setChallengeToken(result.challengeToken)
+    setIsLoading(false)
+
+    pollingRef.current = setInterval(async () => {
+      const statusResult = await checkBiometricStatusAction(result.challengeToken!)
+      if (statusResult.status === "verified") {
+        setBiometricStatus("verified")
+        if (pollingRef.current) clearInterval(pollingRef.current)
+        setTimeout(() => router.push("/"), 500)
+      } else if (statusResult.status === "expired") {
+        setBiometricStatus("expired")
+        setError("Challenge expired. Please try again.")
+        if (pollingRef.current) clearInterval(pollingRef.current)
+        setChallengeToken(null)
+      }
+    }, 1000)
+  }
+
+  const handleBiometricCancel = async () => {
+    if (pollingRef.current) {
+      clearInterval(pollingRef.current)
+    }
+    if (challengeToken) {
+      await cancelBiometricChallengeAction(challengeToken)
+    }
+    setChallengeToken(null)
+    setBiometricStatus("idle")
+    setError(null)
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-background selection:bg-primary/20">
-      {/* Auth Page Header */}
       <header className="sticky top-0 z-50 flex h-20 w-full items-center justify-between border-b border-border bg-background/80 px-8 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
@@ -72,7 +144,6 @@ export function LoginForm() {
 
       <main className="container mx-auto flex-1 px-6 py-12">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-          {/* Left Column: Form */}
           <div className="flex flex-col justify-center lg:col-span-5">
             <div className="space-y-8 rounded-3xl border border-border bg-card p-12 shadow-2xl shadow-primary/5">
               <div className="space-y-2">
@@ -84,87 +155,162 @@ export function LoginForm() {
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-4">
+              {/* Tab Switcher */}
+              <div className="grid grid-cols-2 gap-2 rounded-2xl bg-muted p-1.5">
+                <button
+                  type="button"
+                  onClick={() => { setActiveTab("standard"); setError(null) }}
+                  className={`rounded-xl px-4 py-2.5 text-xs font-black tracking-widest uppercase transition-all ${
+                    activeTab === "standard"
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Lock className="mr-1.5 inline size-3.5" />
+                  PIN & Key
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setActiveTab("biometric"); setError(null) }}
+                  className={`rounded-xl px-4 py-2.5 text-xs font-black tracking-widest uppercase transition-all ${
+                    activeTab === "biometric"
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Fingerprint className="mr-1.5 inline size-3.5" />
+                  Biometric
+                </button>
+              </div>
+
+              {activeTab === "standard" ? (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label htmlFor="email" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+                        Email Address
+                      </label>
+                      <div className="group relative">
+                        <CreditCard className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          placeholder="admin@elock.dev"
+                          className="h-14 rounded-2xl border-border bg-muted pl-12 font-mono text-sm focus-visible:ring-primary"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label htmlFor="password" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+                          Password
+                        </label>
+                        <button type="button" className="text-[10px] font-bold tracking-widest text-primary uppercase hover:underline">
+                          Reset PIN
+                        </button>
+                      </div>
+                      <div className="group relative">
+                        <Lock className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                        <Input
+                          id="password"
+                          name="password"
+                          type="password"
+                          placeholder="••••••••"
+                          className="h-14 rounded-2xl border-border bg-muted pl-12 font-mono text-sm focus-visible:ring-primary"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {error && (
+                    <div className="rounded-xl bg-destructive/15 p-3 text-center text-sm font-bold text-destructive">
+                      {error}
+                    </div>
+                  )}
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="remember" className="rounded-md border-border data-[state=checked]:bg-primary" />
+                    <label htmlFor="remember" className="cursor-pointer text-xs font-bold text-muted-foreground select-none">
+                      Trust this workstation for 24 hours
+                    </label>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    disabled={isLoading}
+                    className="group relative h-16 w-full rounded-2xl bg-primary text-sm font-black tracking-widest text-primary-foreground uppercase shadow-lg shadow-primary/20 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-3">
+                      {isLoading ? "Authenticating..." : "Initiate Protocol"}
+                      <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </Button>
+                </form>
+              ) : (
+                <div className="space-y-6">
                   <div className="space-y-2">
-                    <label
-                      htmlFor="email"
-                      className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
-                    >
-                      Email Address
+                    <label htmlFor="identifier" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+                      Email or Employee ID
                     </label>
                     <div className="group relative">
-                      <CreditCard className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                      <User className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
                       <Input
-                        id="email"
-                        name="email"
-                        type="email"
+                        id="identifier"
+                        value={identifier}
+                        onChange={(e) => setIdentifier(e.target.value)}
                         placeholder="admin@elock.dev"
                         className="h-14 rounded-2xl border-border bg-muted pl-12 font-mono text-sm focus-visible:ring-primary"
-                        required
+                        disabled={biometricStatus === "pending"}
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <label
-                        htmlFor="password"
-                        className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
-                      >
-                        Password
-                      </label>
+                  {error && (
+                    <div className="rounded-xl bg-destructive/15 p-3 text-center text-sm font-bold text-destructive">
+                      {error}
+                    </div>
+                  )}
+
+                  {biometricStatus === "pending" ? (
+                    <div className="space-y-4">
+                      <div className="rounded-xl bg-amber-500/10 p-4 text-center">
+                        <Loader2 className="mx-auto mb-2 size-6 animate-spin text-amber-500" />
+                        <p className="text-xs font-bold text-amber-500">Waiting for fingerprint...</p>
+                        <p className="mt-1 text-[10px] text-muted-foreground">Place registered finger on the AS608 sensor</p>
+                      </div>
                       <button
                         type="button"
-                        className="text-[10px] font-bold tracking-widest text-primary uppercase hover:underline"
+                        onClick={handleBiometricCancel}
+                        className="h-14 w-full rounded-2xl border border-border bg-background text-xs font-black tracking-widest text-muted-foreground uppercase transition-colors hover:bg-destructive/10 hover:text-destructive"
                       >
-                        Reset PIN
+                        Cancel
                       </button>
                     </div>
-                    <div className="group relative">
-                      <Lock className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
-                      <Input
-                        id="password"
-                        name="password"
-                        type="password"
-                        placeholder="••••••••"
-                        className="h-14 rounded-2xl border-border bg-muted pl-12 font-mono text-sm focus-visible:ring-primary"
-                        required
-                      />
+                  ) : biometricStatus === "verified" ? (
+                    <div className="rounded-xl bg-green-500/10 p-4 text-center">
+                      <CheckCircle2 className="mx-auto mb-2 size-8 text-green-500" />
+                      <p className="text-sm font-bold text-green-500">Verified!</p>
+                      <p className="text-xs text-muted-foreground">Redirecting...</p>
                     </div>
-                  </div>
+                  ) : (
+                    <Button
+                      type="button"
+                      onClick={handleBiometricInitiate}
+                      disabled={isLoading || !identifier}
+                      className="group relative h-16 w-full rounded-2xl bg-primary text-sm font-black tracking-widest text-primary-foreground uppercase shadow-lg shadow-primary/20 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
+                    >
+                      <span className="relative z-10 flex items-center justify-center gap-3">
+                        {isLoading ? "Connecting..." : "Initiate Handshake"}
+                        <Fingerprint className="size-5" />
+                      </span>
+                    </Button>
+                  )}
                 </div>
-
-                {error && (
-                  <div className="rounded-xl bg-destructive/15 p-3 text-center text-sm font-bold text-destructive">
-                    {error}
-                  </div>
-                )}
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="remember"
-                    className="rounded-md border-border data-[state=checked]:bg-primary"
-                  />
-                  <label
-                    htmlFor="remember"
-                    className="cursor-pointer text-xs font-bold text-muted-foreground select-none"
-                  >
-                    Trust this workstation for 24 hours
-                  </label>
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="group relative h-16 w-full rounded-2xl bg-primary text-sm font-black tracking-widest text-primary-foreground uppercase shadow-lg shadow-primary/20 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
-                >
-                  <span className="relative z-10 flex items-center justify-center gap-3">
-                    {isLoading ? "Authenticating..." : "Initiate Protocol"}
-                    <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </Button>
-              </form>
+              )}
 
               <div className="pt-4 text-center">
                 <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
@@ -177,7 +323,6 @@ export function LoginForm() {
           {/* Right Column: Visual/Biometric */}
           <div className="lg:col-span-7">
             <div className="relative h-full min-h-[600px] overflow-hidden rounded-3xl bg-sidebar p-12 text-sidebar-foreground shadow-2xl">
-              {/* Background Decoration */}
               <div className="absolute inset-0 opacity-10">
                 <div className="absolute -top-20 -left-20 size-80 rounded-full bg-primary blur-[100px]" />
                 <div className="absolute -right-20 -bottom-20 size-80 rounded-full bg-sidebar-accent-foreground blur-[100px]" />
@@ -187,7 +332,11 @@ export function LoginForm() {
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/20 px-4 py-1.5 text-[10px] font-black tracking-widest text-sidebar-accent-foreground uppercase">
                     <Wifi className="size-3" />
-                    Biometric Handshake Pending
+                    {biometricStatus === "pending"
+                      ? "Biometric Handshake Active"
+                      : biometricStatus === "verified"
+                        ? "Biometric Verified"
+                        : "Biometric Handshake Pending"}
                   </div>
                   <h3 className="mt-6 text-4xl font-black tracking-tighter text-white">
                     Biometric Verification Required
@@ -201,13 +350,25 @@ export function LoginForm() {
 
                 <div className="flex flex-1 items-center justify-center py-12">
                   <div className="group relative">
-                    {/* Scanner Visual */}
-                    <div className="absolute -inset-8 animate-pulse rounded-full bg-primary/10" />
-                    <div className="absolute -inset-4 animate-pulse rounded-full bg-primary/20" />
-                    <div className="relative flex size-48 items-center justify-center rounded-full border-2 border-primary/50 bg-sidebar-accent/20 shadow-[0_0_50px_-12px_rgba(var(--primary),0.5)] backdrop-blur-sm transition-transform group-hover:scale-105">
-                      <Fingerprint className="size-24 text-sidebar-accent-foreground" />
-                      {/* Scanning Line */}
-                      <div className="absolute top-0 left-0 h-1 w-full animate-[scan_3s_ease-in-out_infinite] bg-sidebar-accent-foreground shadow-[0_0_15px_rgba(var(--sidebar-accent-foreground),0.8)]" />
+                    <div className={`absolute -inset-8 animate-pulse rounded-full ${biometricStatus === "verified" ? "bg-green-500/20" : "bg-primary/10"}`} />
+                    <div className={`absolute -inset-4 animate-pulse rounded-full ${biometricStatus === "pending" ? "bg-amber-500/20" : biometricStatus === "verified" ? "bg-green-500/30" : "bg-primary/20"}`} />
+                    <div className={`relative flex size-48 items-center justify-center rounded-full border-2 backdrop-blur-sm transition-transform group-hover:scale-105 ${
+                      biometricStatus === "verified"
+                        ? "border-green-500 bg-green-500/20 shadow-[0_0_50px_-12px_rgba(34,197,94,0.5)]"
+                        : biometricStatus === "pending"
+                          ? "border-amber-500 bg-amber-500/20 shadow-[0_0_50px_-12px_rgba(234,179,8,0.5)]"
+                          : "border-primary/50 bg-sidebar-accent/20 shadow-[0_0_50px_-12px_rgba(var(--primary),0.5)]"
+                    }`}>
+                      <Fingerprint className={`size-24 ${
+                        biometricStatus === "verified" ? "text-green-400" : "text-sidebar-accent-foreground"
+                      }`} />
+                      <div className={`absolute top-0 left-0 h-1 w-full animate-[scan_3s_ease-in-out_infinite] shadow-[0_0_15px_rgba(var(--sidebar-accent-foreground),0.8)] ${
+                        biometricStatus === "verified"
+                          ? "bg-green-400"
+                          : biometricStatus === "pending"
+                            ? "bg-amber-400"
+                            : "bg-sidebar-accent-foreground"
+                      }`} />
                     </div>
                   </div>
                 </div>
@@ -255,7 +416,6 @@ export function LoginForm() {
           </div>
         </div>
 
-        {/* Security Info Cards */}
         <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
           <div className="flex items-start gap-6 rounded-3xl border border-border bg-muted/50 p-8 transition-colors hover:bg-muted">
             <div className="rounded-2xl bg-background p-4 shadow-sm">

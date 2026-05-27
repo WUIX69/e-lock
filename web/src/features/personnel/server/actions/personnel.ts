@@ -8,8 +8,16 @@ import {
   getUserByEmail,
   insertPersonnel,
   updatePersonnel,
+  getAllPersonnel,
 } from "@/features/personnel/server/db/personnel"
 import { AddPersonnelResult } from "@/types/personnel"
+import {
+  setEnrollment,
+  getEnrollment,
+  deleteEnrollment,
+  getNextAvailableId,
+} from "@/features/personnel/server/enrollments"
+import { publishMqtt } from "@/lib/mqtt-server"
 
 export async function addPersonnelAction(
   formData: FormData
@@ -24,6 +32,7 @@ export async function addPersonnelAction(
       securityLevel: formData.get("securityLevel"),
       status: formData.get("status"),
       pin: formData.get("pin"),
+      fingerprintId: formData.get("fingerprintId"),
     }
 
     const validatedData = addPersonnelSchema.safeParse(data)
@@ -45,7 +54,7 @@ export async function addPersonnelAction(
 
     await insertPersonnel(validatedData.data)
 
-    return { success: true }
+    return { success: true, fingerprintId: validatedData.data.fingerprintId ?? undefined }
   } catch (error) {
     console.error("Add personnel error:", error)
     return { error: "An unexpected error occurred while adding personnel." }
@@ -66,6 +75,7 @@ export async function editPersonnelAction(
       securityLevel: formData.get("securityLevel"),
       status: formData.get("status"),
       pin: formData.get("pin"),
+      fingerprintId: formData.get("fingerprintId"),
     }
 
     const validatedData = editPersonnelSchema.safeParse(data)
@@ -92,5 +102,49 @@ export async function editPersonnelAction(
   } catch (error) {
     console.error("Edit personnel error:", error)
     return { error: "An unexpected error occurred while updating personnel." }
+  }
+}
+
+export async function requestEnrollmentAction() {
+  try {
+    const allPersonnel = await getAllPersonnel()
+    const usedIds = allPersonnel
+      .map((p) => p.fingerprintId)
+      .filter((id): id is number => id !== null)
+
+    const nextId = getNextAvailableId(usedIds)
+    if (nextId === -1) {
+      return { error: "No available fingerprint IDs (max 162)" }
+    }
+
+    setEnrollment(nextId)
+    publishMqtt("elock/command", { action: "enroll", id: nextId })
+
+    return { success: true, fingerprintId: nextId }
+  } catch (error) {
+    console.error("Request enrollment error:", error)
+    return { error: "Failed to initiate enrollment" }
+  }
+}
+
+export async function checkEnrollmentStatusAction(fingerprintId: number) {
+  try {
+    const enrollment = getEnrollment(fingerprintId)
+    if (!enrollment) {
+      return { status: "expired" as const }
+    }
+    return { status: enrollment.status }
+  } catch {
+    return { status: "expired" as const }
+  }
+}
+
+export async function cancelEnrollmentAction(fingerprintId: number) {
+  try {
+    deleteEnrollment(fingerprintId)
+    publishMqtt("elock/command", { action: "cancel", id: fingerprintId })
+    return { success: true }
+  } catch {
+    return { error: "Failed to cancel enrollment" }
   }
 }

@@ -23,6 +23,7 @@ FingerprintSensor fingerprintSensor(fingerprintSerial, kFingerprintRxPin, kFinge
 SystemMode currentMode = SystemMode::kNormal;
 unsigned long lastUnlockTime = 0;
 bool unlockActive = false;
+uint16_t pendingEnrollId = 0;
 
 void handleMqttMessage(const char* topic, const char* payload) {
     JsonDocument doc;
@@ -66,18 +67,25 @@ void handleMqttMessage(const char* topic, const char* payload) {
             Serial.printf("[E-Lock] Remote lock triggered\n");
 
         } else if (strcmp(action, "enroll") == 0) {
-            uint16_t enrollId = doc["id"] | 0;
+            pendingEnrollId = doc["id"] | 0;
             currentMode = SystemMode::kEnrollment;
+            fingerprintSensor.startEnroll(pendingEnrollId);
 
             JsonDocument statusDoc;
             statusDoc["event"] = "enrollment_mode";
-            statusDoc["id"] = enrollId;
+            statusDoc["id"] = pendingEnrollId;
             char statusBuf[128];
             serializeJson(statusDoc, statusBuf);
             mqttHandler.publish(kMqttTopicStatus, statusBuf);
             buzzerLed.signalWarning();
 
-            Serial.printf("[E-Lock] Enrollment mode activated for ID %d\n", enrollId);
+            Serial.printf("[E-Lock] Enrollment mode activated for ID %d\n", pendingEnrollId);
+
+        } else if (strcmp(action, "cancel") == 0) {
+            currentMode = SystemMode::kNormal;
+            fingerprintSensor.cancelEnroll();
+            buzzerLed.setIdle();
+            Serial.println("[E-Lock] Enrollment cancelled");
 
         } else if (strcmp(action, "status") == 0) {
             JsonDocument statusDoc;
@@ -120,7 +128,49 @@ void setup() {
     Serial.println("[E-Lock] Ready");
 }
 
+void handleSerialCommand(const String& cmd) {
+    if (cmd == "enroll" || cmd.startsWith("enroll ")) {
+        int id = 1;
+        if (cmd.startsWith("enroll ")) {
+            id = cmd.substring(7).toInt();
+            if (id < 1 || id > 162) id = 1;
+        }
+        pendingEnrollId = id;
+        currentMode = SystemMode::kEnrollment;
+        fingerprintSensor.startEnroll(pendingEnrollId);
+        buzzerLed.signalWarning();
+    } else if (cmd == "cancel") {
+        currentMode = SystemMode::kNormal;
+        fingerprintSensor.cancelEnroll();
+        buzzerLed.setIdle();
+    } else if (cmd == "unlock") {
+        lockController.unlock();
+        unlockActive = true;
+        lastUnlockTime = millis();
+        buzzerLed.signalSuccess();
+    } else if (cmd == "lock") {
+        lockController.lock();
+        unlockActive = false;
+        buzzerLed.setIdle();
+    } else if (cmd == "help") {
+        Serial.println("[E-Lock] Serial commands:");
+        Serial.println("  enroll [id] - Start enrollment (ID 1-162, default 1)");
+        Serial.println("  cancel      - Cancel enrollment");
+        Serial.println("  unlock      - Unlock solenoid");
+        Serial.println("  lock        - Lock solenoid");
+        Serial.println("  help        - Show this help");
+    }
+}
+
 void loop() {
+    if (Serial.available() > 0) {
+        String cmd = Serial.readStringUntil('\n');
+        cmd.trim();
+        if (cmd.length() > 0) {
+            handleSerialCommand(cmd);
+        }
+    }
+
     mqttHandler.loop();
 
     if (unlockActive && (millis() - lastUnlockTime >= kLockEngageDurationMs)) {
@@ -131,16 +181,68 @@ void loop() {
     }
 
     if (currentMode == SystemMode::kEnrollment) {
-        uint16_t newId = 0;
-        AuthResult enrollResult = fingerprintSensor.scan(newId);
-        if (enrollResult == AuthResult::kSuccess) {
+        uint8_t trialNum = 0;
+        uint8_t errorCode = 0;
+        if (fingerprintSensor.checkTrialFailed(trialNum, errorCode)) {
             JsonDocument doc;
-            doc["event"] = "enrollment_scan_ok";
-            doc["id"] = newId;
+            doc["event"] = "enrollment_trial_failed";
+            doc["id"] = pendingEnrollId;
+            doc["trial"] = trialNum;
+            doc["error"] = errorCode;
+            doc["trialsLeft"] = fingerprintSensor.getEnrollTrials();
             char buf[128];
             serializeJson(doc, buf);
             mqttHandler.publish(kMqttTopicStatus, buf);
-            Serial.printf("[E-Lock] Enrollment scan success for ID %d\n", newId);
+        }
+
+        static EnrollStep lastStep = EnrollStep::kIdle;
+        EnrollStep step = fingerprintSensor.enrollStep();
+
+        if (step != lastStep) {
+            if (step == EnrollStep::kNeedRemoveFinger) {
+                JsonDocument doc;
+                doc["event"] = "enrollment_first_scan_ok";
+                doc["id"] = pendingEnrollId;
+                char buf[128];
+                serializeJson(doc, buf);
+                mqttHandler.publish(kMqttTopicStatus, buf);
+            } else if (step == EnrollStep::kCreatingModel) {
+                JsonDocument doc;
+                doc["event"] = "enrollment_second_scan_ok";
+                doc["id"] = pendingEnrollId;
+                char buf[128];
+                serializeJson(doc, buf);
+                mqttHandler.publish(kMqttTopicStatus, buf);
+            }
+            lastStep = step;
+        }
+
+        if (step == EnrollStep::kSuccess) {
+            JsonDocument doc;
+            doc["event"] = "enrollment_success";
+            doc["id"] = pendingEnrollId;
+            char buf[128];
+            serializeJson(doc, buf);
+            mqttHandler.publish(kMqttTopicStatus, buf);
+            Serial.printf("[E-Lock] Enrollment success for ID %d\n", pendingEnrollId);
+            currentMode = SystemMode::kNormal;
+            lastStep = EnrollStep::kIdle;
+            buzzerLed.signalSuccess();
+            pendingEnrollId = 0;
+        } else if (step == EnrollStep::kFailed) {
+            JsonDocument doc;
+            doc["event"] = "enrollment_failed";
+            doc["id"] = pendingEnrollId;
+            doc["trialsLeft"] = fingerprintSensor.getEnrollTrials();
+            char buf[128];
+            serializeJson(doc, buf);
+            mqttHandler.publish(kMqttTopicStatus, buf);
+            Serial.printf("[E-Lock] Enrollment failed for ID %d\n", pendingEnrollId);
+            fingerprintSensor.cancelEnroll();
+            currentMode = SystemMode::kNormal;
+            lastStep = EnrollStep::kIdle;
+            buzzerLed.signalFailure();
+            pendingEnrollId = 0;
         }
         delay(100);
         return;

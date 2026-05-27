@@ -31,6 +31,7 @@ export type PersonnelRow = {
   position: string
   securityLevel: number
   status: "active" | "inactive" | "off-site" | "on-leave"
+  fingerprintId: number | null
   lastLocation: string | null
   lastActiveAt: Date | null
 }
