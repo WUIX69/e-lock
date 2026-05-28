@@ -1,5 +1,13 @@
+interface ChallengeEntry {
+  fingerprintId: number | null
+  verified: boolean
+  createdAt: number
+  userId?: string
+  failedAttempts: number
+}
+
 const globalForChallenges = globalThis as unknown as {
-  challenges: Map<string, { fingerprintId: number; verified: boolean; createdAt: number }>
+  challenges: Map<string, ChallengeEntry>
 }
 
 if (!globalForChallenges.challenges) {
@@ -10,8 +18,8 @@ export const challenges = globalForChallenges.challenges
 
 const CHALLENGE_TTL_MS = 120_000
 
-export function createChallenge(token: string, fingerprintId: number) {
-  challenges.set(token, { fingerprintId, verified: false, createdAt: Date.now() })
+export function createChallenge(token: string, fingerprintId: number | null) {
+  challenges.set(token, { fingerprintId, verified: false, createdAt: Date.now(), failedAttempts: 0 })
 }
 
 export function getChallenge(token: string) {
@@ -33,4 +41,25 @@ export function verifyChallenge(token: string) {
 
 export function deleteChallenge(token: string) {
   challenges.delete(token)
+}
+
+export function incrementFailedAttempt(token: string): number {
+  const entry = challenges.get(token)
+  if (!entry) return 0
+  entry.failedAttempts++
+  return entry.failedAttempts
+}
+
+export function resetFailedAttempts(token: string) {
+  const entry = challenges.get(token)
+  if (entry) {
+    entry.failedAttempts = 0
+  }
+}
+
+export function setChallengeUserId(token: string, userId: string) {
+  const entry = challenges.get(token)
+  if (entry) {
+    entry.userId = userId
+  }
 }

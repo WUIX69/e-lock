@@ -172,6 +172,7 @@ async function seed() {
       position: "SYSTEM ADMIN",
       securityLevel: 5,
       status: "active" as const,
+      fingerprintId: 2,
     },
     {
       name: "Maria Rodriguez",
@@ -192,6 +193,7 @@ async function seed() {
       position: "SENIOR ELECTRICIAN",
       securityLevel: 4,
       status: "active" as const,
+      fingerprintId: 1,
     },
     {
       name: "Ken Chen",
@@ -230,6 +232,7 @@ async function seed() {
             position: user.position,
             securityLevel: user.securityLevel,
             status: user.status,
+            fingerprintId: user.fingerprintId ?? null,
           },
         })
     }

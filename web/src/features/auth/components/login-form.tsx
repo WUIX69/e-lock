@@ -16,16 +16,16 @@ import {
   Wifi,
   Loader2,
   CheckCircle2,
-  User,
+  AlertTriangle,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Footer } from "@/components/layout/footer"
 
-import { loginAction } from "@/features/auth/server/actions/auth"
 import {
-  requestBiometricChallengeAction,
+  loginAction,
+  startBiometricChallengeAction,
   checkBiometricStatusAction,
   cancelBiometricChallengeAction,
 } from "@/features/auth/server/actions/auth"
@@ -38,9 +38,9 @@ export function LoginForm() {
   const [error, setError] = React.useState<string | null>(null)
   const [activeTab, setActiveTab] = React.useState<LoginTab>("standard")
 
-  const [identifier, setIdentifier] = React.useState("")
   const [challengeToken, setChallengeToken] = React.useState<string | null>(null)
-  const [biometricStatus, setBiometricStatus] = React.useState<"idle" | "pending" | "verified" | "expired">("idle")
+  const [biometricStatus, setBiometricStatus] = React.useState<"idle" | "pending" | "verified" | "expired" | "locked">("idle")
+  const [failedAttempts, setFailedAttempts] = React.useState(0)
   const pollingRef = React.useRef<ReturnType<typeof setInterval> | null>(null)
 
   React.useEffect(() => {
@@ -68,19 +68,15 @@ export function LoginForm() {
   }
 
   const handleBiometricInitiate = async () => {
-    if (!identifier) {
-      setError("Please enter your email or employee ID")
-      return
-    }
-
     setIsLoading(true)
     setError(null)
+    setFailedAttempts(0)
     setBiometricStatus("pending")
 
-    const result = await requestBiometricChallengeAction(identifier)
+    const result = await startBiometricChallengeAction()
 
     if (result.error || !result.challengeToken) {
-      setError(result.error || "Failed to initiate biometric challenge")
+      setError(result.error || "Failed to start biometric scan")
       setIsLoading(false)
       setBiometricStatus("idle")
       return
@@ -95,11 +91,18 @@ export function LoginForm() {
         setBiometricStatus("verified")
         if (pollingRef.current) clearInterval(pollingRef.current)
         setTimeout(() => router.push("/"), 500)
+      } else if (statusResult.status === "locked") {
+        setBiometricStatus("locked")
+        setFailedAttempts(3)
+        if (pollingRef.current) clearInterval(pollingRef.current)
+        setChallengeToken(null)
       } else if (statusResult.status === "expired") {
         setBiometricStatus("expired")
         setError("Challenge expired. Please try again.")
         if (pollingRef.current) clearInterval(pollingRef.current)
         setChallengeToken(null)
+      } else if (statusResult.failedAttempts !== failedAttempts) {
+        setFailedAttempts(statusResult.failedAttempts)
       }
     }, 1000)
   }
@@ -113,6 +116,7 @@ export function LoginForm() {
     }
     setChallengeToken(null)
     setBiometricStatus("idle")
+    setFailedAttempts(0)
     setError(null)
   }
 
@@ -187,16 +191,16 @@ export function LoginForm() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label htmlFor="employeeId" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
-                        Employee ID
+                      <label htmlFor="identifier" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+                        Email / Employee ID
                       </label>
                       <div className="group relative">
                         <CreditCard className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
                         <Input
-                          id="employeeId"
-                          name="employeeId"
+                          id="identifier"
+                          name="identifier"
                           type="text"
-                          placeholder="AD104"
+                          placeholder="email@domain.com or AD104"
                           className="h-14 rounded-2xl border-border bg-muted pl-12 font-mono text-sm focus-visible:ring-primary"
                           required
                         />
@@ -250,25 +254,29 @@ export function LoginForm() {
                     </span>
                   </Button>
                 </form>
+               ) : biometricStatus === "locked" ? (
+                <div className="space-y-6">
+                  <div className="rounded-xl bg-destructive/15 p-6 text-center">
+                    <AlertTriangle className="mx-auto mb-3 size-10 text-destructive" />
+                    <p className="text-sm font-black text-destructive uppercase">Too Many Failed Attempts</p>
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      3 consecutive fingerprint failures detected. Use{" "}
+                      <span className="font-bold text-foreground">PIN & Key</span> to log in.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => { setActiveTab("standard"); setBiometricStatus("idle"); setError(null); setFailedAttempts(0) }}
+                    className="group relative h-16 w-full rounded-2xl bg-primary text-sm font-black tracking-widest text-primary-foreground uppercase shadow-lg shadow-primary/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-3">
+                      Switch to PIN & Key
+                      <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </button>
+                </div>
               ) : (
                 <div className="space-y-6">
-                  <div className="space-y-2">
-                    <label htmlFor="identifier" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
-                      Employee ID
-                    </label>
-                    <div className="group relative">
-                      <User className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
-                      <Input
-                        id="identifier"
-                        value={identifier}
-                        onChange={(e) => setIdentifier(e.target.value)}
-                        placeholder="AC101"
-                        className="h-14 rounded-2xl border-border bg-muted pl-12 font-mono text-sm focus-visible:ring-primary"
-                        disabled={biometricStatus === "pending"}
-                      />
-                    </div>
-                  </div>
-
                   {error && (
                     <div className="rounded-xl bg-destructive/15 p-3 text-center text-sm font-bold text-destructive">
                       {error}
@@ -281,6 +289,11 @@ export function LoginForm() {
                         <Loader2 className="mx-auto mb-2 size-6 animate-spin text-amber-500" />
                         <p className="text-xs font-bold text-amber-500">Waiting for fingerprint...</p>
                         <p className="mt-1 text-[10px] text-muted-foreground">Place registered finger on the AS608 sensor</p>
+                        {failedAttempts > 0 && (
+                          <p className="mt-2 text-[10px] font-bold text-amber-600">
+                            Failed attempt {failedAttempts}/3
+                          </p>
+                        )}
                       </div>
                       <button
                         type="button"
@@ -300,7 +313,7 @@ export function LoginForm() {
                     <Button
                       type="button"
                       onClick={handleBiometricInitiate}
-                      disabled={isLoading || !identifier}
+                      disabled={isLoading}
                       className="group relative h-16 w-full rounded-2xl bg-primary text-sm font-black tracking-widest text-primary-foreground uppercase shadow-lg shadow-primary/20 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
                     >
                       <span className="relative z-10 flex items-center justify-center gap-3">

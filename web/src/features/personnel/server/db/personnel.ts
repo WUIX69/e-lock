@@ -25,6 +25,15 @@ export async function getUserByEmployeeId(employeeId: string) {
   return users[0] || null
 }
 
+export async function getUserByFingerprintId(fingerprintId: number) {
+  const users = await db
+    .select()
+    .from(UserTable)
+    .where(eq(UserTable.fingerprintId, fingerprintId))
+    .limit(1)
+  return users[0] || null
+}
+
 export async function insertPersonnel(data: AddPersonnelSchema) {
   const passwordHash = await bcrypt.hash(data.pin, 10)
 

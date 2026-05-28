@@ -33,15 +33,15 @@ function parseExpiresInToSeconds(expiresIn: string): number {
 }
 
 export async function loginAction(formData: FormData) {
-  const employeeId = formData.get("employeeId")?.toString()
+  const identifier = formData.get("identifier")?.toString()
   const pin = formData.get("password")?.toString()
 
-  if (!employeeId || !pin) {
-    return { error: "Employee ID and PIN are required" }
+  if (!identifier || !pin) {
+    return { error: "Email / Employee ID and PIN are required" }
   }
 
   try {
-    const user = await getUserByIdentifier(employeeId)
+    const user = await getUserByIdentifier(identifier)
     if (!user) {
       return { error: "Invalid credentials" }
     }
@@ -123,7 +123,7 @@ export async function getSessionAction(): Promise<SessionUser | null> {
   }
 }
 
-import { createChallenge, getChallenge, deleteChallenge } from "@/features/auth/server/challenges"
+import { challenges, createChallenge, getChallenge, deleteChallenge } from "@/features/auth/server/challenges"
 import { getAllPersonnel } from "@/features/personnel/server/db/personnel"
 
 export async function requestBiometricChallengeAction(identifier: string) {
@@ -146,23 +146,50 @@ export async function requestBiometricChallengeAction(identifier: string) {
   }
 }
 
+export async function startBiometricChallengeAction() {
+  try {
+    for (const [token, challenge] of challenges.entries()) {
+      if (!challenge.verified && challenge.fingerprintId === null) {
+        deleteChallenge(token)
+      }
+    }
+
+    const challengeToken = crypto.randomUUID()
+    createChallenge(challengeToken, null)
+
+    return { success: true, challengeToken }
+  } catch {
+    return { error: "Failed to start biometric scan" }
+  }
+}
+
 export async function checkBiometricStatusAction(challengeToken: string) {
   try {
     const challenge = getChallenge(challengeToken)
     if (!challenge) {
-      return { status: "expired" as const }
+      return { status: "expired" as const, failedAttempts: 0 }
+    }
+
+    if (challenge.failedAttempts >= 3) {
+      deleteChallenge(challengeToken)
+      return { status: "locked" as const, failedAttempts: 3 }
     }
 
     if (!challenge.verified) {
-      return { status: "pending" as const }
+      return { status: "pending" as const, failedAttempts: challenge.failedAttempts }
     }
 
     deleteChallenge(challengeToken)
 
     const allPersonnel = await getAllPersonnel()
-    const matchedUser = allPersonnel.find((u) => u.fingerprintId === challenge.fingerprintId)
+    const matchedUser = challenge.fingerprintId !== null
+      ? allPersonnel.find((u) => u.fingerprintId === challenge.fingerprintId)
+      : challenge.userId
+        ? allPersonnel.find((u) => u.id === challenge.userId)
+        : null
+
     if (!matchedUser) {
-      return { status: "expired" as const }
+      return { status: "expired" as const, failedAttempts: 0 }
     }
 
     const payload: SessionUser = {
@@ -197,9 +224,9 @@ export async function checkBiometricStatusAction(challengeToken: string) {
       path: "/",
     })
 
-    return { status: "verified" as const, role: matchedUser.role }
+    return { status: "verified" as const, role: matchedUser.role, failedAttempts: 0 }
   } catch {
-    return { status: "expired" as const }
+    return { status: "expired" as const, failedAttempts: 0 }
   }
 }
 

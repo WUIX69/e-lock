@@ -1,7 +1,8 @@
 import mqtt from "mqtt"
 import { env } from "@/data/env/server"
-import { challenges, verifyChallenge } from "@/features/auth/server/challenges"
+import { challenges, verifyChallenge, incrementFailedAttempt, resetFailedAttempts, setChallengeUserId } from "@/features/auth/server/challenges"
 import { completeEnrollment } from "@/features/personnel/server/enrollments"
+import { getUserByFingerprintId } from "@/features/personnel/server/db/personnel"
 
 const globalForMqtt = globalThis as unknown as {
   mqttClient: mqtt.MqttClient | null
@@ -21,7 +22,7 @@ if (!globalForMqtt.mqttClient) {
     client.subscribe("elock/status", { qos: 1 })
   })
 
-  client.on("message", (topic, payload) => {
+  client.on("message", async (topic, payload) => {
     const message = payload.toString()
     try {
       const data = JSON.parse(message)
@@ -31,11 +32,35 @@ if (!globalForMqtt.mqttClient) {
         console.log(`[MQTT Server] Auth granted for fingerprint ID ${fingerprintId}`)
 
         for (const [token, challenge] of challenges.entries()) {
-          if (challenge.fingerprintId === fingerprintId && !challenge.verified) {
+          if (challenge.verified) continue
+
+          if (challenge.fingerprintId === fingerprintId) {
+            resetFailedAttempts(token)
             verifyChallenge(token)
-            console.log(`[MQTT Server] Challenge ${token} verified`)
+            console.log(`[MQTT Server] Challenge ${token} verified (exact match)`)
             break
           }
+
+          if (challenge.fingerprintId === null) {
+            const user = await getUserByFingerprintId(fingerprintId)
+            if (user) {
+              resetFailedAttempts(token)
+              setChallengeUserId(token, user.id)
+              verifyChallenge(token)
+              console.log(`[MQTT Server] Challenge ${token} verified (listening match for ${user.name})`)
+              break
+            }
+          }
+        }
+      }
+
+      if (topic === "elock/auth" && data.event === "auth_denied" && data.reason === "not_enrolled") {
+        console.log(`[MQTT Server] Auth denied: unrecognized fingerprint`)
+
+        for (const [token, challenge] of challenges.entries()) {
+          if (challenge.verified || challenge.fingerprintId !== null) continue
+          const attempts = incrementFailedAttempt(token)
+          console.log(`[MQTT Server] Failed attempts for ${token}: ${attempts}`)
         }
       }
 

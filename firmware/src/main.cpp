@@ -328,6 +328,13 @@ void loop() {
     } else if (result == AuthResult::kFailed) {
         Serial.println("[E-Lock] Scan failed - poor image quality");
         buzzerLed.signalWarning();
+
+        JsonDocument doc;
+        doc["event"] = "auth_denied";
+        doc["reason"] = "poor_quality";
+        char buf[128];
+        serializeJson(doc, buf);
+        mqttHandler.publish(kMqttTopicAuth, buf);
     } else if (result == AuthResult::kNotEnrolled) {
         Serial.println("[E-Lock] Access denied - fingerprint not recognized");
         buzzerLed.signalFailure();
