@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:lan": "next dev --turbopack --host 0.0.0.0",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

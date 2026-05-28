@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --filter @e-lock/web dev",
+    "dev:lan": "pnpm --filter @e-lock/web run dev:lan",
     "build": "pnpm --filter @e-lock/web build",
     "lint": "pnpm --filter @e-lock/web lint",
     "typecheck": "pnpm --filter @e-lock/web typecheck",
@@ -15,8 +16,12 @@
     "db:generate": "pnpm --filter @e-lock/web run db:generate",
     "db:migrate": "pnpm --filter @e-lock/web run db:migrate",
     "db:check": "pnpm --filter @e-lock/web run db:check",
+    "db:seed": "pnpm --filter @e-lock/web run db:seed",
     "db:studio": "pnpm --filter @e-lock/web run db:studio",
-    "validate": "pnpm --filter @e-lock/web run validate"
+    "validate": "pnpm --filter @e-lock/web run validate",
+    "firmware:build": "cd firmware && pio run",
+    "firmware:upload": "cd firmware && pio run -t upload",
+    "firmware:monitor": "cd firmware && pio device monitor"
   },
   "dependencies": {
     "ecc-universal": "^1.10.0",
