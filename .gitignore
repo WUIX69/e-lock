@@ -50,6 +50,10 @@ opencode.json
 # Uploads (user-generated files)
 web/uploads/
 
+# Drizzle auto-generated snapshot files
+web/src/drizzle/migrations/schema.ts
+web/src/drizzle/migrations/relations.ts
+
 # Docker / Infra
 infra/.env
 mosquitto/data/
