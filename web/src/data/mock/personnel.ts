@@ -2,7 +2,7 @@ import { PersonnelMember, ActivePersonnel } from "@/types/personnel"
 
 export const MOCK_PERSONNEL: PersonnelMember[] = [
   {
-    id: "P-101",
+    id: "AC101",
     name: "Alex Thompson",
     role: "Senior Electrician",
     clearance: "Level 4 (LOTO)",
@@ -11,7 +11,7 @@ export const MOCK_PERSONNEL: PersonnelMember[] = [
     node: "Node 04",
   },
   {
-    id: "P-102",
+    id: "AD102",
     name: "Maria Rodriguez",
     role: "Safety Supervisor",
     clearance: "Level 5 (Admin)",
@@ -20,7 +20,7 @@ export const MOCK_PERSONNEL: PersonnelMember[] = [
     node: "Control Room",
   },
   {
-    id: "P-103",
+    id: "AC103",
     name: "Ken Chen",
     role: "Maintenance Engineer",
     clearance: "Level 3",
@@ -29,7 +29,7 @@ export const MOCK_PERSONNEL: PersonnelMember[] = [
     node: "N/A",
   },
   {
-    id: "P-104",
+    id: "AD104",
     name: "Sarah Jenkins",
     role: "System Admin",
     clearance: "Level 5 (Admin)",
@@ -38,7 +38,7 @@ export const MOCK_PERSONNEL: PersonnelMember[] = [
     node: "Node 01",
   },
   {
-    id: "P-105",
+    id: "AC105",
     name: "Robert Miller",
     role: "Junior Technician",
     clearance: "Level 2",

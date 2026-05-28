@@ -6,6 +6,7 @@ import {
 } from "@/features/personnel/schemas/personnel"
 import {
   getUserByEmail,
+  getUserByEmployeeId,
   insertPersonnel,
   updatePersonnel,
   getAllPersonnel,
@@ -44,11 +45,17 @@ export async function addPersonnelAction(
       }
     }
 
-    const existingUser = await getUserByEmail(validatedData.data.email)
-
-    if (existingUser) {
+    const existingEmail = await getUserByEmail(validatedData.data.email)
+    if (existingEmail) {
       return {
         error: "A user with this email address is already registered.",
+      }
+    }
+
+    const existingEmployeeId = await getUserByEmployeeId(validatedData.data.employeeId)
+    if (existingEmployeeId) {
+      return {
+        error: "A user with this Employee ID is already registered.",
       }
     }
 
@@ -89,10 +96,17 @@ export async function editPersonnelAction(
 
     const { id: validatedId, ...updateFields } = validatedData.data
 
-    const existingUser = await getUserByEmail(updateFields.email)
-    if (existingUser && existingUser.id !== validatedId) {
+    const existingEmail = await getUserByEmail(updateFields.email)
+    if (existingEmail && existingEmail.id !== validatedId) {
       return {
         error: "A user with this email address is already registered.",
+      }
+    }
+
+    const existingEmployeeId = await getUserByEmployeeId(updateFields.employeeId)
+    if (existingEmployeeId && existingEmployeeId.id !== validatedId) {
+      return {
+        error: "A user with this Employee ID is already registered.",
       }
     }
 

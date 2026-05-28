@@ -34,6 +34,16 @@ constexpr uint8_t kLedRedPin = 33;
 constexpr uint8_t kDisplaySdaPin = 21;
 constexpr uint8_t kDisplaySclPin = 22;
 
+// --- 4x4 Keypad Pins ---
+constexpr uint8_t kKeypadRow1 = 12;
+constexpr uint8_t kKeypadRow2 = 13;
+constexpr uint8_t kKeypadRow3 = 14;
+constexpr uint8_t kKeypadRow4 = 15;
+constexpr uint8_t kKeypadCol1 = 2;
+constexpr uint8_t kKeypadCol2 = 4;
+constexpr uint8_t kKeypadCol3 = 18;
+constexpr uint8_t kKeypadCol4 = 19;
+
 // --- MQTT Topics ---
 constexpr const char* kMqttTopicStatus = "elock/status";
 constexpr const char* kMqttTopicCommand = "elock/command";

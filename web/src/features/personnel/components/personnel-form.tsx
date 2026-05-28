@@ -54,7 +54,7 @@ export const PersonnelForm = ({
   React.useEffect(() => {
     if (mode === "add") {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setEmployeeId(`EL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`)
+      setEmployeeId(`AC${Math.floor(1000 + Math.random() * 9000)}`)
       setFingerprintId(null)
     } else {
       setEmployeeId(personnel?.employeeId ?? "")
@@ -155,8 +155,8 @@ export const PersonnelForm = ({
             id="employeeId"
             name="employeeId"
             value={employeeId}
-            readOnly
-            className="h-14 rounded-2xl border-border bg-muted/50 font-mono text-sm opacity-70"
+            onChange={(e) => setEmployeeId(e.target.value)}
+            className="h-14 rounded-2xl border-border bg-muted font-mono text-sm focus-visible:ring-primary"
           />
         </div>
 

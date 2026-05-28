@@ -159,8 +159,8 @@ const devices = [
 async function seed() {
   console.log("Seeding database...")
 
-  const adminPasswordHash = await bcrypt.hash("Admin@1234", 10)
-  const userPasswordHash = await bcrypt.hash("User@1234", 10)
+  const adminPasswordHash = await bcrypt.hash("1234", 10)
+  const userPasswordHash = await bcrypt.hash("5678", 10)
 
   const users = [
     {
@@ -168,7 +168,7 @@ async function seed() {
       email: "admin@elock.dev",
       passwordHash: adminPasswordHash,
       role: "admin" as const,
-      employeeId: "P-104",
+      employeeId: "AD104",
       position: "SYSTEM ADMIN",
       securityLevel: 5,
       status: "active" as const,
@@ -178,7 +178,7 @@ async function seed() {
       email: "admin2@elock.dev",
       passwordHash: adminPasswordHash,
       role: "admin" as const,
-      employeeId: "P-102",
+      employeeId: "AD102",
       position: "SAFETY SUPERVISOR",
       securityLevel: 5,
       status: "active" as const,
@@ -188,7 +188,7 @@ async function seed() {
       email: "user@elock.dev",
       passwordHash: userPasswordHash,
       role: "senior_engineer" as const,
-      employeeId: "P-101",
+      employeeId: "AC101",
       position: "SENIOR ELECTRICIAN",
       securityLevel: 4,
       status: "active" as const,
@@ -198,7 +198,7 @@ async function seed() {
       email: "user2@elock.dev",
       passwordHash: userPasswordHash,
       role: "user" as const,
-      employeeId: "P-103",
+      employeeId: "AC103",
       position: "MAINTENANCE ENGINEER",
       securityLevel: 3,
       status: "off-site" as const,
@@ -208,7 +208,7 @@ async function seed() {
       email: "user3@elock.dev",
       passwordHash: userPasswordHash,
       role: "user" as const,
-      employeeId: "P-105",
+      employeeId: "AC105",
       position: "JUNIOR TECHNICIAN",
       securityLevel: 2,
       status: "active" as const,
@@ -220,7 +220,18 @@ async function seed() {
       await db
         .insert(UserTable)
         .values(user)
-        .onConflictDoNothing({ target: UserTable.email })
+        .onConflictDoUpdate({
+          target: UserTable.email,
+          set: {
+            employeeId: user.employeeId,
+            name: user.name,
+            passwordHash: user.passwordHash,
+            role: user.role,
+            position: user.position,
+            securityLevel: user.securityLevel,
+            status: user.status,
+          },
+        })
     }
     console.log(`Seeded ${users.length} users`)
 

@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers"
 import * as bcrypt from "bcryptjs"
-import { getUserByEmail, getUserById } from "@/features/auth/server/db/auth"
+import { getUserById, getUserByIdentifier } from "@/features/auth/server/db/auth"
 import {
   createAccessToken,
   createRefreshToken,
@@ -33,20 +33,20 @@ function parseExpiresInToSeconds(expiresIn: string): number {
 }
 
 export async function loginAction(formData: FormData) {
-  const email = formData.get("email")?.toString()
-  const password = formData.get("password")?.toString()
+  const employeeId = formData.get("employeeId")?.toString()
+  const pin = formData.get("password")?.toString()
 
-  if (!email || !password) {
-    return { error: "Email and password are required" }
+  if (!employeeId || !pin) {
+    return { error: "Employee ID and PIN are required" }
   }
 
   try {
-    const user = await getUserByEmail(email)
+    const user = await getUserByIdentifier(employeeId)
     if (!user) {
       return { error: "Invalid credentials" }
     }
 
-    const isMatch = await bcrypt.compare(password, user.passwordHash)
+    const isMatch = await bcrypt.compare(pin, user.passwordHash)
     if (!isMatch) {
       return { error: "Invalid credentials" }
     }
@@ -128,7 +128,7 @@ import { getAllPersonnel } from "@/features/personnel/server/db/personnel"
 
 export async function requestBiometricChallengeAction(identifier: string) {
   try {
-    const user = await getUserByEmail(identifier)
+    const user = await getUserByIdentifier(identifier)
     if (!user) {
       return { error: "User not found" }
     }

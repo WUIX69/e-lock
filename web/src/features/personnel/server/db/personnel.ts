@@ -16,6 +16,15 @@ export async function getUserByEmail(email: string) {
   return users[0] || null
 }
 
+export async function getUserByEmployeeId(employeeId: string) {
+  const users = await db
+    .select()
+    .from(UserTable)
+    .where(eq(UserTable.employeeId, employeeId))
+    .limit(1)
+  return users[0] || null
+}
+
 export async function insertPersonnel(data: AddPersonnelSchema) {
   const passwordHash = await bcrypt.hash(data.pin, 10)
 

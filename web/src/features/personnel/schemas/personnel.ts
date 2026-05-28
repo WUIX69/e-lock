@@ -20,7 +20,10 @@ const basePersonnelSchema = z.object({
 })
 
 export const addPersonnelSchema = basePersonnelSchema.extend({
-  employeeId: z.string().min(1, "Employee ID is required"),
+  employeeId: z
+    .string()
+    .regex(/^[0-9A-D*#]+$/i, "Employee ID must contain only digits, letters A-D, or symbols *, #")
+    .min(1, "Employee ID is required"),
   pin: z.string().regex(/^\d{4}$/, "PIN must be exactly 4 digits"),
   fingerprintId: z.preprocess(
     (v) => (v === "" || v === null ? undefined : v),
@@ -30,6 +33,10 @@ export const addPersonnelSchema = basePersonnelSchema.extend({
 
 export const editPersonnelSchema = basePersonnelSchema.extend({
   id: z.string().uuid("Invalid User ID"),
+  employeeId: z
+    .string()
+    .regex(/^[0-9A-D*#]+$/i, "Employee ID must contain only digits, letters A-D, or symbols *, #")
+    .min(1, "Employee ID is required"),
   pin: z
     .string()
     .regex(/^\d{4}$/, "PIN must be exactly 4 digits")

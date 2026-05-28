@@ -187,16 +187,16 @@ export function LoginForm() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label htmlFor="email" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
-                        Email Address
+                      <label htmlFor="employeeId" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+                        Employee ID
                       </label>
                       <div className="group relative">
                         <CreditCard className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
                         <Input
-                          id="email"
-                          name="email"
-                          type="email"
-                          placeholder="admin@elock.dev"
+                          id="employeeId"
+                          name="employeeId"
+                          type="text"
+                          placeholder="AD104"
                           className="h-14 rounded-2xl border-border bg-muted pl-12 font-mono text-sm focus-visible:ring-primary"
                           required
                         />
@@ -206,7 +206,7 @@ export function LoginForm() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <label htmlFor="password" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
-                          Password
+                          PIN Code
                         </label>
                         <button type="button" className="text-[10px] font-bold tracking-widest text-primary uppercase hover:underline">
                           Reset PIN
@@ -218,7 +218,7 @@ export function LoginForm() {
                           id="password"
                           name="password"
                           type="password"
-                          placeholder="••••••••"
+                          placeholder="••••"
                           className="h-14 rounded-2xl border-border bg-muted pl-12 font-mono text-sm focus-visible:ring-primary"
                           required
                         />
@@ -254,7 +254,7 @@ export function LoginForm() {
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <label htmlFor="identifier" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
-                      Email or Employee ID
+                      Employee ID
                     </label>
                     <div className="group relative">
                       <User className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
@@ -262,7 +262,7 @@ export function LoginForm() {
                         id="identifier"
                         value={identifier}
                         onChange={(e) => setIdentifier(e.target.value)}
-                        placeholder="admin@elock.dev"
+                        placeholder="AC101"
                         className="h-14 rounded-2xl border-border bg-muted pl-12 font-mono text-sm focus-visible:ring-primary"
                         disabled={biometricStatus === "pending"}
                       />
