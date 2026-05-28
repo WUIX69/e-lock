@@ -29,6 +29,17 @@ AuthResult FingerprintSensor::scan(uint16_t& fingerprintId) {
     if (p == FINGERPRINT_NOFINGER) {
         return AuthResult::kTimeout;
     }
+    if (p != FINGERPRINT_OK) {
+        return AuthResult::kFailed;
+    }
+
+    // Confirmation read — real finger placement is sustained,
+    // transient ghost/noise signals disappear after a brief wait
+    delay(30);
+    p = m_finger->getImage();
+    if (p != FINGERPRINT_OK) {
+        return AuthResult::kTimeout;
+    }
 
     p = m_finger->image2Tz();
     if (p != FINGERPRINT_OK) {

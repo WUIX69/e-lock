@@ -11,6 +11,7 @@ import {
   SessionUser,
 } from "@/features/auth/server/actions/jwt"
 import { env } from "@/data/env/server"
+import "@/lib/mqtt-server"
 
 function parseExpiresInToSeconds(expiresIn: string): number {
   const match = expiresIn.match(/^(\d+)([smhd])$/)

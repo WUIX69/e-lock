@@ -24,6 +24,7 @@ SystemMode currentMode = SystemMode::kNormal;
 unsigned long lastUnlockTime = 0;
 bool unlockActive = false;
 uint16_t pendingEnrollId = 0;
+unsigned long lastAuthTime = 0;
 
 void handleMqttMessage(const char* topic, const char* payload) {
     JsonDocument doc;
@@ -300,10 +301,17 @@ void loop() {
         return;
     }
 
+    // Post-auth cooldown prevents ghost re-trigger after auto-relock
+    if (millis() - lastAuthTime < 2000) {
+        delay(100);
+        return;
+    }
+
     uint16_t fingerprintId = 0;
     AuthResult result = fingerprintSensor.scan(fingerprintId);
 
     if (result == AuthResult::kSuccess) {
+        lastAuthTime = millis();
         Serial.printf("[E-Lock] Access granted for ID %d\n", fingerprintId);
         lockController.unlock();
         unlockActive = true;
@@ -332,5 +340,5 @@ void loop() {
         mqttHandler.publish(kMqttTopicAuth, buf);
     }
 
-    delay(100);
+    delay(300);
 }
