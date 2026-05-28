@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <memory>
 
 #include <Arduino.h>
 
@@ -28,7 +29,7 @@ private:
     static void staticCallback(char* topic, unsigned char* payload, unsigned int length);
 
     WiFiClient& m_client;
-    PubSubClient* m_mqtt;
+    std::unique_ptr<PubSubClient> m_mqtt;
     const char* m_host;
     uint16_t m_port;
     MessageCallback m_callback;

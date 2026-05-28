@@ -3,19 +3,18 @@
 #include "constants.h"
 #include <Arduino.h>
 #include <Adafruit_Fingerprint.h>
+#include <memory>
 
 FingerprintSensor::FingerprintSensor(HardwareSerial& serial, uint8_t rxPin, uint8_t txPin)
-    : m_serial(serial), m_rxPin(rxPin), m_txPin(txPin), m_finger(nullptr),
+    : m_serial(serial), m_rxPin(rxPin), m_txPin(txPin),
       m_enrollStep(EnrollStep::kIdle), m_enrollId(0),
       m_enrollTrials(3), m_lastError(0), m_trialFailed(false) {}
 
-FingerprintSensor::~FingerprintSensor() {
-    delete m_finger;
-}
+FingerprintSensor::~FingerprintSensor() {}
 
 bool FingerprintSensor::begin() {
     m_serial.begin(kFingerprintBaudRate, SERIAL_8N1, m_rxPin, m_txPin);
-    m_finger = new Adafruit_Fingerprint(&m_serial);
+    m_finger.reset(new Adafruit_Fingerprint(&m_serial));
 
     if (!m_finger->verifyPassword()) {
         return false;
@@ -196,4 +195,17 @@ EnrollStep FingerprintSensor::enrollStep() {
     }
 
     return m_enrollStep;
+}
+
+uint16_t FingerprintSensor::getEnrolledCount() {
+    m_finger->getTemplateCount();
+    return m_finger->templateCount;
+}
+
+bool FingerprintSensor::deleteFingerprint(uint16_t id) {
+    return m_finger->deleteModel(id) == FINGERPRINT_OK;
+}
+
+bool FingerprintSensor::deleteAllFingerprints() {
+    return m_finger->emptyDatabase() == FINGERPRINT_OK;
 }

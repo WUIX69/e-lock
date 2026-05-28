@@ -6,13 +6,14 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include <Arduino.h>
+#include <memory>
 
 MqttHandler* MqttHandler::s_instance = nullptr;
 
 MqttHandler::MqttHandler(WiFiClient& client, const char* host, uint16_t port)
     : m_client(client), m_host(host), m_port(port), m_callback(nullptr),
       m_clientId(nullptr), m_username(nullptr), m_password(nullptr), m_lastReconnectAttempt(0) {
-    m_mqtt = new PubSubClient(client);
+    m_mqtt.reset(new PubSubClient(client));
     m_mqtt->setServer(m_host, m_port);
     m_mqtt->setBufferSize(512);
     m_mqtt->setCallback(staticCallback);
@@ -22,7 +23,6 @@ MqttHandler::~MqttHandler() {
     if (s_instance == this) {
         s_instance = nullptr;
     }
-    delete m_mqtt;
 }
 
 bool MqttHandler::begin(const char* clientId, const char* username, const char* password) {

@@ -97,6 +97,31 @@ void handleMqttMessage(const char* topic, const char* payload) {
             char statusBuf[256];
             serializeJson(statusDoc, statusBuf);
             mqttHandler.publish(kMqttTopicStatus, statusBuf);
+
+        } else if (strcmp(action, "delete") == 0) {
+            uint16_t fpId = doc["id"] | 0;
+            bool success = fingerprintSensor.deleteFingerprint(fpId);
+
+            JsonDocument statusDoc;
+            statusDoc["event"] = success ? "fingerprint_deleted" : "fingerprint_delete_failed";
+            statusDoc["id"] = fpId;
+            char statusBuf[128];
+            serializeJson(statusDoc, statusBuf);
+            mqttHandler.publish(kMqttTopicStatus, statusBuf);
+            Serial.printf("[E-Lock] %s fingerprint ID %d\n",
+                          success ? "Deleted" : "Failed to delete", fpId);
+
+        } else if (strcmp(action, "clear") == 0) {
+            bool success = fingerprintSensor.deleteAllFingerprints();
+
+            JsonDocument statusDoc;
+            statusDoc["event"] = success ? "fingerprints_cleared" : "fingerprints_clear_failed";
+            statusDoc["count"] = fingerprintSensor.getEnrolledCount();
+            char statusBuf[128];
+            serializeJson(statusDoc, statusBuf);
+            mqttHandler.publish(kMqttTopicStatus, statusBuf);
+            Serial.printf("[E-Lock] %s\n",
+                          success ? "All fingerprints cleared" : "Failed to clear fingerprints");
         }
     }
 }
@@ -111,6 +136,9 @@ void setup() {
     if (!fingerprintSensor.begin()) {
         Serial.println("[E-Lock] Fingerprint sensor FAILED");
         buzzerLed.signalFailure();
+    } else {
+        Serial.printf("[E-Lock] Sensor has %d fingerprint(s) stored\n",
+                      fingerprintSensor.getEnrolledCount());
     }
 
     if (wifiManager.connect(kWifiConnectTimeoutMs)) {
@@ -152,12 +180,36 @@ void handleSerialCommand(const String& cmd) {
         lockController.lock();
         unlockActive = false;
         buzzerLed.setIdle();
+    } else if (cmd == "count") {
+        uint16_t count = fingerprintSensor.getEnrolledCount();
+        Serial.printf("[E-Lock] Sensor has %d fingerprint(s) stored\n", count);
+
+    } else if (cmd.startsWith("delete ")) {
+        int id = cmd.substring(7).toInt();
+        if (id < 1 || id > 162) {
+            Serial.println("[E-Lock] Invalid ID. Use 1-162");
+        } else if (fingerprintSensor.deleteFingerprint(id)) {
+            Serial.printf("[E-Lock] Fingerprint ID %d deleted\n", id);
+        } else {
+            Serial.printf("[E-Lock] Failed to delete fingerprint ID %d\n", id);
+        }
+
+    } else if (cmd == "clear") {
+        if (fingerprintSensor.deleteAllFingerprints()) {
+            Serial.println("[E-Lock] All fingerprints cleared from sensor");
+        } else {
+            Serial.println("[E-Lock] Failed to clear fingerprints");
+        }
+
     } else if (cmd == "help") {
         Serial.println("[E-Lock] Serial commands:");
         Serial.println("  enroll [id] - Start enrollment (ID 1-162, default 1)");
         Serial.println("  cancel      - Cancel enrollment");
         Serial.println("  unlock      - Unlock solenoid");
         Serial.println("  lock        - Lock solenoid");
+        Serial.println("  count       - Show stored fingerprint count");
+        Serial.println("  delete <id> - Delete fingerprint (ID 1-162)");
+        Serial.println("  clear       - Delete ALL fingerprints from sensor");
         Serial.println("  help        - Show this help");
     }
 }

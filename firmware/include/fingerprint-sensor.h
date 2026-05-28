@@ -2,6 +2,7 @@
 
 #include "types.h"
 #include <cstdint>
+#include <memory>
 
 class HardwareSerial;
 class Adafruit_Fingerprint;
@@ -18,6 +19,8 @@ public:
     EnrollStep enrollStep();
     void cancelEnroll();
     uint16_t getEnrolledCount();
+    bool deleteFingerprint(uint16_t id);
+    bool deleteAllFingerprints();
 
     EnrollStep getEnrollStep() const { return m_enrollStep; }
     uint8_t getEnrollTrials() const { return m_enrollTrials; }
@@ -26,7 +29,7 @@ public:
 private:
     void handleTrialFailure(uint8_t error);
     HardwareSerial& m_serial;
-    Adafruit_Fingerprint* m_finger;
+    std::unique_ptr<Adafruit_Fingerprint> m_finger;
     uint8_t m_rxPin;
     uint8_t m_txPin;
     EnrollStep m_enrollStep;

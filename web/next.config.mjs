@@ -5,7 +5,7 @@ const nextConfig = {
       bodySizeLimit: "10mb",
     },
   },
-  allowedDevOrigins: ["192.168.5.101"],
+  allowedDevOrigins: ["172.20.48.1", "192.168.1.20"],
   images: {
     remotePatterns: [
       {
