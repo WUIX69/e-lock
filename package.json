@@ -19,9 +19,9 @@
     "db:seed": "pnpm --filter @e-lock/web run db:seed",
     "db:studio": "pnpm --filter @e-lock/web run db:studio",
     "validate": "pnpm --filter @e-lock/web run validate",
-    "firmware:build": "cd firmware && pio run",
-    "firmware:upload": "cd firmware && pio run -t upload",
-    "firmware:monitor": "cd firmware && pio device monitor"
+    "fw:build": "cd firmware && pio run",
+    "fw:upload": "cd firmware && pio run -t upload",
+    "fw:monitor": "cd firmware && pio device monitor"
   },
   "dependencies": {
     "ecc-universal": "^1.10.0",
