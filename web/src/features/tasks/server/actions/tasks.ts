@@ -27,6 +27,7 @@ import { UserTable, AttachmentTable } from "@/drizzle/schema"
 import { eq, inArray } from "drizzle-orm"
 import { AddTaskResult } from "@/types/tasks"
 import { storeFile, deleteStoredFile } from "@/lib/file-storage"
+import { publishMqtt } from "@/lib/mqtt-server"
 
 const RESTRICTED_DEVICE_STATUSES = ["offline", "maintenance"]
 const STRICT_TASK_TYPES = ["Preventative Maintenance", "Emergency Repair"]
@@ -294,6 +295,16 @@ export async function approveTaskAction(
 
     await updateTaskApproval(taskId, true)
 
+    const device = await getDeviceById(task.deviceId)
+    if (device) {
+      publishMqtt("elock/command", {
+        action: "maintenance_on",
+        deviceId: device.deviceId,
+        issuedBy: session.sub,
+        timestamp: Math.floor(Date.now() / 1000),
+      })
+    }
+
     await createNotification({
       recipientId: task.userId,
       title: "Task Approved",
@@ -409,6 +420,16 @@ export async function completeTaskAction(
     }
 
     await completeTaskWithAttachments(taskId, attachmentRecords, session.sub)
+
+    const completedDevice = await getDeviceById(task.deviceId)
+    if (completedDevice) {
+      publishMqtt("elock/command", {
+        action: "maintenance_off",
+        deviceId: completedDevice.deviceId,
+        issuedBy: session.sub,
+        timestamp: Math.floor(Date.now() / 1000),
+      })
+    }
 
     revalidatePath("/user/my-activity")
     revalidatePath("/tasks")

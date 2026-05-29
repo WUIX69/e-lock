@@ -49,3 +49,17 @@ constexpr const char* kMqttTopicStatus = "elock/status";
 constexpr const char* kMqttTopicCommand = "elock/command";
 constexpr const char* kMqttTopicAuth = "elock/auth";
 constexpr const char* kMqttTopicLog = "elock/log";
+
+// --- Field Controller (ESP32 #2) MAC Address ---
+constexpr uint8_t kFieldControllerMac[] = {0x08, 0x3A, 0xF2, 0x82, 0x55, 0xB8};
+
+// --- LOTO Field Controller Relay & Sensor Pins ---
+constexpr uint8_t kLotoMainRelayPin = 4;
+constexpr uint8_t kLotoShuntRelayPin = 26;
+constexpr uint8_t kLotoTimerRelayPin = 5;
+constexpr uint8_t kLotoZmptPin = 34;
+constexpr uint8_t kPilotLightPin = 21;
+constexpr uint8_t kLotoBypassButtonPin = 13;
+
+// --- ESP-NOW Configuration ---
+constexpr uint8_t kEspNowChannel = 1;

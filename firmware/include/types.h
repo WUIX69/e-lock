@@ -26,6 +26,17 @@ enum class SystemMode : uint8_t {
     kMaintenance = 2,
 };
 
+enum class LotoState : uint8_t {
+    kStandby = 0,
+    kDelay = 1,
+    kMonitoring = 2,
+    kTripped = 3,
+};
+
+struct EspNowMessage {
+    char command[10];
+};
+
 enum class EnrollStep : uint8_t {
     kIdle = 0,
     kNeedFirstFinger = 1,

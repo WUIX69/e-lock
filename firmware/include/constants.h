@@ -23,6 +23,10 @@ constexpr uint8_t kMaxFingerprintAttempts = 3;
 constexpr uint16_t kMaxStoredFingerprints = 127;
 constexpr uint8_t kMaxEspNowPeers = 6;
 
+// --- LOTO Timing & Thresholds ---
+constexpr uint32_t kLotoDelayDurationMs = 10000;
+constexpr int kLotoVoltageThreshold = 3500;
+
 // --- Serial Baud Rates ---
 constexpr uint32_t kSerialBaudRate = 115200;
 constexpr uint32_t kFingerprintBaudRate = 57600;

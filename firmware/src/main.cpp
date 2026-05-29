@@ -10,12 +10,14 @@
 #include "fingerprint-sensor.h"
 #include "lock-controller.h"
 #include "buzzer-led.h"
+#include "esp-now-handler.h"
 
 WifiManager wifiManager(kWifiSsid, kWifiPassword);
 WiFiClient wifiClient;
 MqttHandler mqttHandler(wifiClient, kMqttBrokerHost, kMqttBrokerPort);
 LockController lockController(kLockRelayPin);
 BuzzerLed buzzerLed(kBuzzerPin, kLedGreenPin, kLedRedPin);
+EspNowHandler espNowHandler;
 
 HardwareSerial fingerprintSerial(2);
 FingerprintSensor fingerprintSensor(fingerprintSerial, kFingerprintRxPin, kFingerprintTxPin);
@@ -123,6 +125,18 @@ void handleMqttMessage(const char* topic, const char* payload) {
             mqttHandler.publish(kMqttTopicStatus, statusBuf);
             Serial.printf("[E-Lock] %s\n",
                           success ? "All fingerprints cleared" : "Failed to clear fingerprints");
+
+        } else if (strcmp(action, "maintenance_on") == 0) {
+            EspNowMessage msg = {};
+            strcpy(msg.command, "START");
+            espNowHandler.send(kFieldControllerMac, (const uint8_t*)&msg, sizeof(msg));
+            Serial.println("[E-Lock] Forwarded maintenance_on to Field Controller");
+
+        } else if (strcmp(action, "maintenance_off") == 0) {
+            EspNowMessage msg = {};
+            strcpy(msg.command, "STOP");
+            espNowHandler.send(kFieldControllerMac, (const uint8_t*)&msg, sizeof(msg));
+            Serial.println("[E-Lock] Forwarded maintenance_off to Field Controller");
         }
     }
 }
@@ -147,6 +161,13 @@ void setup() {
     } else {
         Serial.println("[E-Lock] WiFi connection FAILED");
         buzzerLed.signalWarning();
+    }
+
+    if (espNowHandler.begin()) {
+        espNowHandler.addPeer(kFieldControllerMac);
+        Serial.println("[E-Lock] ESP-NOW initialized");
+    } else {
+        Serial.println("[E-Lock] ESP-NOW init FAILED");
     }
 
     mqttHandler.begin(kMqttClientId, kMqttUsername, kMqttPassword);
