@@ -22,20 +22,36 @@ const basePersonnelSchema = z.object({
 export const addPersonnelSchema = basePersonnelSchema.extend({
   employeeId: z
     .string()
-    .regex(/^[0-9A-D*#]+$/i, "Employee ID must contain only digits, letters A-D, or symbols *, #")
     .min(1, "Employee ID is required"),
   pin: z.string().regex(/^\d{4}$/, "PIN must be exactly 4 digits"),
   fingerprintId: z.preprocess(
     (v) => (v === "" || v === null ? undefined : v),
     z.coerce.number().int().min(1).max(162).optional().nullable()
   ),
+}).superRefine((data, ctx) => {
+  if (data.role === "admin") {
+    if (!/^AD[0-9A-D*#]+$/i.test(data.employeeId)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Admin Employee ID must start with AD and contain only digits, letters A-D, or symbols *, #",
+        path: ["employeeId"],
+      });
+    }
+  } else {
+    if (!/^AC[0-9A-D*#]+$/i.test(data.employeeId)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "User Employee ID must start with AC and contain only digits, letters A-D, or symbols *, #",
+        path: ["employeeId"],
+      });
+    }
+  }
 })
 
 export const editPersonnelSchema = basePersonnelSchema.extend({
   id: z.string().uuid("Invalid User ID"),
   employeeId: z
     .string()
-    .regex(/^[0-9A-D*#]+$/i, "Employee ID must contain only digits, letters A-D, or symbols *, #")
     .min(1, "Employee ID is required"),
   pin: z
     .string()
@@ -46,6 +62,24 @@ export const editPersonnelSchema = basePersonnelSchema.extend({
     (v) => (v === "" || v === null ? undefined : v),
     z.coerce.number().int().min(1).max(162).optional().nullable()
   ),
+}).superRefine((data, ctx) => {
+  if (data.role === "admin") {
+    if (!/^AD[0-9A-D*#]+$/i.test(data.employeeId)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Admin Employee ID must start with AD and contain only digits, letters A-D, or symbols *, #",
+        path: ["employeeId"],
+      });
+    }
+  } else {
+    if (!/^AC[0-9A-D*#]+$/i.test(data.employeeId)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "User Employee ID must start with AC and contain only digits, letters A-D, or symbols *, #",
+        path: ["employeeId"],
+      });
+    }
+  }
 })
 
 export type AddPersonnelSchema = z.infer<typeof addPersonnelSchema>

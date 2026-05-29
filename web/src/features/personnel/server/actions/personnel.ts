@@ -75,6 +75,7 @@ export async function editPersonnelAction(
     const id = formData.get("id") as string
     const data = {
       id,
+      employeeId: formData.get("employeeId"),
       fullName: formData.get("fullName"),
       email: formData.get("email"),
       role: formData.get("role"),

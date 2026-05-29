@@ -64,6 +64,13 @@
       "when": 1748400000000,
       "tag": "0008_fingerprint_id",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1748500000000,
+      "tag": "0009_update_employee_ids",
+      "breakpoints": true
     }
   ]
 }

@@ -50,15 +50,20 @@ export const PersonnelForm = ({
 
   const isEditMode = mode === "edit"
   const [employeeId, setEmployeeId] = React.useState<string>("")
+  const [role, setRole] = React.useState<string>(
+    isEditMode ? (personnel?.role ?? "user") : "user"
+  )
 
   React.useEffect(() => {
     if (mode === "add") {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setEmployeeId(`AC${Math.floor(1000 + Math.random() * 9000)}`)
       setFingerprintId(null)
+      setRole("user")
     } else {
       setEmployeeId(personnel?.employeeId ?? "")
       setFingerprintId(personnel?.fingerprintId ?? null)
+      setRole(personnel?.role ?? "user")
     }
   }, [mode, personnel])
 
@@ -151,12 +156,12 @@ export const PersonnelForm = ({
           >
             Employee ID {!isEditMode && "(Auto)"}
           </Label>
+          <input type="hidden" name="employeeId" value={employeeId} />
           <Input
             id="employeeId"
-            name="employeeId"
             value={employeeId}
-            onChange={(e) => setEmployeeId(e.target.value)}
-            className="h-14 rounded-2xl border-border bg-muted font-mono text-sm focus-visible:ring-primary"
+            disabled
+            className="h-14 cursor-not-allowed rounded-2xl border-border bg-muted font-mono text-sm opacity-60 focus-visible:ring-primary"
           />
         </div>
 
@@ -169,7 +174,27 @@ export const PersonnelForm = ({
           </Label>
           <Select
             name="role"
-            defaultValue={isEditMode ? personnel?.role : "user"}
+            value={role}
+            onValueChange={(val) => {
+              setRole(val)
+              if (mode === "add") {
+                if (val === "admin") {
+                  setEmployeeId((prev) => {
+                    if (prev.startsWith("AC")) {
+                      return "AD" + prev.slice(2)
+                    }
+                    return `AD${Math.floor(1000 + Math.random() * 9000)}`
+                  })
+                } else {
+                  setEmployeeId((prev) => {
+                    if (prev.startsWith("AD")) {
+                      return "AC" + prev.slice(2)
+                    }
+                    return `AC${Math.floor(1000 + Math.random() * 9000)}`
+                  })
+                }
+              }
+            }}
             disabled={isLoading}
           >
             <SelectTrigger className="h-14 w-full rounded-2xl border-border bg-muted px-4 py-6 font-mono text-sm focus:ring-primary">
