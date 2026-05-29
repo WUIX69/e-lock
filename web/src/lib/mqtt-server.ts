@@ -50,7 +50,11 @@ if (!globalForMqtt.mqttClient) {
               console.log(`[MQTT Server] Challenge ${token} verified (listening match for ${user.name})`)
               break
             }
+            continue
           }
+
+          const attempts = incrementFailedAttempt(token)
+          console.log(`[MQTT Server] Wrong finger for challenge ${token}, failed attempts: ${attempts}`)
         }
       }
 
@@ -58,7 +62,7 @@ if (!globalForMqtt.mqttClient) {
         console.log(`[MQTT Server] Auth denied: unrecognized fingerprint`)
 
         for (const [token, challenge] of challenges.entries()) {
-          if (challenge.verified || challenge.fingerprintId !== null) continue
+          if (challenge.verified) continue
           const attempts = incrementFailedAttempt(token)
           console.log(`[MQTT Server] Failed attempts for ${token}: ${attempts}`)
         }

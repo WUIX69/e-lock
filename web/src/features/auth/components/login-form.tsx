@@ -26,6 +26,7 @@ import { Footer } from "@/components/layout/footer"
 import {
   loginAction,
   startBiometricChallengeAction,
+  requestBiometricChallengeAction,
   checkBiometricStatusAction,
   cancelBiometricChallengeAction,
 } from "@/features/auth/server/actions/auth"
@@ -38,6 +39,7 @@ export function LoginForm() {
   const [error, setError] = React.useState<string | null>(null)
   const [activeTab, setActiveTab] = React.useState<LoginTab>("standard")
 
+  const [biometricIdentifier, setBiometricIdentifier] = React.useState("")
   const [challengeToken, setChallengeToken] = React.useState<string | null>(null)
   const [biometricStatus, setBiometricStatus] = React.useState<"idle" | "pending" | "verified" | "expired" | "locked">("idle")
   const [failedAttempts, setFailedAttempts] = React.useState(0)
@@ -67,13 +69,13 @@ export function LoginForm() {
     }
   }
 
-  const handleBiometricInitiate = async () => {
+  const handleBiometricInitiate = async (identifier: string) => {
     setIsLoading(true)
     setError(null)
     setFailedAttempts(0)
     setBiometricStatus("pending")
 
-    const result = await startBiometricChallengeAction()
+    const result = await requestBiometricChallengeAction(identifier)
 
     if (result.error || !result.challengeToken) {
       setError(result.error || "Failed to start biometric scan")
@@ -82,6 +84,7 @@ export function LoginForm() {
       return
     }
 
+    setBiometricIdentifier(identifier)
     setChallengeToken(result.challengeToken)
     setIsLoading(false)
 
@@ -310,17 +313,36 @@ export function LoginForm() {
                       <p className="text-xs text-muted-foreground">Redirecting...</p>
                     </div>
                   ) : (
-                    <Button
-                      type="button"
-                      onClick={handleBiometricInitiate}
-                      disabled={isLoading}
-                      className="group relative h-16 w-full rounded-2xl bg-primary text-sm font-black tracking-widest text-primary-foreground uppercase shadow-lg shadow-primary/20 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
-                    >
-                      <span className="relative z-10 flex items-center justify-center gap-3">
-                        {isLoading ? "Connecting..." : "Initiate Handshake"}
-                        <Fingerprint className="size-5" />
-                      </span>
-                    </Button>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label htmlFor="biometric-identifier" className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+                          Email / Employee ID
+                        </label>
+                        <div className="group relative">
+                          <CreditCard className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                          <Input
+                            id="biometric-identifier"
+                            type="text"
+                            placeholder="email@domain.com or AD104"
+                            value={biometricIdentifier}
+                            onChange={(e) => setBiometricIdentifier(e.target.value)}
+                            className="h-14 rounded-2xl border-border bg-muted pl-12 font-mono text-sm focus-visible:ring-primary"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={() => handleBiometricInitiate(biometricIdentifier)}
+                        disabled={isLoading || !biometricIdentifier.trim()}
+                        className="group relative h-16 w-full rounded-2xl bg-primary text-sm font-black tracking-widest text-primary-foreground uppercase shadow-lg shadow-primary/20 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
+                      >
+                        <span className="relative z-10 flex items-center justify-center gap-3">
+                          {isLoading ? "Connecting..." : "Initiate Handshake"}
+                          <Fingerprint className="size-5" />
+                        </span>
+                      </Button>
+                    </div>
                   )}
                 </div>
               )}
