@@ -15,20 +15,31 @@ uint8_t lotoMainRelayPin = kLotoMainRelayPin;
 
 void onEspNowReceive(const uint8_t* mac, const uint8_t* data, int len) {
     if (len < 4) return;
-    EspNowMessage msg;
+    EspNowMessage msg = {};
     memcpy(&msg, data, min((size_t)len, sizeof(msg)));
 
     if (strcmp(msg.command, "START") == 0) {
+        if (strcmp(msg.deviceId, "DEV-FC02") == 0) {
+            lotoMainRelayPin = kLotoMainRelayPinDevice2;
+        } else {
+            lotoMainRelayPin = kLotoMainRelayPin;
+        }
         pendingCommand = LotoState::kDelay;
         lotoCommandReceived = true;
     } else if (strcmp(msg.command, "STOP") == 0) {
+        if (strcmp(msg.deviceId, "DEV-FC02") == 0) {
+            lotoMainRelayPin = kLotoMainRelayPinDevice2;
+        } else {
+            lotoMainRelayPin = kLotoMainRelayPin;
+        }
         pendingCommand = LotoState::kStandby;
         lotoCommandReceived = true;
     }
 }
 
 void setRelaysHigh() {
-    digitalWrite(lotoMainRelayPin, HIGH);
+    digitalWrite(kLotoMainRelayPin, HIGH);
+    digitalWrite(kLotoMainRelayPinDevice2, HIGH);
     digitalWrite(kLotoShuntRelayPin, HIGH);
     digitalWrite(kLotoTimerRelayPin, HIGH);
     digitalWrite(kPilotLightPin, HIGH);
@@ -43,23 +54,22 @@ void setup() {
         esp_read_mac(mac, ESP_MAC_WIFI_STA);
         Serial.printf("[E-Lock] ESP32 #2 (Field Controller) MAC Address: %02X:%02X:%02X:%02X:%02X:%02X\n",
                       mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-        const uint8_t device2Mac[6] = {0x28, 0x05, 0xA5, 0x2F, 0xCF, 0xAC};
-        if (memcmp(mac, device2Mac, 6) == 0) {
-            lotoMainRelayPin = kLotoMainRelayPinDevice2;
-            Serial.println("[E-Lock] Detected Device 2 (DEV-FC02) - Using main relay pin 19");
-        } else {
-            Serial.println("[E-Lock] Detected Device 1 (DEV-FC01) - Using main relay pin 4");
-        }
     }
 
-    pinMode(lotoMainRelayPin, OUTPUT);
+    pinMode(kLotoMainRelayPin, OUTPUT);
+    pinMode(kLotoMainRelayPinDevice2, OUTPUT);
     pinMode(kLotoShuntRelayPin, OUTPUT);
     pinMode(kLotoTimerRelayPin, OUTPUT);
     pinMode(kPilotLightPin, OUTPUT);
     pinMode(kLotoBypassButtonPin, INPUT_PULLUP);
     pinMode(kLotoZmptPin, INPUT);
 
-    setRelaysHigh();
+    // Initialize all relays and indicators to standby state (HIGH)
+    digitalWrite(kLotoMainRelayPin, HIGH);
+    digitalWrite(kLotoMainRelayPinDevice2, HIGH);
+    digitalWrite(kLotoShuntRelayPin, HIGH);
+    digitalWrite(kLotoTimerRelayPin, HIGH);
+    digitalWrite(kPilotLightPin, HIGH);
 
     if (espNowHandler.begin()) {
         esp_wifi_set_channel(kEspNowChannel, WIFI_SECOND_CHAN_NONE);

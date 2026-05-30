@@ -140,6 +140,7 @@ void handleMqttMessage(const char* topic, const char* payload) {
             } else {
                 EspNowMessage msg = {};
                 strcpy(msg.command, strcmp(action, "maintenance_on") == 0 ? "START" : "STOP");
+                strcpy(msg.deviceId, targetDeviceId);
                 espNowHandler.send(targetMac, (const uint8_t*)&msg, sizeof(msg));
                 Serial.printf("[E-Lock] Forwarded %s to %s\n", msg.command, targetDeviceId);
             }
@@ -173,7 +174,16 @@ void setup() {
 
     if (espNowHandler.begin()) {
         for (size_t i = 0; i < kLotoDeviceCount; i++) {
-            espNowHandler.addPeer(kLotoDevices[i].mac);
+            bool exists = false;
+            for (size_t j = 0; j < i; j++) {
+                if (memcmp(kLotoDevices[i].mac, kLotoDevices[j].mac, 6) == 0) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                espNowHandler.addPeer(kLotoDevices[i].mac);
+            }
         }
         Serial.printf("[E-Lock] ESP-NOW initialized with %zu peers\n", kLotoDeviceCount);
     } else {

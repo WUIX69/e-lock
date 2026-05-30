@@ -35,6 +35,7 @@ enum class LotoState : uint8_t {
 
 struct EspNowMessage {
     char command[10];
+    char deviceId[10];
 };
 
 enum class EnrollStep : uint8_t {
