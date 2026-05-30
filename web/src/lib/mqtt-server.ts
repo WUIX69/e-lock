@@ -3,6 +3,9 @@ import { env } from "@/data/env/server"
 import { challenges, verifyChallenge, incrementFailedAttempt, resetFailedAttempts, setChallengeUserId } from "@/features/auth/server/challenges"
 import { completeEnrollment } from "@/features/personnel/server/enrollments"
 import { getUserByFingerprintId } from "@/features/personnel/server/db/personnel"
+import { db } from "@/drizzle/db"
+import { TaskTable, DeviceTable } from "@/drizzle/schema"
+import { eq, and } from "drizzle-orm"
 
 const globalForMqtt = globalThis as unknown as {
   mqttClient: mqtt.MqttClient | null
@@ -72,6 +75,37 @@ if (!globalForMqtt.mqttClient) {
         const fingerprintId = data.id as number
         console.log(`[MQTT Server] Enrollment success for fingerprint ID ${fingerprintId}`)
         completeEnrollment(fingerprintId, "success")
+      }
+
+      if (topic === "elock/status" && data.event === "relay_fault") {
+        const deviceIdString = data.deviceId as string
+        console.log(`[MQTT Server] Relay fault alert received for device ID: ${deviceIdString}`)
+
+        const device = await db.query.DeviceTable.findFirst({
+          where: eq(DeviceTable.deviceId, deviceIdString)
+        })
+
+        if (device) {
+          const activeTask = await db.query.TaskTable.findFirst({
+            where: and(
+              eq(TaskTable.deviceId, device.id),
+              eq(TaskTable.status, "pending"),
+              eq(TaskTable.approvedByAdmin, true)
+            )
+          })
+
+          if (activeTask) {
+            await db
+              .update(TaskTable)
+              .set({ relayFault: true })
+              .where(eq(TaskTable.id, activeTask.id))
+            console.log(`[MQTT Server] Set relayFault = true for task ${activeTask.id}`)
+          } else {
+            console.warn(`[MQTT Server] No active approved task found for device ${deviceIdString}`)
+          }
+        } else {
+          console.error(`[MQTT Server] Device with ID ${deviceIdString} not found`)
+        }
       }
     } catch {
       console.error("[MQTT Server] Failed to parse message:", message)

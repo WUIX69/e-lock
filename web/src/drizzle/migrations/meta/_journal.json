@@ -85,6 +85,13 @@
       "when": 1748700000000,
       "tag": "0011_remove_senior_engineer_role",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1748800000000,
+      "tag": "0012_add_relay_fault",
+      "breakpoints": true
     }
   ]
 }

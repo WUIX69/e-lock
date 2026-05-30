@@ -58,6 +58,7 @@ export interface AdminTask {
   approvedByAdmin?: boolean
   submissionAttachments?: TaskAttachment[]
   completionAttachments?: TaskAttachment[]
+  relayFault?: boolean
 }
 
 interface AdminTasksTableProps {
@@ -508,6 +509,7 @@ export const AdminTasksTable = ({
             coWorkers: viewTask.coWorkers,
             submissionAttachments: viewTask.submissionAttachments,
             completionAttachments: viewTask.completionAttachments,
+            relayFault: viewTask.relayFault,
           }}
         />
       )}

@@ -77,7 +77,8 @@ void setup() {
     if (espNowHandler.begin()) {
         esp_wifi_set_channel(kEspNowChannel, WIFI_SECOND_CHAN_NONE);
         espNowHandler.onReceive(onEspNowReceive);
-        Serial.println("[E-Lock] ESP-NOW listening");
+        espNowHandler.addPeer(kGatewayMac);
+        Serial.println("[E-Lock] ESP-NOW listening and Gateway peer added");
     } else {
         Serial.println("[E-Lock] ESP-NOW init FAILED");
     }
@@ -113,6 +114,17 @@ void loop() {
     if (isAnyTripped && digitalRead(kLotoBypassButtonPin) == LOW) {
         delay(50);
         if (digitalRead(kLotoBypassButtonPin) == LOW) {
+            for (int i = 0; i < 2; i++) {
+                if (deviceStates[i] != LotoState::kStandby) {
+                    EspNowMessage alertMsg = {};
+                    strcpy(alertMsg.command, "ALERT");
+                    strcpy(alertMsg.deviceId, (i == 1) ? "DEV-FC02" : "DEV-FC01");
+                    espNowHandler.send(kGatewayMac, (const uint8_t*)&alertMsg, sizeof(alertMsg));
+                    Serial.printf("[E-Lock] Sent ALERT ESP-NOW for %s\n", alertMsg.deviceId);
+                    delay(50);
+                }
+            }
+
             for (int i = 0; i < 2; i++) {
                 deviceStates[i] = LotoState::kStandby;
                 pendingCommands[i] = LotoState::kStandby;

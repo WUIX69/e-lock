@@ -43,6 +43,7 @@ interface TaskDetailModalProps {
     coWorkers?: { id: string | null; name: string }[]
     submissionAttachments?: TaskAttachment[]
     completionAttachments?: TaskAttachment[]
+    relayFault?: boolean
   }
 }
 
@@ -234,6 +235,14 @@ export const TaskDetailModal = ({
               {task.approvedByAdmin
                 ? "This task has been approved by an administrator."
                 : "Awaiting admin approval. Task cannot be marked complete until approved."}
+            </div>
+          )}
+
+          {/* Relay Fault / Shunt Trip Alert */}
+          {task.relayFault && (
+            <div className="mx-6 mt-4 rounded-xl border border-rose-500/30 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-600 dark:bg-rose-950/20 dark:text-rose-400 flex items-center gap-2">
+              <span className="text-base">⚠️</span>
+              <span>SYSTEM ALERT: Relay Fault / Shunt Trip Engaged</span>
             </div>
           )}
 

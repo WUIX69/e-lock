@@ -55,6 +55,8 @@ constexpr LotoDeviceEntry kLotoDevices[] = {
 };
 constexpr size_t kLotoDeviceCount = sizeof(kLotoDevices) / sizeof(kLotoDevices[0]);
 
+constexpr uint8_t kGatewayMac[6] = {0x28, 0x05, 0xA5, 0x2F, 0xCF, 0xAC};
+
 // --- LOTO Field Controller Relay & Sensor Pins ---
 constexpr uint8_t kLotoMainRelayPin = 4;
 constexpr uint8_t kLotoMainRelayPinDevice2 = 19;

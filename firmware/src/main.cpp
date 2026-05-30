@@ -148,6 +148,23 @@ void handleMqttMessage(const char* topic, const char* payload) {
     }
 }
 
+void onEspNowReceive(const uint8_t* mac, const uint8_t* data, int len) {
+    if (len < 4) return;
+    EspNowMessage msg = {};
+    size_t copyLen = (len < sizeof(msg)) ? len : sizeof(msg);
+    memcpy(&msg, data, copyLen);
+    
+    if (strcmp(msg.command, "ALERT") == 0) {
+        JsonDocument doc;
+        doc["event"] = "relay_fault";
+        doc["deviceId"] = msg.deviceId;
+        char buf[128];
+        serializeJson(doc, buf);
+        mqttHandler.publish(kMqttTopicStatus, buf);
+        Serial.printf("[E-Lock] Relay fault alert received for %s, published to MQTT\n", msg.deviceId);
+    }
+}
+
 void setup() {
     Serial.begin(kSerialBaudRate);
     Serial.println("[E-Lock] Initializing...");
@@ -185,6 +202,7 @@ void setup() {
                 espNowHandler.addPeer(kLotoDevices[i].mac);
             }
         }
+        espNowHandler.onReceive(onEspNowReceive);
         Serial.printf("[E-Lock] ESP-NOW initialized with %zu peers\n", kLotoDeviceCount);
     } else {
         Serial.println("[E-Lock] ESP-NOW init FAILED");

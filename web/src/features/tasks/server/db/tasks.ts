@@ -176,6 +176,7 @@ export async function getTasksByUser(userId: string) {
       description: TaskTable.description,
       status: TaskTable.status,
       approvedByAdmin: TaskTable.approvedByAdmin,
+      relayFault: TaskTable.relayFault,
       submittedAt: TaskTable.submittedAt,
       updatedAt: TaskTable.updatedAt,
     })
@@ -264,6 +265,7 @@ export async function getTasksByDevice(deviceId: string) {
       description: TaskTable.description,
       status: TaskTable.status,
       approvedByAdmin: TaskTable.approvedByAdmin,
+      relayFault: TaskTable.relayFault,
       submittedAt: TaskTable.submittedAt,
       updatedAt: TaskTable.updatedAt,
     })
@@ -344,6 +346,7 @@ export async function getAllTasks() {
       description: TaskTable.description,
       status: TaskTable.status,
       approvedByAdmin: TaskTable.approvedByAdmin,
+      relayFault: TaskTable.relayFault,
       submittedAt: TaskTable.submittedAt,
       updatedAt: TaskTable.updatedAt,
     })

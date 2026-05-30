@@ -104,6 +104,7 @@ export const TaskTable = pgTable(
     description: text("description"),
     status: text("status").notNull().default("pending"),
     approvedByAdmin: boolean("approved_by_admin").notNull().default(false),
+    relayFault: boolean("relay_fault").notNull().default(false),
     submittedAt: timestamp("submitted_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

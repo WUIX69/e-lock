@@ -44,6 +44,7 @@ type TaskItem = {
   approvedByAdmin?: boolean
   submissionAttachments?: TaskAttachment[]
   completionAttachments?: TaskAttachment[]
+  relayFault?: boolean
 }
 
 interface UserTasksTableProps {
@@ -356,6 +357,7 @@ export const UserTasksTable = ({
             coWorkers: viewTask.coWorkers,
             submissionAttachments: viewTask.submissionAttachments,
             completionAttachments: viewTask.completionAttachments,
+            relayFault: viewTask.relayFault,
           }}
         />
       )}
