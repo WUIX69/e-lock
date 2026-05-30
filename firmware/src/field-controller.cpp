@@ -142,7 +142,7 @@ void loop() {
                 break;
 
             case LotoState::kMonitoring:
-                if (analogRead(kLotoZmptPin) > kLotoVoltageThreshold) {
+                if (i == 0 && analogRead(kLotoZmptPin) > kLotoVoltageThreshold) {
                     digitalWrite(kLotoShuntRelayPin, LOW);
                     digitalWrite(kLotoTimerRelayPin, LOW);
                     // Trip all monitoring devices
