@@ -6,34 +6,37 @@
 #include "types.h"
 #include "esp-now-handler.h"
 
-LotoState currentLotoState = LotoState::kStandby;
 EspNowHandler espNowHandler;
-unsigned long lotoStateStartMs = 0;
-volatile bool lotoCommandReceived = false;
-volatile LotoState pendingCommand = LotoState::kStandby;
-uint8_t lotoMainRelayPin = kLotoMainRelayPin;
+
+int getDeviceIndex(const char* deviceId) {
+    if (strcmp(deviceId, "DEV-FC02") == 0) {
+        return 1;
+    }
+    return 0;
+}
+
+uint8_t getDeviceMainRelayPin(int index) {
+    return (index == 1) ? kLotoMainRelayPinDevice2 : kLotoMainRelayPin;
+}
+
+LotoState deviceStates[2] = {LotoState::kStandby, LotoState::kStandby};
+unsigned long stateStartMs[2] = {0, 0};
+volatile bool commandReceived[2] = {false, false};
+volatile LotoState pendingCommands[2] = {LotoState::kStandby, LotoState::kStandby};
 
 void onEspNowReceive(const uint8_t* mac, const uint8_t* data, int len) {
     if (len < 4) return;
     EspNowMessage msg = {};
     memcpy(&msg, data, min((size_t)len, sizeof(msg)));
 
+    int idx = getDeviceIndex(msg.deviceId);
+
     if (strcmp(msg.command, "START") == 0) {
-        if (strcmp(msg.deviceId, "DEV-FC02") == 0) {
-            lotoMainRelayPin = kLotoMainRelayPinDevice2;
-        } else {
-            lotoMainRelayPin = kLotoMainRelayPin;
-        }
-        pendingCommand = LotoState::kDelay;
-        lotoCommandReceived = true;
+        pendingCommands[idx] = LotoState::kDelay;
+        commandReceived[idx] = true;
     } else if (strcmp(msg.command, "STOP") == 0) {
-        if (strcmp(msg.deviceId, "DEV-FC02") == 0) {
-            lotoMainRelayPin = kLotoMainRelayPinDevice2;
-        } else {
-            lotoMainRelayPin = kLotoMainRelayPin;
-        }
-        pendingCommand = LotoState::kStandby;
-        lotoCommandReceived = true;
+        pendingCommands[idx] = LotoState::kStandby;
+        commandReceived[idx] = true;
     }
 }
 
@@ -83,56 +86,78 @@ void setup() {
 }
 
 void loop() {
-    if (lotoCommandReceived) {
-        lotoCommandReceived = false;
-        if (pendingCommand == LotoState::kDelay && currentLotoState == LotoState::kStandby) {
-            currentLotoState = LotoState::kDelay;
-            lotoStateStartMs = millis();
-            Serial.println("[E-Lock] LOTO START - 10s delay");
-        } else if (pendingCommand == LotoState::kStandby) {
-            currentLotoState = LotoState::kStandby;
-            setRelaysHigh();
-            Serial.println("[E-Lock] LOTO STOP - returning to standby");
+    for (int i = 0; i < 2; i++) {
+        if (commandReceived[i]) {
+            commandReceived[i] = false;
+            if (pendingCommands[i] == LotoState::kDelay && deviceStates[i] == LotoState::kStandby) {
+                deviceStates[i] = LotoState::kDelay;
+                stateStartMs[i] = millis();
+                Serial.printf("[E-Lock] LOTO START for Device %d - 10s delay\n", i + 1);
+            } else if (pendingCommands[i] == LotoState::kStandby) {
+                deviceStates[i] = LotoState::kStandby;
+                digitalWrite(getDeviceMainRelayPin(i), HIGH);
+                Serial.printf("[E-Lock] LOTO STOP for Device %d - returning to standby\n", i + 1);
+
+                // If BOTH devices are now in Standby, restore safety relays and pilot light
+                if (deviceStates[0] == LotoState::kStandby && deviceStates[1] == LotoState::kStandby) {
+                    digitalWrite(kLotoShuntRelayPin, HIGH);
+                    digitalWrite(kLotoTimerRelayPin, HIGH);
+                    digitalWrite(kPilotLightPin, HIGH);
+                }
+            }
         }
     }
 
-    if (currentLotoState == LotoState::kTripped && digitalRead(kLotoBypassButtonPin) == LOW) {
+    // Bypass button: resets both devices if either is tripped
+    bool isAnyTripped = (deviceStates[0] == LotoState::kTripped || deviceStates[1] == LotoState::kTripped);
+    if (isAnyTripped && digitalRead(kLotoBypassButtonPin) == LOW) {
         delay(50);
         if (digitalRead(kLotoBypassButtonPin) == LOW) {
-            currentLotoState = LotoState::kStandby;
+            for (int i = 0; i < 2; i++) {
+                deviceStates[i] = LotoState::kStandby;
+                pendingCommands[i] = LotoState::kStandby;
+            }
             setRelaysHigh();
-            Serial.println("[E-Lock] Bypass pressed - returning to standby");
+            Serial.println("[E-Lock] Bypass pressed - returning both to standby");
             while (digitalRead(kLotoBypassButtonPin) == LOW) {
                 delay(10);
             }
         }
     }
 
-    switch (currentLotoState) {
-        case LotoState::kStandby:
-            break;
+    // Process state machine for both devices
+    for (int i = 0; i < 2; i++) {
+        switch (deviceStates[i]) {
+            case LotoState::kStandby:
+                break;
 
-        case LotoState::kDelay:
-            if (millis() - lotoStateStartMs >= kLotoDelayDurationMs) {
-                digitalWrite(lotoMainRelayPin, LOW);
-                digitalWrite(kPilotLightPin, LOW);
-                currentLotoState = LotoState::kMonitoring;
-                lotoStateStartMs = millis();
-                Serial.println("[E-Lock] LOTO power cut - monitoring");
-            }
-            break;
+            case LotoState::kDelay:
+                if (millis() - stateStartMs[i] >= kLotoDelayDurationMs) {
+                    digitalWrite(getDeviceMainRelayPin(i), LOW);
+                    digitalWrite(kPilotLightPin, LOW);
+                    deviceStates[i] = LotoState::kMonitoring;
+                    stateStartMs[i] = millis();
+                    Serial.printf("[E-Lock] LOTO power cut for Device %d - monitoring\n", i + 1);
+                }
+                break;
 
-        case LotoState::kMonitoring:
-            if (analogRead(kLotoZmptPin) > kLotoVoltageThreshold) {
-                digitalWrite(kLotoShuntRelayPin, LOW);
-                digitalWrite(kLotoTimerRelayPin, LOW);
-                currentLotoState = LotoState::kTripped;
-                Serial.println("[E-Lock] LOTO TRIPPED - voltage detected");
-            }
-            break;
+            case LotoState::kMonitoring:
+                if (analogRead(kLotoZmptPin) > kLotoVoltageThreshold) {
+                    digitalWrite(kLotoShuntRelayPin, LOW);
+                    digitalWrite(kLotoTimerRelayPin, LOW);
+                    // Trip all monitoring devices
+                    for (int j = 0; j < 2; j++) {
+                        if (deviceStates[j] == LotoState::kMonitoring) {
+                            deviceStates[j] = LotoState::kTripped;
+                        }
+                    }
+                    Serial.println("[E-Lock] LOTO TRIPPED - voltage detected");
+                }
+                break;
 
-        case LotoState::kTripped:
-            break;
+            case LotoState::kTripped:
+                break;
+        }
     }
 
     delay(50);
