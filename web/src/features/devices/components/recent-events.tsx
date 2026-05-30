@@ -38,13 +38,13 @@ const ADDITIONAL_MOCK_EVENTS: DeviceEvent[] = [
   {
     id: "evt-005",
     timestamp: "11:15:00",
-    message: "Secondary Conveyor Shunt Trip Self-Test Passed",
+    message: "Circuit Breaker Panel B Shunt Trip Self-Test Passed",
     type: "success",
   },
   {
     id: "evt-006",
     timestamp: "10:42:18",
-    message: "MESH Router NODE-114 Connected to Gateway Hub A",
+    message: "MESH Router NODE-114 Connected to Central Gateway",
     type: "info",
   },
   {

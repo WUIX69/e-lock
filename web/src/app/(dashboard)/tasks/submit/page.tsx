@@ -19,7 +19,7 @@ export default async function TaskSubmitPage({
     id: d.id,
     deviceId: d.deviceId,
     type: d.type,
-    assignedMachine: d.assignedMachine,
+    deviceUniqueName: d.deviceUniqueName,
     signalStrength: d.signalStrength ?? 0,
     lastHeartbeat: "Unknown",
     status: d.status,

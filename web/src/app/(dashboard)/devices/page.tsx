@@ -35,7 +35,7 @@ const DevicesPage = async () => {
       id: d.id,
       deviceId: d.deviceId,
       type: d.type,
-      assignedMachine: d.assignedMachine,
+      deviceUniqueName: d.deviceUniqueName,
       signalStrength: d.signalStrength ?? 0,
       lastHeartbeat: d.lastHeartbeatAt
         ? formatTimeAgo(d.lastHeartbeatAt)
@@ -62,7 +62,7 @@ const DevicesPage = async () => {
 
   const devices: UserDevice[] = dbDevices.map((d) => ({
     id: d.id,
-    name: d.assignedMachine,
+    name: d.deviceUniqueName,
     deviceId: d.deviceId,
     sector: "Production",
     status: STATUS_MAP[d.status] ?? "offline",

@@ -25,7 +25,6 @@ import { Footer } from "@/components/layout/footer"
 
 import {
   loginAction,
-  startBiometricChallengeAction,
   requestBiometricChallengeAction,
   checkBiometricStatusAction,
   cancelBiometricChallengeAction,

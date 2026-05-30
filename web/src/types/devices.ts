@@ -5,7 +5,7 @@ export interface Device {
   id: string
   deviceId: string
   type: DeviceType
-  assignedMachine: string
+  deviceUniqueName: string
   signalStrength: number
   lastHeartbeat: string
   status: DeviceStatus

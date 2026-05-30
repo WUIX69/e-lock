@@ -126,17 +126,23 @@ void handleMqttMessage(const char* topic, const char* payload) {
             Serial.printf("[E-Lock] %s\n",
                           success ? "All fingerprints cleared" : "Failed to clear fingerprints");
 
-        } else if (strcmp(action, "maintenance_on") == 0) {
-            EspNowMessage msg = {};
-            strcpy(msg.command, "START");
-            espNowHandler.send(kFieldControllerMac, (const uint8_t*)&msg, sizeof(msg));
-            Serial.println("[E-Lock] Forwarded maintenance_on to Field Controller");
-
-        } else if (strcmp(action, "maintenance_off") == 0) {
-            EspNowMessage msg = {};
-            strcpy(msg.command, "STOP");
-            espNowHandler.send(kFieldControllerMac, (const uint8_t*)&msg, sizeof(msg));
-            Serial.println("[E-Lock] Forwarded maintenance_off to Field Controller");
+        } else if (strcmp(action, "maintenance_on") == 0 || strcmp(action, "maintenance_off") == 0) {
+            const char* targetDeviceId = doc["deviceId"] | "";
+            const uint8_t* targetMac = nullptr;
+            for (size_t i = 0; i < kLotoDeviceCount; i++) {
+                if (strcmp(kLotoDevices[i].deviceId, targetDeviceId) == 0) {
+                    targetMac = kLotoDevices[i].mac;
+                    break;
+                }
+            }
+            if (targetMac == nullptr) {
+                Serial.printf("[E-Lock] Unknown device: %s\n", targetDeviceId);
+            } else {
+                EspNowMessage msg = {};
+                strcpy(msg.command, strcmp(action, "maintenance_on") == 0 ? "START" : "STOP");
+                espNowHandler.send(targetMac, (const uint8_t*)&msg, sizeof(msg));
+                Serial.printf("[E-Lock] Forwarded %s to %s\n", msg.command, targetDeviceId);
+            }
         }
     }
 }
@@ -164,8 +170,10 @@ void setup() {
     }
 
     if (espNowHandler.begin()) {
-        espNowHandler.addPeer(kFieldControllerMac);
-        Serial.println("[E-Lock] ESP-NOW initialized");
+        for (size_t i = 0; i < kLotoDeviceCount; i++) {
+            espNowHandler.addPeer(kLotoDevices[i].mac);
+        }
+        Serial.printf("[E-Lock] ESP-NOW initialized with %zu peers\n", kLotoDeviceCount);
     } else {
         Serial.println("[E-Lock] ESP-NOW init FAILED");
     }

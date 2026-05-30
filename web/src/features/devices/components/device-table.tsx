@@ -68,12 +68,12 @@ const columns: ColumnDef<Device>[] = [
     ),
   },
   {
-    accessorKey: "assignedMachine",
-    header: "Assigned Machine",
+    accessorKey: "deviceUniqueName",
+    header: "Device Name",
     enableSorting: true,
     cell: ({ row }) => (
       <span className="text-muted-foreground">
-        {row.original.assignedMachine}
+        {row.original.deviceUniqueName}
       </span>
     ),
   },
@@ -138,7 +138,7 @@ export const DeviceTable = ({ devices }: DeviceTableProps) => {
       const q = search.toLowerCase()
       if (
         !d.deviceId.toLowerCase().includes(q) &&
-        !d.assignedMachine.toLowerCase().includes(q)
+        !d.deviceUniqueName.toLowerCase().includes(q)
       )
         return false
     }

@@ -37,7 +37,7 @@ export async function insertDevice(data: AddDeviceSchema) {
     .values({
       deviceId: data.deviceId,
       type: data.hardwareType,
-      assignedMachine: data.assignedMachine,
+      deviceUniqueName: data.deviceUniqueName,
       macAddress: data.macAddress,
       isHighPriority: data.isHighPriority,
       signalStrength: 0,

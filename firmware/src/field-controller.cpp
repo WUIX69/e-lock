@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <esp_wifi.h>
+#include <esp_system.h>
 #include "config.h"
 #include "constants.h"
 #include "types.h"
@@ -10,6 +11,7 @@ EspNowHandler espNowHandler;
 unsigned long lotoStateStartMs = 0;
 volatile bool lotoCommandReceived = false;
 volatile LotoState pendingCommand = LotoState::kStandby;
+uint8_t lotoMainRelayPin = kLotoMainRelayPin;
 
 void onEspNowReceive(const uint8_t* mac, const uint8_t* data, int len) {
     if (len < 4) return;
@@ -26,7 +28,7 @@ void onEspNowReceive(const uint8_t* mac, const uint8_t* data, int len) {
 }
 
 void setRelaysHigh() {
-    digitalWrite(kLotoMainRelayPin, HIGH);
+    digitalWrite(lotoMainRelayPin, HIGH);
     digitalWrite(kLotoShuntRelayPin, HIGH);
     digitalWrite(kLotoTimerRelayPin, HIGH);
     digitalWrite(kPilotLightPin, HIGH);
@@ -36,7 +38,19 @@ void setup() {
     Serial.begin(kSerialBaudRate);
     Serial.println("[E-Lock] Field Controller Initializing...");
 
-    pinMode(kLotoMainRelayPin, OUTPUT);
+    {
+        uint8_t mac[6];
+        esp_read_mac(mac, ESP_MAC_WIFI_STA);
+        const uint8_t device2Mac[6] = {0x28, 0x05, 0xA5, 0x2F, 0xCF, 0xAC};
+        if (memcmp(mac, device2Mac, 6) == 0) {
+            lotoMainRelayPin = kLotoMainRelayPinDevice2;
+            Serial.println("[E-Lock] Detected Device 2 (DEV-FC02) - Using main relay pin 21");
+        } else {
+            Serial.println("[E-Lock] Detected Device 1 (DEV-FC01) - Using main relay pin 4");
+        }
+    }
+
+    pinMode(lotoMainRelayPin, OUTPUT);
     pinMode(kLotoShuntRelayPin, OUTPUT);
     pinMode(kLotoTimerRelayPin, OUTPUT);
     pinMode(kPilotLightPin, OUTPUT);
@@ -88,7 +102,7 @@ void loop() {
 
         case LotoState::kDelay:
             if (millis() - lotoStateStartMs >= kLotoDelayDurationMs) {
-                digitalWrite(kLotoMainRelayPin, LOW);
+                digitalWrite(lotoMainRelayPin, LOW);
                 digitalWrite(kPilotLightPin, LOW);
                 currentLotoState = LotoState::kMonitoring;
                 lotoStateStartMs = millis();

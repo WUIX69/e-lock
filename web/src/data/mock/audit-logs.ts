@@ -4,7 +4,7 @@ export const MOCK_AUDIT_LOGS: AuditLog[] = [
   {
     id: "LOG-001",
     person: { name: "Alex Thompson", role: "Sr. Electrician", initials: "AT" },
-    machineId: "MC-402",
+    deviceName: "Circuit Breaker Panel A",
     isolation: "Electrical",
     verification: "Biometric",
     time: "2024-05-14 08:41:22",
@@ -13,7 +13,7 @@ export const MOCK_AUDIT_LOGS: AuditLog[] = [
   {
     id: "LOG-002",
     person: { name: "Sarah Jenkins", role: "Safety Lead", initials: "SJ" },
-    machineId: "CONV-12",
+    deviceName: "Circuit Breaker Panel B",
     isolation: "Mechanical",
     verification: "PIN + Tag",
     time: "2024-05-14 09:12:05",
@@ -27,7 +27,7 @@ export const MOCK_AUDIT_LOGS: AuditLog[] = [
       initials: "??",
       error: true,
     },
-    machineId: "PUMP-04",
+    deviceName: "Circuit Breaker Panel A",
     isolation: "Fluid",
     verification: "Failed Attempt",
     time: "2024-05-14 10:05:41",
@@ -36,7 +36,7 @@ export const MOCK_AUDIT_LOGS: AuditLog[] = [
   {
     id: "LOG-004",
     person: { name: "Michael Zhao", role: "Maintenance", initials: "MZ" },
-    machineId: "GEN-01",
+    deviceName: "Central Gateway",
     isolation: "Multiple",
     verification: "Biometric",
     time: "2024-05-14 10:45:18",

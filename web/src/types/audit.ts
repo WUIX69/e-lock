@@ -8,7 +8,7 @@ export interface AuditLogPerson {
 export interface AuditLog {
   id: string
   person: AuditLogPerson
-  machineId: string
+  deviceName: string
   isolation: string
   verification: string
   time: string

@@ -55,14 +55,14 @@ const columns: ColumnDef<AuditLog>[] = [
     },
   },
   {
-    accessorKey: "machineId",
-    header: "Machine ID",
+    accessorKey: "deviceName",
+    header: "Device",
     cell: ({ row }) => (
       <Badge
         variant="outline"
         className="rounded-lg border-border bg-muted px-3 py-1 text-[10px] font-black tracking-widest"
       >
-        {row.original.machineId}
+        {row.original.deviceName}
       </Badge>
     ),
   },
@@ -142,7 +142,7 @@ export function AuditTable() {
       const q = search.toLowerCase()
       if (
         !log.person.name.toLowerCase().includes(q) &&
-        !log.machineId.toLowerCase().includes(q)
+        !log.deviceName.toLowerCase().includes(q)
       )
         return false
     }
@@ -155,7 +155,7 @@ export function AuditTable() {
         filters={
           <>
             <FilterInput
-              placeholder="Search personnel or machine..."
+              placeholder="Search personnel or device..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />

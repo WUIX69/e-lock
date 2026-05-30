@@ -47,12 +47,12 @@ export const ResourceSelection = ({
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       <div className="space-y-2">
         <label className="block px-1 text-[10px] font-black tracking-widest text-muted-foreground uppercase">
-          Machine / Device ID
+          Device
         </label>
         {isPreselected && selectedDevice ? (
           <div>
             <div className="font-body-md w-full rounded-lg border border-border bg-muted/50 p-3 text-foreground">
-              {selectedDevice.assignedMachine} ({selectedDevice.deviceId})
+              {selectedDevice.deviceUniqueName} ({selectedDevice.deviceId})
             </div>
             {isRestricted && (
               <div className="mt-2 flex items-center gap-2 rounded-lg border border-yellow-400/30 bg-yellow-50 px-3 py-2 text-xs font-medium text-yellow-800">
@@ -74,7 +74,7 @@ export const ResourceSelection = ({
             <option value="">Select a Device...</option>
             {devices.map((device) => (
               <option key={device.id} value={device.id}>
-                {device.assignedMachine} ({device.deviceId})
+                {device.deviceUniqueName} ({device.deviceId})
               </option>
             ))}
           </select>

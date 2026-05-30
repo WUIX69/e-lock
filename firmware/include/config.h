@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 // ============================================================
 // E-Lock Firmware Configuration
 // Pin definitions, WiFi credentials, MQTT broker settings
@@ -34,15 +36,6 @@ constexpr uint8_t kLedRedPin = 33;
 constexpr uint8_t kDisplaySdaPin = 21;
 constexpr uint8_t kDisplaySclPin = 22;
 
-// --- 4x4 Keypad Pins ---
-constexpr uint8_t kKeypadRow1 = 12;
-constexpr uint8_t kKeypadRow2 = 13;
-constexpr uint8_t kKeypadRow3 = 14;
-constexpr uint8_t kKeypadRow4 = 15;
-constexpr uint8_t kKeypadCol1 = 2;
-constexpr uint8_t kKeypadCol2 = 4;
-constexpr uint8_t kKeypadCol3 = 18;
-constexpr uint8_t kKeypadCol4 = 19;
 
 // --- MQTT Topics ---
 constexpr const char* kMqttTopicStatus = "elock/status";
@@ -50,11 +43,21 @@ constexpr const char* kMqttTopicCommand = "elock/command";
 constexpr const char* kMqttTopicAuth = "elock/auth";
 constexpr const char* kMqttTopicLog = "elock/log";
 
-// --- Field Controller (ESP32 #2) MAC Address ---
-constexpr uint8_t kFieldControllerMac[] = {0x08, 0x3A, 0xF2, 0x82, 0x55, 0xB8};
+// --- LOTO Device Registry ---
+struct LotoDeviceEntry {
+    const char* deviceId;
+    uint8_t mac[6];
+};
+
+constexpr LotoDeviceEntry kLotoDevices[] = {
+    {"DEV-FC01", {0x08, 0x3A, 0xF2, 0x82, 0x55, 0xB8}},
+    {"DEV-FC02", {0x28, 0x05, 0xA5, 0x2F, 0xCF, 0xAC}},
+};
+constexpr size_t kLotoDeviceCount = sizeof(kLotoDevices) / sizeof(kLotoDevices[0]);
 
 // --- LOTO Field Controller Relay & Sensor Pins ---
-constexpr uint8_t kLotoMainRelayPin = 4;
+constexpr uint8_t kLotoMainRelayPin = 19;
+constexpr uint8_t kLotoMainRelayPinDevice2 = 4;
 constexpr uint8_t kLotoShuntRelayPin = 26;
 constexpr uint8_t kLotoTimerRelayPin = 5;
 constexpr uint8_t kLotoZmptPin = 34;

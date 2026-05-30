@@ -20,7 +20,7 @@ export async function addDeviceAction(
     const data = {
       deviceId: formData.get("deviceId"),
       hardwareType: dbType,
-      assignedMachine: formData.get("assignedMachine"),
+      deviceUniqueName: formData.get("deviceUniqueName"),
       macAddress: formData.get("macAddress"),
       isHighPriority: formData.get("espNowPriority") === "high",
     }

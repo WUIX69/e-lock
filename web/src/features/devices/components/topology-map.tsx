@@ -97,7 +97,7 @@ export const TopologyMap = () => {
           <div
             className="absolute top-1/4 left-1/3 z-20 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-4 border-background bg-secondary text-secondary-foreground shadow-md transition-transform duration-300 hover:scale-110"
             onMouseEnter={() =>
-              handleMouseEnterNode("Master Lock #1", "-52 dBm", "Online")
+              handleMouseEnterNode("Circuit Breaker Panel A", "-52 dBm", "Online")
             }
             onMouseLeave={handleMouseLeaveNode}
           >
@@ -108,7 +108,7 @@ export const TopologyMap = () => {
           <div
             className="absolute right-1/4 bottom-1/4 z-20 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-4 border-background bg-secondary text-secondary-foreground shadow-md transition-transform duration-300 hover:scale-110"
             onMouseEnter={() =>
-              handleMouseEnterNode("Valve Lock #4", "-67 dBm", "Online")
+              handleMouseEnterNode("Circuit Breaker Panel B", "-67 dBm", "Online")
             }
             onMouseLeave={handleMouseLeaveNode}
           >
@@ -119,7 +119,7 @@ export const TopologyMap = () => {
           <div
             className="absolute top-1/2 right-1/3 z-20 flex h-10 w-10 animate-pulse cursor-pointer items-center justify-center rounded-full border-4 border-background bg-destructive text-destructive-foreground shadow-md transition-transform duration-300 hover:scale-110"
             onMouseEnter={() =>
-              handleMouseEnterNode("Breaker Node", "-89 dBm", "Critical Delay")
+              handleMouseEnterNode("Central Gateway", "-89 dBm", "Critical Delay")
             }
             onMouseLeave={handleMouseLeaveNode}
           >

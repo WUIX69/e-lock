@@ -9,8 +9,8 @@ import {
 import { Bolt, Timer } from "lucide-react"
 
 export const MOCK_ASSIGNED_MACHINE: AssignedMachine = {
-  name: "Main Crusher",
-  id: "#402",
+  name: "Circuit Breaker Panel A",
+  id: "DEV-FC01",
   zone: "Zone B",
   sector: "Primary Processing Sector",
   runtime: "184h 12m",
@@ -82,7 +82,7 @@ export const MOCK_ACTIVE_LOCKOUTS: ActiveLockout[] = [
   {
     id: "lo-001",
     zoneId: "L1",
-    assetName: "Main Conveyor Hub #2",
+    assetName: "Circuit Breaker Panel B",
     isolatedAt: "10:30 AM",
     duration: "2h 15m",
     status: "maintenance_in_progress",

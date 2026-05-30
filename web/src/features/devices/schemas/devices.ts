@@ -7,7 +7,7 @@ export const addDeviceSchema = z.object({
   hardwareType: z.enum(DEVICE_TYPES, {
     message: "Please select a hardware type",
   }),
-  assignedMachine: z.string().min(1, "Assigned machine is required"),
+  deviceUniqueName: z.string().min(1, "Device name is required"),
   macAddress: z
     .string()
     .regex(

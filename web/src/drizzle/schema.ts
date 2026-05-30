@@ -38,7 +38,6 @@ export const DeviceStatusEnum = pgEnum("device_status", [
 
 export const UserRoleEnum = pgEnum("user_role", [
   "admin",
-  "senior_engineer",
   "user",
 ])
 export const UserStatusEnum = pgEnum("user_status", [
@@ -142,7 +141,7 @@ export const DeviceTable = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     deviceId: text("device_id").notNull().unique(),
     type: DeviceTypeEnum("type").notNull(),
-    assignedMachine: text("assigned_machine").notNull(),
+    deviceUniqueName: text("device_unique_name").notNull(),
     macAddress: text("mac_address").notNull().unique(),
     isHighPriority: boolean("is_high_priority").notNull().default(false),
     signalStrength: integer("signal_strength").default(0),

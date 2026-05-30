@@ -164,7 +164,7 @@ export async function getTasksByUser(userId: string) {
     .select({
       id: TaskTable.id,
       deviceId: TaskTable.deviceId,
-      deviceName: DeviceTable.assignedMachine,
+      deviceName: DeviceTable.deviceUniqueName,
       deviceLabel: DeviceTable.deviceId,
       deviceType: DeviceTable.type,
       userId: TaskTable.userId,
@@ -252,7 +252,7 @@ export async function getTasksByDevice(deviceId: string) {
     .select({
       id: TaskTable.id,
       deviceId: TaskTable.deviceId,
-      deviceName: DeviceTable.assignedMachine,
+      deviceName: DeviceTable.deviceUniqueName,
       deviceLabel: DeviceTable.deviceId,
       deviceType: DeviceTable.type,
       userId: TaskTable.userId,
@@ -332,7 +332,7 @@ export async function getAllTasks() {
     .select({
       id: TaskTable.id,
       deviceId: TaskTable.deviceId,
-      deviceName: DeviceTable.assignedMachine,
+      deviceName: DeviceTable.deviceUniqueName,
       deviceLabel: DeviceTable.deviceId,
       deviceType: DeviceTable.type,
       userId: TaskTable.userId,
@@ -490,7 +490,7 @@ export async function getPendingInvitationsForUser(userId: string) {
       taskPriority: TaskTable.priority,
       taskDescription: TaskTable.description,
       creatorName: UserTable.name,
-      deviceName: DeviceTable.assignedMachine,
+      deviceName: DeviceTable.deviceUniqueName,
       deviceLabel: DeviceTable.deviceId,
       submittedAt: TaskTable.submittedAt,
     })

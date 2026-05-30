@@ -45,7 +45,7 @@ const HARDWARE_OPTIONS: {
 ]
 
 const machineOptions = Array.from(
-  new Set(MOCK_DEVICES.map((d) => d.assignedMachine))
+  new Set(MOCK_DEVICES.map((d) => d.deviceUniqueName))
 )
 
 interface RegisterHardwareFormProps {
@@ -162,14 +162,14 @@ export const RegisterHardwareForm = ({
 
       <div className="grid gap-2">
         <Label
-          htmlFor="assignedMachine"
+          htmlFor="deviceUniqueName"
           className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
         >
-          Assigned Machine
+          Device Name
         </Label>
-        <Select name="assignedMachine" disabled={isLoading}>
+        <Select name="deviceUniqueName" disabled={isLoading}>
           <SelectTrigger className="h-14 w-full rounded-2xl border-border bg-muted px-4 py-6 font-mono text-sm focus:ring-primary">
-            <SelectValue placeholder="Select machine..." />
+            <SelectValue placeholder="Select device..." />
           </SelectTrigger>
           <SelectContent className="p-2">
             {machineOptions.map((machine) => (

@@ -1,7 +1,7 @@
 import "dotenv/config"
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
-import { UserTable, DeviceTable } from "@/drizzle/schema"
+import { UserTable, DeviceTable, TaskTable, AuditLogTable } from "@/drizzle/schema"
 import * as bcrypt from "bcryptjs"
 
 const connectionString = process.env.DATABASE_URL
@@ -15,143 +15,33 @@ const db = drizzle(client)
 
 const devices = [
   {
-    deviceId: "DEV-1001",
+    deviceId: "DEV-FC01",
     type: "field_controller" as const,
-    assignedMachine: "Main Crusher #402",
-    macAddress: "A1:B2:C3:D4:E5:F1",
+    deviceUniqueName: "Circuit Breaker Panel A",
+    macAddress: "08:3A:F2:82:55:B8",
     isHighPriority: true,
     signalStrength: -48,
     lastHeartbeatAt: new Date(),
     status: "active" as const,
   },
   {
-    deviceId: "DEV-1002",
-    type: "shunt_trip" as const,
-    assignedMachine: "Secondary Conveyor",
-    macAddress: "A1:B2:C3:D4:E5:F2",
-    isHighPriority: false,
-    signalStrength: -92,
-    lastHeartbeatAt: new Date(Date.now() - 45000),
-    status: "warning" as const,
+    deviceId: "DEV-FC02",
+    type: "field_controller" as const,
+    deviceUniqueName: "Circuit Breaker Panel B",
+    macAddress: "28:05:A5:2F:CF:AC",
+    isHighPriority: true,
+    signalStrength: -55,
+    lastHeartbeatAt: new Date(),
+    status: "active" as const,
   },
   {
     deviceId: "GTWY-01",
     type: "gateway" as const,
-    assignedMachine: "Central Hub A",
+    deviceUniqueName: "Central Gateway",
     macAddress: "A1:B2:C3:D4:E5:F3",
     isHighPriority: true,
     signalStrength: 0,
     lastHeartbeatAt: new Date(),
-    status: "active" as const,
-  },
-  {
-    deviceId: "DEV-1003",
-    type: "field_controller" as const,
-    assignedMachine: "Ventilation System 02",
-    macAddress: "A1:B2:C3:D4:E5:F4",
-    isHighPriority: false,
-    signalStrength: -72,
-    lastHeartbeatAt: new Date(Date.now() - 8000),
-    status: "active" as const,
-  },
-  {
-    deviceId: "DEV-1004",
-    type: "field_controller" as const,
-    assignedMachine: "Hydraulic Press #03",
-    macAddress: "A1:B2:C3:D4:E5:F5",
-    isHighPriority: true,
-    signalStrength: -55,
-    lastHeartbeatAt: new Date(Date.now() - 120000),
-    status: "active" as const,
-  },
-  {
-    deviceId: "DEV-1005",
-    type: "shunt_trip" as const,
-    assignedMachine: "Boiler System A",
-    macAddress: "A1:B2:C3:D4:E5:F6",
-    isHighPriority: true,
-    signalStrength: -88,
-    lastHeartbeatAt: new Date(Date.now() - 300000),
-    status: "warning" as const,
-  },
-  {
-    deviceId: "DEV-1006",
-    type: "field_controller" as const,
-    assignedMachine: "Packaging Line 01",
-    macAddress: "A1:B2:C3:D4:E5:F7",
-    isHighPriority: false,
-    signalStrength: -42,
-    lastHeartbeatAt: new Date(Date.now() - 5000),
-    status: "active" as const,
-  },
-  {
-    deviceId: "GTWY-02",
-    type: "gateway" as const,
-    assignedMachine: "Warehouse Wing B",
-    macAddress: "A1:B2:C3:D4:E5:F8",
-    isHighPriority: true,
-    signalStrength: 0,
-    lastHeartbeatAt: new Date(Date.now() - 2000),
-    status: "active" as const,
-  },
-  {
-    deviceId: "DEV-1007",
-    type: "field_controller" as const,
-    assignedMachine: "Cooling Tower #1",
-    macAddress: "A1:B2:C3:D4:E5:F9",
-    isHighPriority: false,
-    signalStrength: -65,
-    lastHeartbeatAt: new Date(Date.now() - 60000),
-    status: "offline" as const,
-  },
-  {
-    deviceId: "DEV-1008",
-    type: "shunt_trip" as const,
-    assignedMachine: "HV Transformer-A",
-    macAddress: "B1:C2:D3:E4:F5:A1",
-    isHighPriority: true,
-    signalStrength: -76,
-    lastHeartbeatAt: new Date(Date.now() - 900000),
-    status: "warning" as const,
-  },
-  {
-    deviceId: "DEV-1009",
-    type: "field_controller" as const,
-    assignedMachine: "Conveyor Main Belt",
-    macAddress: "B1:C2:D3:E4:F5:A2",
-    isHighPriority: false,
-    signalStrength: -38,
-    lastHeartbeatAt: new Date(),
-    status: "active" as const,
-  },
-  {
-    deviceId: "DEV-1010",
-    type: "gateway" as const,
-    assignedMachine: "Remote Substation 03",
-    macAddress: "B1:C2:D3:E4:F5:A3",
-    isHighPriority: false,
-    signalStrength: -30,
-    lastHeartbeatAt: new Date(Date.now() - 15000),
-    status: "active" as const,
-  },
-  {
-    deviceId: "DEV-1011",
-    type: "field_controller" as const,
-    assignedMachine: "Sprayer Unit 04",
-    macAddress: "B1:C2:D3:E4:F5:A4",
-    isHighPriority: false,
-    signalStrength: -60,
-    lastHeartbeatAt: new Date(Date.now() - 7200000),
-    status: "offline" as const,
-  },
-  {
-    deviceId: "DEV-1012",
-    type: "shunt_trip" as const,
-    assignedMachine: "Emergency Generator",
-    macAddress: "B1:C2:D3:E4:F5:A5",
-    isHighPriority: true,
-    signalStrength: -50,
-    lastHeartbeatAt: new Date(Date.now() - 180000),
     status: "active" as const,
   },
 ]
@@ -188,7 +78,7 @@ async function seed() {
       name: "Alex Thompson",
       email: "user@elock.dev",
       passwordHash: userPasswordHash,
-      role: "senior_engineer" as const,
+      role: "user" as const,
       employeeId: "AC101",
       position: "SENIOR ELECTRICIAN",
       securityLevel: 4,
@@ -218,31 +108,18 @@ async function seed() {
   ]
 
   try {
+    await db.delete(AuditLogTable)
+    await db.delete(TaskTable)
+    await db.delete(DeviceTable)
+    await db.delete(UserTable)
+
     for (const user of users) {
-      await db
-        .insert(UserTable)
-        .values(user)
-        .onConflictDoUpdate({
-          target: UserTable.email,
-          set: {
-            employeeId: user.employeeId,
-            name: user.name,
-            passwordHash: user.passwordHash,
-            role: user.role,
-            position: user.position,
-            securityLevel: user.securityLevel,
-            status: user.status,
-            fingerprintId: user.fingerprintId ?? null,
-          },
-        })
+      await db.insert(UserTable).values(user)
     }
     console.log(`Seeded ${users.length} users`)
 
     for (const device of devices) {
-      await db
-        .insert(DeviceTable)
-        .values(device)
-        .onConflictDoNothing({ target: DeviceTable.deviceId })
+      await db.insert(DeviceTable).values(device)
     }
     console.log(`Seeded ${devices.length} devices`)
 
