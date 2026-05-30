@@ -255,6 +255,7 @@ export const columns: ColumnDef<PersonnelRow>[] = [
           <PersonnelDetailModal
             open={isDetailsOpen}
             onOpenChange={setIsDetailsOpen}
+            onEdit={() => setIsEditDialogOpen(true)}
             personnel={personnel}
           />
         </>

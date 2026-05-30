@@ -13,11 +13,13 @@ import {
   Mail,
   User,
   Activity,
+  Pencil,
 } from "lucide-react"
 
 interface PersonnelDetailModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onEdit?: () => void
   personnel: {
     id: string
     employeeId: string
@@ -44,6 +46,7 @@ const statusStyles: Record<string, string> = {
 export const PersonnelDetailModal = ({
   open,
   onOpenChange,
+  onEdit,
   personnel,
 }: PersonnelDetailModalProps) => {
   const dateStr = personnel.createdAt
@@ -226,6 +229,22 @@ export const PersonnelDetailModal = ({
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-2 border-t border-border bg-muted/30 px-6 py-4">
+          {onEdit && (
+            <button
+              type="button"
+              className="flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-xs text-primary transition-all hover:bg-primary/20 active:scale-95"
+              onClick={() => {
+                onOpenChange(false)
+                onEdit()
+              }}
+              aria-label="Edit personnel"
+            >
+              <Pencil className="size-3.5" />
+              <span className="font-bold uppercase tracking-wider text-[10px]">
+                Edit
+              </span>
+            </button>
+          )}
           <button
             type="button"
             className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-xs text-foreground transition-all hover:bg-muted active:scale-95"
