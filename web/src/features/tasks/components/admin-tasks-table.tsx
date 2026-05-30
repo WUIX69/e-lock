@@ -273,6 +273,24 @@ export const AdminTasksTable = ({
       },
     },
     {
+      accessorKey: "relayFault",
+      header: "Relay Fault",
+      cell: ({ row }) => {
+        const fault = row.original.relayFault
+        return fault ? (
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-600 dark:text-rose-400">
+            <span className="size-1.5 rounded-full bg-rose-500 animate-pulse" />
+            Fault
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
+            <span className="size-1.5 rounded-full bg-muted-foreground" />
+            Normal
+          </span>
+        )
+      },
+    },
+    {
       id: "actions",
       header: "Actions",
       cell: ({ row }) => {

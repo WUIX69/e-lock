@@ -1,6 +1,6 @@
 import { db } from "@/drizzle/db"
 import { UserTable } from "@/drizzle/schema"
-import { eq } from "drizzle-orm"
+import { eq, desc } from "drizzle-orm"
 import * as bcrypt from "bcryptjs"
 import {
   AddPersonnelSchema,
@@ -56,7 +56,7 @@ export async function insertPersonnel(data: AddPersonnelSchema) {
 }
 
 export async function getAllPersonnel() {
-  return await db.select().from(UserTable).orderBy(UserTable.createdAt)
+  return await db.select().from(UserTable).orderBy(desc(UserTable.createdAt))
 }
 
 export async function getAllActivePersonnel() {
@@ -64,7 +64,7 @@ export async function getAllActivePersonnel() {
     .select()
     .from(UserTable)
     .where(eq(UserTable.status, "active"))
-    .orderBy(UserTable.createdAt)
+    .orderBy(desc(UserTable.createdAt))
 }
 
 export async function updatePersonnel(

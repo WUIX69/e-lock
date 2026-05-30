@@ -21,19 +21,21 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 import { PersonnelDialog } from "@/features/personnel/components/personnel-dialog"
+import { PersonnelDetailModal } from "@/features/personnel/components/personnel-detail-modal"
 
 export type PersonnelRow = {
   id: string
   employeeId: string
   name: string
   email: string
-  role: "admin" | "senior_engineer" | "user"
+  role: "admin" | "senior_engineer" | "user" | string
   position: string
   securityLevel: number
-  status: "active" | "inactive" | "off-site" | "on-leave"
+  status: "active" | "inactive" | "off-site" | "on-leave" | string
   fingerprintId: number | null
   lastLocation: string | null
-  lastActiveAt: Date | null
+  lastActiveAt: Date | string | null
+  createdAt?: Date | string | null
 }
 
 const getStatusColor = (status: PersonnelRow["status"]) => {
@@ -163,6 +165,33 @@ export const columns: ColumnDef<PersonnelRow>[] = [
     },
   },
   {
+    accessorKey: "createdAt",
+    header: "Date Enrolled",
+    cell: ({ row }) => {
+      const dateVal = row.original.createdAt
+      if (!dateVal)
+        return <span className="text-sm text-muted-foreground">—</span>
+
+      const date = new Date(dateVal)
+      const dateStr = date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+      const timeStr = date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+
+      return (
+        <div className="flex flex-col">
+          <span className="font-bold text-foreground">{dateStr}</span>
+          <span className="text-xs text-muted-foreground">{timeStr}</span>
+        </div>
+      )
+    },
+  },
+  {
     accessorKey: "lastLocation",
     header: "Location",
     cell: ({ row }) => {
@@ -182,6 +211,8 @@ export const columns: ColumnDef<PersonnelRow>[] = [
     cell: function ActionsCell({ row }) {
       const personnel = row.original
       const [isEditDialogOpen, setIsEditDialogOpen] =
+        React.useState<boolean>(false)
+      const [isDetailsOpen, setIsDetailsOpen] =
         React.useState<boolean>(false)
 
       return (
@@ -203,7 +234,9 @@ export const columns: ColumnDef<PersonnelRow>[] = [
                 Copy Employee ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>View details</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setIsDetailsOpen(true)}>
+                View details
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
                 Edit access level
               </DropdownMenuItem>
@@ -217,6 +250,11 @@ export const columns: ColumnDef<PersonnelRow>[] = [
             mode="edit"
             isOpen={isEditDialogOpen}
             onOpenChange={setIsEditDialogOpen}
+            personnel={personnel}
+          />
+          <PersonnelDetailModal
+            open={isDetailsOpen}
+            onOpenChange={setIsDetailsOpen}
             personnel={personnel}
           />
         </>

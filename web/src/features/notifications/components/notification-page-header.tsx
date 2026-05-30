@@ -1,16 +1,21 @@
 "use client"
 
-import { Check, CheckCheck } from "lucide-react"
+import { Check, CheckCheck, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 interface NotificationPageHeaderProps {
   onMarkAllRead: () => void
   isAllRead: boolean
+  onRefresh?: () => void
+  refreshing?: boolean
 }
 
 export const NotificationPageHeader = ({
   onMarkAllRead,
   isAllRead,
+  onRefresh,
+  refreshing = false,
 }: NotificationPageHeaderProps) => {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -25,25 +30,41 @@ export const NotificationPageHeader = ({
           </p>
         </div>
       </div>
-      <Button
-        onClick={onMarkAllRead}
-        disabled={isAllRead}
-        size="sm"
-        className="bg-muted text-foreground hover:bg-muted/80"
-        aria-label="Mark all notifications as read"
-      >
-        {isAllRead ? (
-          <>
-            <CheckCheck className="size-4" />
-            All Read
-          </>
-        ) : (
-          <>
-            <Check className="size-4" />
-            Mark all as read
-          </>
+      <div className="flex items-center gap-2">
+        <Button
+          onClick={onMarkAllRead}
+          disabled={isAllRead}
+          size="sm"
+          className="bg-muted text-foreground hover:bg-muted/80"
+          aria-label="Mark all notifications as read"
+        >
+          {isAllRead ? (
+            <>
+              <CheckCheck className="size-4" />
+              All Read
+            </>
+          ) : (
+            <>
+              <Check className="size-4" />
+              Mark all as read
+            </>
+          )}
+        </Button>
+        {onRefresh && (
+          <Button
+            onClick={onRefresh}
+            disabled={refreshing}
+            size="sm"
+            className="bg-muted text-foreground hover:bg-muted/80 shrink-0 flex items-center gap-1.5"
+            aria-label="Refresh notifications"
+          >
+            <RefreshCw
+              className={cn("size-3.5", refreshing && "animate-spin")}
+            />
+            <span>Refresh</span>
+          </Button>
         )}
-      </Button>
+      </div>
     </div>
   )
 }

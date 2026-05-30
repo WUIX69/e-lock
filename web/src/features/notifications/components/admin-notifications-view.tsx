@@ -23,20 +23,22 @@ export const AdminNotificationsView = () => {
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
 
-  React.useEffect(() => {
-    const fetchNotifications = async () => {
-      setIsLoading(true)
-      setError(null)
-      const result = await getNotificationsAction()
-      if (result.error) {
-        setError(result.error)
-      } else if (result.notifications) {
-        setNotifications(result.notifications)
-      }
-      setIsLoading(false)
+  const fetchNotifications = React.useCallback(async () => {
+    setIsLoading(true)
+    setError(null)
+    const result = await getNotificationsAction()
+    if (result.error) {
+      setError(result.error)
+    } else if (result.notifications) {
+      setNotifications(result.notifications)
     }
-    fetchNotifications()
+    setIsLoading(false)
   }, [])
+
+  React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchNotifications()
+  }, [fetchNotifications])
 
   const filteredNotifications = React.useMemo(() => {
     if (activeCategory === "all") return notifications
@@ -110,6 +112,8 @@ export const AdminNotificationsView = () => {
       <NotificationPageHeader
         onMarkAllRead={handleMarkAllRead}
         isAllRead={isAllRead}
+        onRefresh={fetchNotifications}
+        refreshing={isLoading}
       />
       <NotificationCategoryFilter
         activeCategory={activeCategory}
