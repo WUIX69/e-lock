@@ -41,10 +41,12 @@ void setup() {
     {
         uint8_t mac[6];
         esp_read_mac(mac, ESP_MAC_WIFI_STA);
+        Serial.printf("[E-Lock] ESP32 #2 (Field Controller) MAC Address: %02X:%02X:%02X:%02X:%02X:%02X\n",
+                      mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
         const uint8_t device2Mac[6] = {0x28, 0x05, 0xA5, 0x2F, 0xCF, 0xAC};
         if (memcmp(mac, device2Mac, 6) == 0) {
             lotoMainRelayPin = kLotoMainRelayPinDevice2;
-            Serial.println("[E-Lock] Detected Device 2 (DEV-FC02) - Using main relay pin 21");
+            Serial.println("[E-Lock] Detected Device 2 (DEV-FC02) - Using main relay pin 19");
         } else {
             Serial.println("[E-Lock] Detected Device 1 (DEV-FC01) - Using main relay pin 4");
         }

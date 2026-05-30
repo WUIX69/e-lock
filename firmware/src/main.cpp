@@ -150,6 +150,8 @@ void handleMqttMessage(const char* topic, const char* payload) {
 void setup() {
     Serial.begin(kSerialBaudRate);
     Serial.println("[E-Lock] Initializing...");
+    Serial.print("[E-Lock] ESP32 #1 (Gateway) MAC Address: ");
+    Serial.println(WiFi.macAddress());
 
     buzzerLed.begin();
     lockController.begin();
