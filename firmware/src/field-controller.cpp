@@ -9,6 +9,19 @@
 
 EspNowHandler espNowHandler;
 
+bool isVoltagePresent() {
+    int maxVal = 0;
+    int minVal = 4095;
+    unsigned long startMs = millis();
+    while (millis() - startMs < 25) { // sample over 25ms (covers > 1 full cycle of 50Hz/60Hz AC)
+        int val = analogRead(kLotoZmptPin);
+        if (val > maxVal) maxVal = val;
+        if (val < minVal) minVal = val;
+    }
+    int peakToPeak = maxVal - minVal;
+    return peakToPeak > 1500; // robust threshold to distinguish noise from real mains voltage
+}
+
 int getDeviceIndex(const char* deviceId) {
     if (strcmp(deviceId, "DEV-FC02") == 0) {
         return 1;
@@ -127,44 +140,8 @@ void loop() {
         }
     }
 
-    // Bypass / Push button logic: resets both devices if either is tripped, or trips if Device 1 is monitoring
-    if (digitalRead(kLotoBypassButtonPin) == LOW) {
-        delay(50); // debounce
-        if (digitalRead(kLotoBypassButtonPin) == LOW) {
-            bool isAnyTripped = (deviceStates[0] == LotoState::kTripped || deviceStates[1] == LotoState::kTripped);
-            if (isAnyTripped) {
-                // If any device is tripped, the button acts as bypass reset to return both to standby
-                for (int i = 0; i < 2; i++) {
-                    deviceStates[i] = LotoState::kStandby;
-                    pendingCommands[i] = LotoState::kStandby;
-                }
-                setRelaysHigh();
-                Serial.println("[E-Lock] Bypass pressed - returning both to standby");
-            } else if (deviceStates[0] == LotoState::kMonitoring) {
-                // If device 1 is currently in monitoring (active LOTO, not completed), button press trips it
-                digitalWrite(kLotoShuntRelayPin, LOW);
-                digitalWrite(kLotoTimerRelayPin, LOW);
-
-                deviceStates[0] = LotoState::kTripped;
-                if (deviceStates[1] == LotoState::kMonitoring) {
-                    deviceStates[1] = LotoState::kTripped;
-                }
-
-                // Immediately send ALERT ESP-NOW message for DEV-FC01 to trigger DB relay_fault update
-                EspNowMessage alertMsg = {};
-                strcpy(alertMsg.command, "ALERT");
-                strcpy(alertMsg.deviceId, "DEV-FC01");
-                espNowHandler.send(kGatewayMac, (const uint8_t*)&alertMsg, sizeof(alertMsg));
-                Serial.println("[E-Lock] Sent ALERT ESP-NOW for DEV-FC01");
-                delay(50);
-            }
-
-            // Wait for button release
-            while (digitalRead(kLotoBypassButtonPin) == LOW) {
-                delay(10);
-            }
-        }
-    }
+    // The physical push button applies voltage to the ZMPT sensor to simulate/test a LOTO fault.
+    // Bypass/reset is handled digitally via the web application sending a STOP command.
 
     // Process state machine for both devices
     for (int i = 0; i < 2; i++) {
@@ -183,8 +160,31 @@ void loop() {
                 break;
 
             case LotoState::kMonitoring:
-                // ZMPT voltage-based auto-tripping is disabled to prevent noise triggers.
-                // Device #1 is now tripped manually via the physical push button while in kMonitoring state.
+                // ZMPT voltage-based fault check:
+                // Device 1 is tripped if voltage is detected (e.g. via physical push button test or real fault)
+                // after a 2-second stabilization window to prevent transient noise from causing false trips.
+                if (i == 0 && (millis() - stateStartMs[i] > 2000)) {
+                    if (isVoltagePresent()) {
+                        digitalWrite(kLotoShuntRelayPin, LOW);
+                        digitalWrite(kLotoTimerRelayPin, LOW);
+
+                        // Trip all monitoring devices
+                        for (int j = 0; j < 2; j++) {
+                            if (deviceStates[j] == LotoState::kMonitoring) {
+                                deviceStates[j] = LotoState::kTripped;
+
+                                // Send ALERT immediately on trip
+                                EspNowMessage alertMsg = {};
+                                strcpy(alertMsg.command, "ALERT");
+                                strcpy(alertMsg.deviceId, (j == 1) ? "DEV-FC02" : "DEV-FC01");
+                                espNowHandler.send(kGatewayMac, (const uint8_t*)&alertMsg, sizeof(alertMsg));
+                                Serial.printf("[E-Lock] Sent ALERT ESP-NOW for %s due to voltage detection\n", alertMsg.deviceId);
+                                delay(50);
+                            }
+                        }
+                        Serial.println("[E-Lock] LOTO TRIPPED - voltage detected on ZMPT");
+                    }
+                }
                 break;
 
             case LotoState::kTripped:
