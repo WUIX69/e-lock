@@ -183,7 +183,7 @@ void setup() {
     }
 
     if (wifiManager.connect(kWifiConnectTimeoutMs)) {
-        Serial.printf("[E-Lock] WiFi connected: %s\n", wifiManager.getLocalIp());
+        Serial.printf("[E-Lock] WiFi connected: %s (Channel: %d)\n", wifiManager.getLocalIp(), WiFi.channel());
     } else {
         Serial.println("[E-Lock] WiFi connection FAILED");
         buzzerLed.signalWarning();

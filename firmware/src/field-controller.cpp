@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <WiFi.h>
 #include <esp_wifi.h>
 #include <esp_system.h>
 #include "config.h"
@@ -74,11 +75,28 @@ void setup() {
     digitalWrite(kLotoTimerRelayPin, HIGH);
     digitalWrite(kPilotLightPin, HIGH);
 
+    // Set WiFi to STA mode and scan for target router channel
+    WiFi.mode(WIFI_STA);
+    int targetChannel = 1;
+    Serial.println("[E-Lock] Scanning WiFi to align ESP-NOW channel...");
+    int n = WiFi.scanNetworks();
+    for (int i = 0; i < n; ++i) {
+        if (strcmp(WiFi.SSID(i).c_str(), kWifiSsid) == 0) {
+            targetChannel = WiFi.channel(i);
+            Serial.printf("[E-Lock] Found target network '%s' on channel %d\n", kWifiSsid, targetChannel);
+            break;
+        }
+    }
+    WiFi.scanDelete();
+
     if (espNowHandler.begin()) {
-        esp_wifi_set_channel(kEspNowChannel, WIFI_SECOND_CHAN_NONE);
+        esp_wifi_set_promiscuous(true);
+        esp_wifi_set_channel(targetChannel, WIFI_SECOND_CHAN_NONE);
+        esp_wifi_set_promiscuous(false);
+
         espNowHandler.onReceive(onEspNowReceive);
         espNowHandler.addPeer(kGatewayMac);
-        Serial.println("[E-Lock] ESP-NOW listening and Gateway peer added");
+        Serial.printf("[E-Lock] ESP-NOW listening on channel %d and Gateway peer added\n", targetChannel);
     } else {
         Serial.println("[E-Lock] ESP-NOW init FAILED");
     }
@@ -109,28 +127,39 @@ void loop() {
         }
     }
 
-    // Bypass button: resets both devices if either is tripped
-    bool isAnyTripped = (deviceStates[0] == LotoState::kTripped || deviceStates[1] == LotoState::kTripped);
-    if (isAnyTripped && digitalRead(kLotoBypassButtonPin) == LOW) {
-        delay(50);
+    // Bypass / Push button logic: resets both devices if either is tripped, or trips if Device 1 is monitoring
+    if (digitalRead(kLotoBypassButtonPin) == LOW) {
+        delay(50); // debounce
         if (digitalRead(kLotoBypassButtonPin) == LOW) {
-            for (int i = 0; i < 2; i++) {
-                if (deviceStates[i] != LotoState::kStandby) {
-                    EspNowMessage alertMsg = {};
-                    strcpy(alertMsg.command, "ALERT");
-                    strcpy(alertMsg.deviceId, (i == 1) ? "DEV-FC02" : "DEV-FC01");
-                    espNowHandler.send(kGatewayMac, (const uint8_t*)&alertMsg, sizeof(alertMsg));
-                    Serial.printf("[E-Lock] Sent ALERT ESP-NOW for %s\n", alertMsg.deviceId);
-                    delay(50);
+            bool isAnyTripped = (deviceStates[0] == LotoState::kTripped || deviceStates[1] == LotoState::kTripped);
+            if (isAnyTripped) {
+                // If any device is tripped, the button acts as bypass reset to return both to standby
+                for (int i = 0; i < 2; i++) {
+                    deviceStates[i] = LotoState::kStandby;
+                    pendingCommands[i] = LotoState::kStandby;
                 }
+                setRelaysHigh();
+                Serial.println("[E-Lock] Bypass pressed - returning both to standby");
+            } else if (deviceStates[0] == LotoState::kMonitoring) {
+                // If device 1 is currently in monitoring (active LOTO, not completed), button press trips it
+                digitalWrite(kLotoShuntRelayPin, LOW);
+                digitalWrite(kLotoTimerRelayPin, LOW);
+
+                deviceStates[0] = LotoState::kTripped;
+                if (deviceStates[1] == LotoState::kMonitoring) {
+                    deviceStates[1] = LotoState::kTripped;
+                }
+
+                // Immediately send ALERT ESP-NOW message for DEV-FC01 to trigger DB relay_fault update
+                EspNowMessage alertMsg = {};
+                strcpy(alertMsg.command, "ALERT");
+                strcpy(alertMsg.deviceId, "DEV-FC01");
+                espNowHandler.send(kGatewayMac, (const uint8_t*)&alertMsg, sizeof(alertMsg));
+                Serial.println("[E-Lock] Sent ALERT ESP-NOW for DEV-FC01");
+                delay(50);
             }
 
-            for (int i = 0; i < 2; i++) {
-                deviceStates[i] = LotoState::kStandby;
-                pendingCommands[i] = LotoState::kStandby;
-            }
-            setRelaysHigh();
-            Serial.println("[E-Lock] Bypass pressed - returning both to standby");
+            // Wait for button release
             while (digitalRead(kLotoBypassButtonPin) == LOW) {
                 delay(10);
             }
@@ -154,17 +183,8 @@ void loop() {
                 break;
 
             case LotoState::kMonitoring:
-                if (i == 0 && analogRead(kLotoZmptPin) > kLotoVoltageThreshold) {
-                    digitalWrite(kLotoShuntRelayPin, LOW);
-                    digitalWrite(kLotoTimerRelayPin, LOW);
-                    // Trip all monitoring devices
-                    for (int j = 0; j < 2; j++) {
-                        if (deviceStates[j] == LotoState::kMonitoring) {
-                            deviceStates[j] = LotoState::kTripped;
-                        }
-                    }
-                    Serial.println("[E-Lock] LOTO TRIPPED - voltage detected");
-                }
+                // ZMPT voltage-based auto-tripping is disabled to prevent noise triggers.
+                // Device #1 is now tripped manually via the physical push button while in kMonitoring state.
                 break;
 
             case LotoState::kTripped:
