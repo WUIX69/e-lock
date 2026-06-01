@@ -30,7 +30,8 @@
 - **Auth**: Custom JWT (jose) via server actions — no middleware, no next-auth. Tokens in `elock_access_token` / `elock_refresh_token` httpOnly cookies. Route protection: server-side `requireAuth()` in `(dashboard)/layout.tsx`, client-side via `AuthProvider` context
 - **Dashboard layout** (`(dashboard)/layout.tsx`): calls `requireAuth()` server-side, wraps in `<AuthProvider>` + `<SidebarProvider>`. Admin vs user routing handled per-page via `currentUser.role`
 - **Server actions**: 10 MB body size limit (`next.config.mjs:serverActions.bodySizeLimit`)
-- **`allowedDevOrigins`** in `next.config.mjs` — update when dev IP changes
+- **LAN dev**: Use `pnpm dev:lan` (binds `0.0.0.0`). `pnpm dev` only binds to `localhost` — HMR WebSocket will cause random full-page reloads on LAN clients
+- **`allowedDevOrigins`** in `next.config.mjs` — currently `["*"]` for dev; restrict to specific IPs if needed
 - **Env validation**: `@t3-oss/env-nextjs` in `web/src/data/env/server.ts` and `client.ts`
 - **Client pages** using `useEffect` + `refreshKey` for data fetching need explicit `onRefresh` callbacks wired to `ToolbarRow` — `router.refresh()` fallback only works for server component pages
 
