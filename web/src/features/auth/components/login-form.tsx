@@ -412,7 +412,7 @@ export function LoginForm() {
                             className="mt-3 flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
                           >
                             <Lock className="size-3.5" />
-                            Use PIN & Key
+                            Use PIN & Key Bypass for Admins
                           </button>
                         )}
                       </div>

@@ -25,12 +25,15 @@ export function ToolbarRow({
 
   const handleRefresh = async () => {
     setRefreshing(true)
+    const start = Date.now()
     if (onRefresh) {
       await onRefresh()
     } else {
       router.refresh()
-      // Micro-delay for a satisfying loading spin visual feedback
-      await new Promise((resolve) => setTimeout(resolve, 600))
+    }
+    const elapsed = Date.now() - start
+    if (elapsed < 600) {
+      await new Promise((resolve) => setTimeout(resolve, 600 - elapsed))
     }
     setRefreshing(false)
   }
