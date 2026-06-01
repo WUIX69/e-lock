@@ -2,8 +2,6 @@
 
 import * as React from "react"
 import { MachineStatusCard } from "@/features/dashboard/components/user/machine-status-card"
-import { LotoControlPanel } from "@/features/dashboard/components/user/loto-control-panel"
-import { UserTelemetryChart } from "@/features/dashboard/components/user/user-telemetry-chart"
 import { MaintenanceChecklist } from "@/features/dashboard/components/user/maintenance-checklist"
 import { EmergencyFab } from "@/features/dashboard/components/user/emergency-fab"
 import { JoinLockoutCard } from "@/features/dashboard/components/user/join-lockout-card"
@@ -38,14 +36,11 @@ export function UserDashboard() {
       {/* Bento Grid Layout */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Top Row */}
-        <div className="lg:col-span-8">
+        <div className="lg:col-span-12">
           <MachineStatusCard machine={data.assignedMachine} />
         </div>
-        <div className="lg:col-span-4">
-          <LotoControlPanel loto={data.lotoStatus} />
-        </div>
 
-        {/* Middle Row - New */}
+        {/* Middle Row */}
         <div className="lg:col-span-8">
           <ActiveLockoutsPanel lockouts={data.myActiveLockouts} />
         </div>
@@ -54,10 +49,7 @@ export function UserDashboard() {
         </div>
 
         {/* Bottom Row */}
-        <div className="lg:col-span-7">
-          <UserTelemetryChart data={data.telemetry} />
-        </div>
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-12">
           <MaintenanceChecklist ticket={data.checklist} />
         </div>
       </div>

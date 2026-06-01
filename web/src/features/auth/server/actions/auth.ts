@@ -238,3 +238,12 @@ export async function cancelBiometricChallengeAction(challengeToken: string) {
     return { error: "Failed to cancel challenge" }
   }
 }
+
+export async function checkIsAdminAction(identifier: string) {
+  try {
+    const user = await getUserByIdentifier(identifier)
+    return { isAdmin: user?.role === "admin" }
+  } catch {
+    return { isAdmin: false }
+  }
+}

@@ -8,6 +8,9 @@ import {
   SignalHigh,
   Wifi,
   MoreHorizontal,
+  Eye,
+  Pencil,
+  MoreVertical,
 } from "lucide-react"
 import { Device } from "@/types/devices"
 import { Button } from "@/components/ui/button"
@@ -15,6 +18,14 @@ import { DataTable } from "@/components/ui/data-table"
 import { ToolbarRow } from "@/components/primitives/toolbar-row"
 import { FilterInput } from "@/components/primitives/filter-input"
 import { FilterSelect } from "@/components/primitives/filter-select"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { DeviceDetailModal } from "@/features/devices/components/device-detail-modal"
 
 interface SignalIconProps {
   strength: number
@@ -30,106 +41,15 @@ const SignalIcon = ({ strength }: SignalIconProps) => {
 
 interface DeviceTableProps {
   devices: Device[]
+  onRefresh?: () => void
 }
 
-const columns: ColumnDef<Device>[] = [
-  {
-    accessorKey: "deviceId",
-    header: "Device ID",
-    enableSorting: true,
-    cell: ({ row }) => {
-      const status = row.original.status
-      return (
-        <div className="flex items-center gap-3">
-          <div
-            className={`h-2 w-2 rounded-full ${
-              status === "active"
-                ? "animate-pulse bg-primary"
-                : status === "warning"
-                  ? "bg-destructive"
-                  : "bg-muted-foreground"
-            }`}
-          />
-          <span className="rounded-md border border-border/35 bg-muted px-2.5 py-1 font-mono text-xs text-muted-foreground">
-            {row.original.deviceId}
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: "type",
-    header: "Type",
-    enableSorting: true,
-    cell: ({ row }) => (
-      <span className="font-semibold text-foreground capitalize">
-        {row.original.type.replace("_", " ")}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "deviceUniqueName",
-    header: "Device Name",
-    enableSorting: true,
-    cell: ({ row }) => (
-      <span className="text-muted-foreground">
-        {row.original.deviceUniqueName}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "signalStrength",
-    header: "Signal Strength",
-    enableSorting: true,
-    cell: ({ row }) => {
-      const strength = row.original.signalStrength
-      const status = row.original.status
-      return (
-        <div className="flex items-center gap-2">
-          <SignalIcon strength={strength} />
-          <span
-            className={`text-xs font-bold ${
-              status === "warning" ? "text-destructive" : "text-foreground"
-            }`}
-          >
-            {strength === 0
-              ? "Uplink Stable"
-              : `${strength} dBm${strength < -80 ? " (LOW)" : ""}`}
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: "lastHeartbeat",
-    header: "Last Heartbeat",
-    cell: ({ row }) => (
-      <span className="text-muted-foreground">
-        {row.original.lastHeartbeat}
-      </span>
-    ),
-  },
-  {
-    id: "actions",
-    header: "",
-    cell: () => (
-      <div className="text-right">
-        <Button
-          variant="link"
-          size="sm"
-          className="h-8 p-0 text-sm font-bold text-primary hover:text-primary/80"
-        >
-          Configure
-        </Button>
-      </div>
-    ),
-  },
-]
-
-export const DeviceTable = ({ devices }: DeviceTableProps) => {
+export const DeviceTable = ({ devices, onRefresh }: DeviceTableProps) => {
   const [search, setSearch] = React.useState("")
   const [statusFilter, setStatusFilter] = React.useState("all")
   const [typeFilter, setTypeFilter] = React.useState("all")
+  const [viewDevice, setViewDevice] = React.useState<Device | null>(null)
+  const [deviceModalMode, setDeviceModalMode] = React.useState<"view" | "edit">("view")
 
   const filtered = devices.filter((d) => {
     if (statusFilter !== "all" && d.status !== statusFilter) return false
@@ -145,10 +65,130 @@ export const DeviceTable = ({ devices }: DeviceTableProps) => {
     return true
   })
 
+  const columns: ColumnDef<Device>[] = [
+    {
+      accessorKey: "deviceId",
+      header: "Device ID",
+      enableSorting: true,
+      cell: ({ row }) => {
+        const status = row.original.status
+        return (
+          <div className="flex items-center gap-3">
+            <div
+              className={`h-2 w-2 rounded-full ${
+                status === "active"
+                  ? "animate-pulse bg-primary"
+                  : status === "warning"
+                    ? "bg-destructive"
+                    : "bg-muted-foreground"
+              }`}
+            />
+            <span className="rounded-md border border-border/35 bg-muted px-2.5 py-1 font-mono text-xs text-muted-foreground">
+              {row.original.deviceId}
+            </span>
+          </div>
+        )
+      },
+    },
+    {
+      accessorKey: "type",
+      header: "Type",
+      enableSorting: true,
+      cell: ({ row }) => (
+        <span className="font-semibold text-foreground capitalize">
+          {row.original.type.replace("_", " ")}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "deviceUniqueName",
+      header: "Device Name",
+      enableSorting: true,
+      cell: ({ row }) => (
+        <span className="text-muted-foreground">
+          {row.original.deviceUniqueName}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "signalStrength",
+      header: "Signal Strength",
+      enableSorting: true,
+      cell: ({ row }) => {
+        const strength = row.original.signalStrength
+        const status = row.original.status
+        return (
+          <div className="flex items-center gap-2">
+            <SignalIcon strength={strength} />
+            <span
+              className={`text-xs font-bold ${
+                status === "warning" ? "text-destructive" : "text-foreground"
+              }`}
+            >
+              {strength === 0
+                ? "Uplink Stable"
+                : `${strength} dBm${strength < -80 ? " (LOW)" : ""}`}
+            </span>
+          </div>
+        )
+      },
+    },
+    {
+      accessorKey: "lastHeartbeat",
+      header: "Last Heartbeat",
+      cell: ({ row }) => (
+        <span className="text-muted-foreground">
+          {row.original.lastHeartbeat}
+        </span>
+      ),
+    },
+    {
+      id: "actions",
+      header: "",
+      cell: ({ row }) => (
+        <div className="flex justify-end">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="rounded-lg p-1 text-muted-foreground transition-colors hover:text-primary"
+                aria-label="Device actions"
+              >
+                <MoreVertical className="size-5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onSelect={() => {
+                  setViewDevice(row.original)
+                  setDeviceModalMode("view")
+                }}
+              >
+                <Eye className="mr-2 size-4" />
+                View Details
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => {
+                  setViewDevice(row.original)
+                  setDeviceModalMode("edit")
+                }}
+              >
+                <Pencil className="mr-2 size-4" />
+                Edit
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
+    },
+  ]
+
   return (
     <div className="space-y-4">
       <ToolbarRow
         title="Hardware Fleet"
+        onRefresh={onRefresh}
         filters={
           <>
             <FilterInput
@@ -191,6 +231,19 @@ export const DeviceTable = ({ devices }: DeviceTableProps) => {
         }
       />
       <DataTable columns={columns} data={filtered} pageSize={6} />
+
+      {viewDevice && (
+        <DeviceDetailModal
+          open={!!viewDevice}
+          onOpenChange={(open) => {
+            if (!open) setViewDevice(null)
+          }}
+          device={viewDevice}
+          mode={deviceModalMode}
+          onModeChange={setDeviceModalMode}
+          onDeviceUpdated={() => setViewDevice(null)}
+        />
+      )}
     </div>
   )
 }

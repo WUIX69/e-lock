@@ -1,7 +1,10 @@
 import { db } from "@/drizzle/db"
 import { DeviceTable } from "@/drizzle/schema"
 import { eq } from "drizzle-orm"
-import { AddDeviceSchema } from "@/features/devices/schemas/devices"
+import {
+  AddDeviceSchema,
+  UpdateDeviceSchema,
+} from "@/features/devices/schemas/devices"
 import { DeviceStatus } from "@/types/devices"
 
 export async function getDeviceById(id: string) {
@@ -51,4 +54,18 @@ export async function insertDevice(data: AddDeviceSchema) {
 
 export async function getAllDevices() {
   return await db.select().from(DeviceTable).orderBy(DeviceTable.createdAt)
+}
+
+export async function updateDevice(id: string, data: UpdateDeviceSchema) {
+  const [updated] = await db
+    .update(DeviceTable)
+    .set({
+      deviceUniqueName: data.deviceUniqueName,
+      type: data.hardwareType,
+      isHighPriority: data.isHighPriority,
+      status: data.status as DeviceStatus,
+    })
+    .where(eq(DeviceTable.id, id))
+    .returning()
+  return updated
 }

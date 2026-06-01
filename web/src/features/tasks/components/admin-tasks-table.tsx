@@ -71,6 +71,7 @@ interface AdminTasksTableProps {
     growth: number
   }
   onTaskUpdated?: () => void
+  onRefresh?: () => void
 }
 
 const taskTypeStyles: Record<string, string> = {
@@ -101,6 +102,7 @@ export const AdminTasksTable = ({
   tasks,
   stats,
   onTaskUpdated,
+  onRefresh,
 }: AdminTasksTableProps) => {
   const [workerFilter, setWorkerFilter] = useState("")
   const [typeFilter, setTypeFilter] = useState("all")
@@ -439,6 +441,7 @@ export const AdminTasksTable = ({
       <div className="space-y-4">
         <ToolbarRow
           title="Task Ledger"
+          onRefresh={onRefresh}
           filters={
             <>
               <FilterInput

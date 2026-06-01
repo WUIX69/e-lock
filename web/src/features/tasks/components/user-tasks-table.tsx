@@ -50,6 +50,7 @@ type TaskItem = {
 interface UserTasksTableProps {
   tasks: TaskItem[]
   onTaskUpdated?: () => void
+  onRefresh?: () => void
 }
 
 const taskTypeColors: Record<string, string> = {
@@ -105,6 +106,7 @@ const getCodeColor = (label: string | null) => {
 export const UserTasksTable = ({
   tasks,
   onTaskUpdated,
+  onRefresh,
 }: UserTasksTableProps) => {
   const [viewTask, setViewTask] = useState<TaskItem | null>(null)
   const [cancellingId, setCancellingId] = useState<string | null>(null)
@@ -283,6 +285,7 @@ export const UserTasksTable = ({
       <div className="space-y-4">
         <ToolbarRow
           title="My Recent Submissions"
+          onRefresh={onRefresh}
           filters={
             <>
               <FilterInput

@@ -75,6 +75,7 @@ function AdminView() {
           }
         }
         onTaskUpdated={() => setRefreshKey((k) => k + 1)}
+        onRefresh={() => setRefreshKey((k) => k + 1)}
       />
     </div>
   )
@@ -145,6 +146,7 @@ function UserView() {
       <UserTasksTable
         tasks={tasks as AdminTask[]}
         onTaskUpdated={() => setRefreshKey((k) => k + 1)}
+        onRefresh={() => setRefreshKey((k) => k + 1)}
       />
       <UserTasksBottom />
     </div>

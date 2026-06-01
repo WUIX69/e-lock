@@ -18,3 +18,13 @@ export const addDeviceSchema = z.object({
 })
 
 export type AddDeviceSchema = z.infer<typeof addDeviceSchema>
+
+export const updateDeviceSchema = z.object({
+  deviceUniqueName: z.string().min(1, "Device name is required"),
+  hardwareType: z.enum(DEVICE_TYPES, {
+    message: "Please select a hardware type",
+  }),
+  isHighPriority: z.boolean().default(false),
+  status: z.enum(["active", "warning", "offline", "maintenance"] as const),
+})
+export type UpdateDeviceSchema = z.infer<typeof updateDeviceSchema>
