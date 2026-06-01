@@ -42,7 +42,7 @@
 - `db:push`, `db:generate`, `db:migrate`, `db:check` all available; team convention prefers manual SQL for named migrations
 
 ## MQTT Flow
-- `web/src/lib/mqtt-server.ts` subscribes to `elock/auth`, `elock/status` — **only initializes when imported**, must be imported by every server action that relies on MQTT events
+- `web/src/lib/mqtt-server.ts` subscribes to `elock/auth`, `elock/status` — **initializes at server boot** via `web/src/instrumentation.ts:register()`, no layout import needed
 - Topics: `elock/auth` (auth_granted/denied), `elock/command` (unlock/lock/enroll/maintenance_on/off), `elock/status`, `elock/log`
 - Auth uses in-memory `challenges` Map (globalThis singleton, 120s TTL): `requestBiometricChallengeAction()` → MQTT listener receives `auth_granted` → `verifyChallenge()` → poll sees `verified` → JWT session
 
