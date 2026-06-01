@@ -20,7 +20,11 @@
     "db:studio": "pnpm --filter @e-lock/web run db:studio",
     "validate": "pnpm --filter @e-lock/web run validate",
     "fw:build": "cd firmware && pio run",
+    "fw:build:gateway": "cd firmware && pio run -e esp32-gateway",
+    "fw:build:field": "cd firmware && pio run -e esp32-field-controller",
     "fw:upload": "cd firmware && pio run -t upload",
+    "fw:upload:gateway": "cd firmware && pio run -e esp32-gateway -t upload",
+    "fw:upload:field": "cd firmware && pio run -e esp32-field-controller -t upload",
     "fw:monitor": "cd firmware && pio device monitor"
   },
   "dependencies": {

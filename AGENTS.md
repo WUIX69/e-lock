@@ -13,6 +13,10 @@
 | root | `pnpm validate` | lint → typecheck → db:check |
 | root | `pnpm docker:up` | Start DB + MQTT |
 | root | `pnpm fw:build` | Build both firmware targets |
+| root | `pnpm fw:build:gateway` | Build gateway only |
+| root | `pnpm fw:build:field` | Build field controller only |
+| root | `pnpm fw:upload:gateway` | Upload firmware to gateway |
+| root | `pnpm fw:upload:field` | Upload firmware to field controller |
 | web | `pnpm dev:lan` | Dev server on 0.0.0.0 (LAN) |
 | web | `pnpm typecheck` | `tsc --noEmit` |
 | web | `pnpm db:migrate` | Apply SQL migrations |
