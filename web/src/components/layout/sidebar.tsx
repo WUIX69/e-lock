@@ -5,17 +5,17 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
-  Zap,
+  // Zap,
   Lock,
-  History,
+  // History,
   Users,
-  Settings,
+  // Settings,
   LogOut,
   Bell,
   HelpCircle,
   AlertTriangle,
   ChevronRight,
-  Activity,
+  // Activity,
   Network,
   ClipboardList,
 } from "lucide-react"
@@ -30,13 +30,13 @@ const getNavigation = (role: string | undefined) => {
   if (role === "admin") {
     return [
       { name: "Dashboard", href: "/", icon: LayoutDashboard },
-      { name: "Energy Sources", href: "/admin/energy", icon: Zap },
+      // { name: "Energy Sources", href: "/admin/energy", icon: Zap },
       { name: "Lockout Devices", href: "/devices", icon: Lock },
-      { name: "Safety Logs", href: "/admin/audit", icon: History },
+      // { name: "Safety Logs", href: "/admin/audit", icon: History },
       { name: "Task Records", href: "/tasks", icon: ClipboardList },
       { name: "Notifications", href: "/notifications", icon: Bell },
       { name: "Team Access", href: "/admin/personnel", icon: Users },
-      { name: "System Settings", href: "/admin/settings", icon: Settings },
+      // { name: "System Settings", href: "/admin/settings", icon: Settings },
     ]
   }
 
@@ -45,7 +45,7 @@ const getNavigation = (role: string | undefined) => {
     { name: "Devices", href: "/devices", icon: Network },
     { name: "Task Records", href: "/tasks", icon: ClipboardList },
     { name: "Notifications", href: "/notifications", icon: Bell },
-    { name: "My Activity", href: "/user/my-activity", icon: Activity },
+    // { name: "My Activity", href: "/user/my-activity", icon: Activity },
   ]
 }
 
@@ -147,7 +147,7 @@ function SidebarContent() {
       {/* Bottom Actions */}
       <div className="shrink-0 space-y-4 p-6">
         {/* Emergency Stop Button */}
-        <button className="flex w-full items-center justify-center gap-3 rounded-2xl bg-destructive px-4 py-4 text-sm font-black tracking-widest text-destructive-foreground uppercase shadow-lg shadow-destructive/20 transition-transform hover:scale-[1.02] active:scale-[0.98]">
+        <button className="flex hidden w-full items-center justify-center gap-3 rounded-2xl bg-destructive px-4 py-4 text-sm font-black tracking-widest text-destructive-foreground uppercase shadow-lg shadow-destructive/20 transition-transform hover:scale-[1.02] active:scale-[0.98]">
           <AlertTriangle className="size-5" />
           Emergency Stop
         </button>

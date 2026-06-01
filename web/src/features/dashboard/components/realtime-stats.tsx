@@ -85,8 +85,7 @@ export const RealtimeStats = ({
                     {stats.activeLockouts.count}
                   </span>
                   <span className="text-xs font-bold text-muted-foreground">
-                    / {stats.activeLockouts.total}{" "}
-                    {stats.activeLockouts.status}
+                    / {stats.activeLockouts.total} {stats.activeLockouts.status}
                   </span>
                 </div>
                 <p className="text-[10px] font-bold tracking-wide text-lime-600 dark:text-lime-500">
@@ -154,7 +153,7 @@ export const RealtimeStats = ({
       </div>
 
       {/* Critical Action Card */}
-      <div className="group relative overflow-hidden rounded-[2rem] border border-border bg-sidebar p-10 shadow-xl lg:col-span-1">
+      <div className="group relative hidden overflow-hidden rounded-[2rem] border border-border bg-sidebar p-10 shadow-xl lg:col-span-1">
         <div className="relative z-10 flex h-full flex-col justify-between text-sidebar-foreground">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
