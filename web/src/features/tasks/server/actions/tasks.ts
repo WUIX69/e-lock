@@ -298,6 +298,12 @@ export async function approveTaskAction(
     const device = await getDeviceById(task.deviceId)
     if (device) {
       publishMqtt("elock/command", {
+        action: "maintenance_off",
+        deviceId: device.deviceId,
+        issuedBy: session.sub,
+        timestamp: Math.floor(Date.now() / 1000),
+      })
+      publishMqtt("elock/command", {
         action: "maintenance_on",
         deviceId: device.deviceId,
         issuedBy: session.sub,
@@ -345,6 +351,16 @@ export async function denyTaskAction(taskId: string): Promise<AddTaskResult> {
     }
 
     await updateTask(taskId, { status: "denied" })
+
+    const deniedDevice = await getDeviceById(task.deviceId)
+    if (deniedDevice) {
+      publishMqtt("elock/command", {
+        action: "maintenance_off",
+        deviceId: deniedDevice.deviceId,
+        issuedBy: session.sub,
+        timestamp: Math.floor(Date.now() / 1000),
+      })
+    }
 
     await createNotification({
       recipientId: task.userId,
@@ -460,6 +476,16 @@ export async function cancelTaskAction(
     }
 
     await updateTask(id, { status: "cancelled" })
+
+    const cancelledDevice = await getDeviceById(existing.deviceId)
+    if (cancelledDevice) {
+      publishMqtt("elock/command", {
+        action: "maintenance_off",
+        deviceId: cancelledDevice.deviceId,
+        issuedBy: session.sub,
+        timestamp: Math.floor(Date.now() / 1000),
+      })
+    }
 
     revalidatePath("/user/my-activity")
     revalidatePath("/tasks")
