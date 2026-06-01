@@ -11,17 +11,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useSidebar } from "@/context/sidebar-context"
 import { useAuth } from "@/context/auth-context"
 
-const breadcrumbs = [
-  // { name: "Facility Alpha", href: "#" },
-  // { name: "Zone 4", href: "#" },
-  { name: "Main Grid", href: "/" },
-]
+// const breadcrumbs = [
+//   { name: "Facility Alpha", href: "#" },
+//   { name: "Zone 4", href: "#" },
+//   { name: "Main Grid", href: "/" },
+// ]
 
 export function Header() {
   const { setIsOpen } = useSidebar()
@@ -41,7 +40,7 @@ export function Header() {
           <h1 className="text-xl font-black tracking-tight text-primary">
             E-LOCK Industrial
           </h1>
-          <nav className="mt-1 flex items-center gap-4">
+          {/* <nav className="mt-1 flex items-center gap-4">
             {breadcrumbs.map((crumb, index) => (
               <React.Fragment key={crumb.name}>
                 <Link
@@ -62,7 +61,7 @@ export function Header() {
                 )}
               </React.Fragment>
             ))}
-          </nav>
+          </nav> */}
         </div>
       </div>
 
