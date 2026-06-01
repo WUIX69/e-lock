@@ -36,20 +36,18 @@ export function UserDashboard() {
       {/* Bento Grid Layout */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Top Row */}
-        <div className="lg:col-span-12">
-          <MachineStatusCard machine={data.assignedMachine} />
-        </div>
-
-        {/* Middle Row */}
         <div className="lg:col-span-8">
-          <ActiveLockoutsPanel lockouts={data.myActiveLockouts} />
+          <MachineStatusCard machine={data.assignedMachine} />
         </div>
         <div className="lg:col-span-4">
           <JoinLockoutCard invitation={data.lockoutInvitation} />
         </div>
 
         {/* Bottom Row */}
-        <div className="lg:col-span-12">
+        <div className="lg:col-span-7">
+          <ActiveLockoutsPanel lockouts={data.myActiveLockouts} />
+        </div>
+        <div className="lg:col-span-5">
           <MaintenanceChecklist ticket={data.checklist} />
         </div>
       </div>
