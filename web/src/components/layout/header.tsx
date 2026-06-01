@@ -18,8 +18,8 @@ import { useSidebar } from "@/context/sidebar-context"
 import { useAuth } from "@/context/auth-context"
 
 const breadcrumbs = [
-  { name: "Facility Alpha", href: "#" },
-  { name: "Zone 4", href: "#" },
+  // { name: "Facility Alpha", href: "#" },
+  // { name: "Zone 4", href: "#" },
   { name: "Main Grid", href: "/" },
 ]
 
