@@ -50,7 +50,7 @@ export const RealtimeStats = ({
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       {/* Safety & Diagnostics Overview Card */}
-      <div className="group relative overflow-hidden rounded-[2rem] border border-border bg-muted p-8 shadow-sm md:p-10 lg:col-span-2">
+      <div className="group relative overflow-hidden rounded-[2rem] border border-border bg-muted p-8 shadow-sm md:p-10 lg:col-span-3">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-50" />
 
         <div className="relative z-10 flex h-full flex-col justify-between gap-8 md:gap-10">
