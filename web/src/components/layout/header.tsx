@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Bell, ShieldCheck, CreditCard, User, Menu } from "lucide-react"
+import { Bell, ShieldCheck, User, Menu } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -68,7 +68,7 @@ export function Header() {
 
       <div className="flex items-center gap-4 md:gap-6">
         {/* System Status Badge */}
-        <div className="hidden items-center gap-3 rounded-2xl bg-accent px-4 py-2 text-accent-foreground shadow-sm lg:flex">
+        {/* <div className="hidden items-center gap-3 rounded-2xl bg-accent px-4 py-2 text-accent-foreground shadow-sm lg:flex">
           <div className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
             <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
@@ -76,13 +76,13 @@ export function Header() {
           <span className="text-[10px] font-black tracking-widest uppercase">
             System Isolated
           </span>
-        </div>
+        </div> */}
 
         {/* Scan Badge Button */}
-        <button className="hidden items-center gap-2 rounded-2xl border border-border bg-background px-4 py-2 text-[10px] font-black tracking-widest uppercase transition-colors hover:bg-muted sm:flex">
+        {/* <button className="hidden items-center gap-2 rounded-2xl border border-border bg-background px-4 py-2 text-[10px] font-black tracking-widest uppercase transition-colors hover:bg-muted sm:flex">
           <CreditCard className="size-4" />
           <span className="hidden md:inline">Scan Badge</span>
-        </button>
+        </button> */}
 
         <div className="flex items-center gap-2 md:gap-4 lg:border-l lg:border-border lg:pl-6">
           <ModeToggle />
