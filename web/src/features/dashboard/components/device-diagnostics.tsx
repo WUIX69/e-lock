@@ -4,8 +4,16 @@ import * as React from "react"
 import { ShieldCheck } from "lucide-react"
 import { MOCK_SYSTEM_DIAGNOSTICS } from "@/data/mock/dashboard"
 
-export const DeviceDiagnostics = () => {
-  const { integrity } = MOCK_SYSTEM_DIAGNOSTICS
+interface DeviceDiagnosticsProps {
+  integrityStatus?: string
+}
+
+export const DeviceDiagnostics = ({
+  integrityStatus,
+}: DeviceDiagnosticsProps) => {
+  const integrity = integrityStatus
+    ? { status: integrityStatus }
+    : MOCK_SYSTEM_DIAGNOSTICS.integrity
 
   return (
     <div className="flex flex-col justify-between rounded-3xl border border-border bg-card p-8 shadow-sm">

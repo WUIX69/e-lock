@@ -7,14 +7,46 @@ import { LatestAlert } from "@/features/dashboard/components/latest-alert"
 import { OnboardingCta } from "@/features/dashboard/components/onboarding-cta"
 import { RecentLogs } from "@/features/dashboard/components/recent-logs"
 import { DeviceDiagnostics } from "@/features/dashboard/components/device-diagnostics"
+import { getAdminDashboardStatsAction } from "@/features/dashboard/server/actions/dashboard"
 
 import { ArrowRight, History, LayoutGrid, Layers } from "lucide-react"
 import Link from "next/link"
 import { MOCK_COMPLIANCE_STATS } from "@/data/mock/dashboard"
 
+interface DashboardStats {
+  devices: {
+    total: number
+    active: number
+    warning: number
+    offline: number
+    maintenance: number
+  }
+  tasks: {
+    total: number
+    pending: number
+    completed: number
+    denied: number
+    cancelled: number
+    relayFaults: number
+  }
+  personnel: {
+    total: number
+    admins: number
+    users: number
+    active: number
+  }
+}
+
 export const AdminDashboard = () => {
   const [deviceDiagnosticsPosition, setDeviceDiagnosticsPosition] =
     React.useState<"top" | "bottom">("bottom")
+  const [stats, setStats] = React.useState<DashboardStats | null>(null)
+
+  React.useEffect(() => {
+    getAdminDashboardStatsAction().then((res) => {
+      if (!res.error) setStats(res as unknown as DashboardStats)
+    })
+  }, [])
 
   return (
     <div className="space-y-12 pb-12">
@@ -77,13 +109,25 @@ export const AdminDashboard = () => {
       </div>
 
       {/* Hero Section */}
-      <RealtimeStats />
+      <RealtimeStats
+        activeLockouts={stats?.devices.maintenance}
+        totalLockouts={stats?.devices.total}
+        anomaliesDetected={stats?.tasks.relayFaults}
+        deviceOnlineCount={stats?.devices.active}
+        deviceTotal={stats?.devices.total}
+      />
 
       {/* Bento Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {deviceDiagnosticsPosition === "top" ? (
           <React.Fragment>
-            <DeviceDiagnostics />
+            <DeviceDiagnostics
+              integrityStatus={
+                stats?.devices
+                  ? `${stats.devices.active}/${stats.devices.total} devices online`
+                  : undefined
+              }
+            />
             <LatestAlert />
             <OnboardingCta />
             <ActivePersonnelList />
@@ -93,7 +137,13 @@ export const AdminDashboard = () => {
           <React.Fragment>
             <ActivePersonnelList />
             <RecentLogs />
-            <DeviceDiagnostics />
+            <DeviceDiagnostics
+              integrityStatus={
+                stats?.devices
+                  ? `${stats.devices.active}/${stats.devices.total} devices online`
+                  : undefined
+              }
+            />
             <LatestAlert />
             <OnboardingCta />
           </React.Fragment>

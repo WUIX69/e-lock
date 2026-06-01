@@ -4,7 +4,49 @@ import * as React from "react"
 import { AlertTriangle, ShieldCheck, Cpu, Lock } from "lucide-react"
 import { MOCK_ADMIN_STATS } from "@/data/mock/dashboard"
 
-export const RealtimeStats = () => {
+interface RealtimeStatsProps {
+  activeLockouts?: number
+  totalLockouts?: number
+  anomaliesDetected?: number
+  deviceOnlineCount?: number
+  deviceTotal?: number
+}
+
+export const RealtimeStats = ({
+  activeLockouts,
+  totalLockouts,
+  anomaliesDetected,
+  deviceOnlineCount,
+  deviceTotal,
+}: RealtimeStatsProps) => {
+  const stats = {
+    activeLockouts: {
+      count: activeLockouts ?? MOCK_ADMIN_STATS.activeLockouts.count,
+      total: totalLockouts ?? MOCK_ADMIN_STATS.activeLockouts.total,
+      status: "Devices",
+      subtext:
+        activeLockouts !== undefined
+          ? `${activeLockouts} device${activeLockouts === 1 ? "" : "s"} currently locked out`
+          : MOCK_ADMIN_STATS.activeLockouts.subtext,
+    },
+    anomaliesDetected: {
+      count: anomaliesDetected ?? MOCK_ADMIN_STATS.anomaliesDetected.count,
+      status: MOCK_ADMIN_STATS.anomaliesDetected.status,
+      subtext: MOCK_ADMIN_STATS.anomaliesDetected.subtext,
+    },
+    deviceDiagnostics: {
+      count:
+        deviceOnlineCount !== undefined
+          ? `${Math.round((deviceOnlineCount / (deviceTotal || 1)) * 100)}%`
+          : MOCK_ADMIN_STATS.deviceDiagnostics.count,
+      status: MOCK_ADMIN_STATS.deviceDiagnostics.status,
+      subtext:
+        deviceOnlineCount !== undefined
+          ? `${deviceOnlineCount}/${deviceTotal} devices online`
+          : MOCK_ADMIN_STATS.deviceDiagnostics.subtext,
+    },
+  }
+
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       {/* Safety & Diagnostics Overview Card */}
@@ -40,15 +82,15 @@ export const RealtimeStats = () => {
               <div className="space-y-1.5">
                 <div className="flex items-baseline gap-1">
                   <span className="text-4xl font-extrabold tracking-tight text-emerald-600 dark:text-emerald-400">
-                    {MOCK_ADMIN_STATS.activeLockouts.count}
+                    {stats.activeLockouts.count}
                   </span>
                   <span className="text-xs font-bold text-muted-foreground">
-                    / {MOCK_ADMIN_STATS.activeLockouts.total}{" "}
-                    {MOCK_ADMIN_STATS.activeLockouts.status}
+                    / {stats.activeLockouts.total}{" "}
+                    {stats.activeLockouts.status}
                   </span>
                 </div>
                 <p className="text-[10px] font-bold tracking-wide text-lime-600 dark:text-lime-500">
-                  {MOCK_ADMIN_STATS.activeLockouts.subtext}
+                  {stats.activeLockouts.subtext}
                 </p>
               </div>
               <div className="flex w-full items-center justify-center rounded-xl border border-border/20 bg-muted/60 py-3 shadow-inner transition-all duration-300 group-hover/stat:border-emerald-500/20 group-hover/stat:bg-emerald-500/5">
@@ -64,10 +106,10 @@ export const RealtimeStats = () => {
               <div className="space-y-1.5">
                 <div className="flex items-baseline gap-1.5">
                   <span className="text-4xl font-extrabold tracking-tight text-rose-600 dark:text-rose-500">
-                    {MOCK_ADMIN_STATS.anomaliesDetected.count}
+                    {stats.anomaliesDetected.count}
                   </span>
                   <span className="text-xs font-bold text-muted-foreground">
-                    {MOCK_ADMIN_STATS.anomaliesDetected.status}
+                    {stats.anomaliesDetected.status}
                   </span>
                 </div>
                 <p className="flex items-center gap-1.5 text-[10px] font-bold tracking-wide text-emerald-600 dark:text-emerald-500">
@@ -75,7 +117,7 @@ export const RealtimeStats = () => {
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
                   </span>
-                  {MOCK_ADMIN_STATS.anomaliesDetected.subtext}
+                  {stats.anomaliesDetected.subtext}
                 </p>
               </div>
               <div className="flex w-full items-center justify-center rounded-xl border border-border/20 bg-muted/60 py-3 shadow-inner transition-all duration-300 group-hover/stat:border-rose-500/20 group-hover/stat:bg-rose-500/5">
@@ -91,14 +133,14 @@ export const RealtimeStats = () => {
               <div className="space-y-1.5">
                 <div className="flex items-baseline gap-1.5">
                   <span className="text-4xl font-extrabold tracking-tight text-primary">
-                    {MOCK_ADMIN_STATS.deviceDiagnostics.count}
+                    {stats.deviceDiagnostics.count}
                   </span>
                   <span className="text-xs font-bold text-muted-foreground">
-                    {MOCK_ADMIN_STATS.deviceDiagnostics.status}
+                    {stats.deviceDiagnostics.status}
                   </span>
                 </div>
                 <p className="text-[10px] font-bold tracking-wide text-muted-foreground">
-                  {MOCK_ADMIN_STATS.deviceDiagnostics.subtext}
+                  {stats.deviceDiagnostics.subtext}
                 </p>
               </div>
               <div className="flex w-full items-center justify-center rounded-xl border border-border/20 bg-muted/60 py-3 shadow-inner transition-all duration-300 group-hover/stat:border-primary/20 group-hover/stat:bg-primary/5">

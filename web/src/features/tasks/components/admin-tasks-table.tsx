@@ -14,6 +14,7 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react"
+import { TaskStatsBento } from "@/features/tasks/components/task-stats-bento"
 import {
   deleteTaskAction,
   approveTaskAction,
@@ -363,74 +364,14 @@ export const AdminTasksTable = ({
     },
   ]
 
-  const bentoCards = [
-    {
-      icon: "task",
-      iconBg: "bg-primary/10 text-primary",
-      label: "Total Submissions",
-      value: stats.totalSubmissions.toLocaleString(),
-      badge: `+${stats.growth}% vs last month`,
-      badgeColor: "text-primary font-bold font-label-sm",
-      decoration: "text-primary",
-    },
-    {
-      icon: "construction",
-      iconBg:
-        "bg-rose-100 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400",
-      label: "Critical Repairs",
-      value: String(stats.criticalRepairs),
-      badge: "Requires Attention",
-      badgeColor: "text-rose-700 dark:text-rose-400 font-bold font-label-sm",
-      decoration: "text-rose-300 dark:text-rose-700",
-      bg: "bg-rose-50 dark:bg-rose-950/20",
-    },
-    {
-      icon: "verified_user",
-      iconBg:
-        "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400",
-      label: "Pending Verifications",
-      value: String(stats.pendingVerifications),
-      badge: `${stats.verificationRate}% Verification Rate`,
-      badgeColor:
-        "text-yellow-700 dark:text-yellow-400 font-bold font-label-sm",
-      decoration: "text-yellow-300 dark:text-yellow-700",
-      bg: "bg-yellow-50 dark:bg-yellow-950/20",
-    },
-  ]
-
   return (
-    <>
-      {/* Stats Bento */}
-      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-        {bentoCards.map((card) => (
-          <div
-            key={card.label}
-            className={`relative overflow-hidden rounded-3xl p-6 shadow-sm ${
-              card.bg || "bg-card"
-            } border border-border/30`}
-          >
-            <div className="absolute -top-4 -right-4 opacity-5 transition-transform duration-700 group-hover:scale-110">
-              <span className="text-[120px]">{card.icon}</span>
-            </div>
-            <div className="relative">
-              <div className="mb-4 flex items-center justify-between">
-                <div className={`rounded-xl p-2 ${card.iconBg}`}>
-                  <span className="material-symbols-outlined">{card.icon}</span>
-                </div>
-                <span className={card.badgeColor}>{card.badge}</span>
-              </div>
-              <div>
-                <p className="mb-1 text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-                  {card.label}
-                </p>
-                <p className="text-3xl font-black tracking-tighter text-foreground">
-                  {card.value}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+    <><TaskStatsBento
+        totalSubmissions={stats.totalSubmissions}
+        criticalRepairs={stats.criticalRepairs}
+        pendingVerifications={stats.pendingVerifications}
+        verificationRate={stats.verificationRate}
+        growth={stats.growth}
+      />
 
       {error && (
         <div className="mb-4 rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
