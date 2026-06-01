@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Circle, Loader2, ClipboardList, ArrowRight } from "lucide-react"
 import { DataTable } from "@/components/ui/data-table"
 
-interface TaskItem {
+export interface TaskItem {
   id: string
   deviceName: string | null
   deviceLabel: string | null

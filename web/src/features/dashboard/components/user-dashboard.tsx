@@ -6,7 +6,8 @@ import { MaintenanceChecklist } from "@/features/dashboard/components/user/maint
 import { EmergencyFab } from "@/features/dashboard/components/user/emergency-fab"
 import { JoinLockoutCard } from "@/features/dashboard/components/user/join-lockout-card"
 import { HardwareStatusList } from "@/features/dashboard/components/user/hardware-status-list"
-import { TasksRecords } from "@/features/dashboard/components/user/tasks-records"
+import { TasksRecords, TaskItem } from "@/features/dashboard/components/user/tasks-records"
+import { Invitation } from "@/features/tasks/components/invitations-modal"
 import { useAuth } from "@/context/auth-context"
 import { MOCK_USER_DASHBOARD_DATA } from "@/data/mock/user-dashboard"
 import {
@@ -16,24 +17,30 @@ import {
 
 export function UserDashboard() {
   const { currentUser } = useAuth()
-  const [tasks, setTasks] = React.useState<any[]>([])
-  const [invitations, setInvitations] = React.useState<any[]>([])
+  const [tasks, setTasks] = React.useState<TaskItem[]>([])
+  const [invitations, setInvitations] = React.useState<Invitation[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
-
-  const fetchData = React.useCallback(async () => {
-    setIsLoading(true)
-    const [tasksRes, invRes] = await Promise.all([
-      getMyTasksAction(),
-      getPendingInvitationsAction(),
-    ])
-    if (tasksRes.tasks) setTasks(tasksRes.tasks)
-    if (invRes.invitations) setInvitations(invRes.invitations)
-    setIsLoading(false)
-  }, [])
+  const [refreshKey, setRefreshKey] = React.useState(0)
 
   React.useEffect(() => {
-    fetchData()
-  }, [fetchData])
+    let active = true
+    Promise.all([
+      getMyTasksAction(),
+      getPendingInvitationsAction(),
+    ]).then(([tasksRes, invRes]) => {
+      if (!active) return
+      if (tasksRes.tasks) setTasks(tasksRes.tasks as TaskItem[])
+      if (invRes.invitations) setInvitations(invRes.invitations as Invitation[])
+      setIsLoading(false)
+    })
+    return () => {
+      active = false
+    }
+  }, [refreshKey])
+
+  const handleRefresh = React.useCallback(() => {
+    setRefreshKey((k) => k + 1)
+  }, [])
 
   if (!currentUser) return null
 
@@ -63,7 +70,7 @@ export function UserDashboard() {
         <div className="space-y-6 lg:col-span-4">
           <JoinLockoutCard
             invitations={invitations}
-            onRefresh={fetchData}
+            onRefresh={handleRefresh}
           />
           <HardwareStatusList loto={data.lotoStatus} />
         </div>
