@@ -121,10 +121,18 @@ void loop() {
     for (int i = 0; i < 2; i++) {
         if (commandReceived[i]) {
             commandReceived[i] = false;
-            if (pendingCommands[i] == LotoState::kDelay && deviceStates[i] == LotoState::kStandby) {
-                deviceStates[i] = LotoState::kDelay;
-                stateStartMs[i] = millis();
-                Serial.printf("[E-Lock] LOTO START for Device %d - 10s delay\n", i + 1);
+            if (pendingCommands[i] == LotoState::kDelay) {
+                if (deviceStates[i] != LotoState::kStandby) {
+                    // Force reset to Standby (handles kTripped, kMonitoring, kDelay)
+                    digitalWrite(getDeviceMainRelayPin(i), HIGH);
+                    deviceStates[i] = LotoState::kStandby;
+                    Serial.printf("[E-Lock] LOTO RESET for Device %d - forced to standby\n", i + 1);
+                    commandReceived[i] = true;
+                } else {
+                    deviceStates[i] = LotoState::kDelay;
+                    stateStartMs[i] = millis();
+                    Serial.printf("[E-Lock] LOTO START for Device %d - 10s delay\n", i + 1);
+                }
             } else if (pendingCommands[i] == LotoState::kStandby) {
                 deviceStates[i] = LotoState::kStandby;
                 digitalWrite(getDeviceMainRelayPin(i), HIGH);
