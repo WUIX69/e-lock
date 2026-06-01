@@ -4,6 +4,7 @@ import { Footer } from "@/components/layout/footer"
 import { SidebarProvider } from "@/context/sidebar-context"
 import { AuthProvider } from "@/context/auth-context"
 import { requireAuth } from "@/features/auth/server/actions/jwt"
+import "@/lib/mqtt-server"
 
 export default async function DashboardLayout({
   children,

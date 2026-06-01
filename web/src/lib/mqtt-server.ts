@@ -5,7 +5,7 @@ import { completeEnrollment } from "@/features/personnel/server/enrollments"
 import { getUserByFingerprintId } from "@/features/personnel/server/db/personnel"
 import { db } from "@/drizzle/db"
 import { TaskTable, DeviceTable } from "@/drizzle/schema"
-import { eq, and } from "drizzle-orm"
+import { eq, and, desc } from "drizzle-orm"
 
 const globalForMqtt = globalThis as unknown as {
   mqttClient: mqtt.MqttClient | null
@@ -91,7 +91,8 @@ if (!globalForMqtt.mqttClient) {
               eq(TaskTable.deviceId, device.id),
               eq(TaskTable.status, "pending"),
               eq(TaskTable.approvedByAdmin, true)
-            )
+            ),
+            orderBy: desc(TaskTable.submittedAt)
           })
 
           if (activeTask) {
