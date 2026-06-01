@@ -303,6 +303,9 @@ export async function approveTaskAction(
         issuedBy: session.sub,
         timestamp: Math.floor(Date.now() / 1000),
       })
+      // Wait for field controller to process STOP and reset to Standby
+      // before sending START, or the START overwrites the STOP buffer
+      await new Promise((r) => setTimeout(r, 2000))
       publishMqtt("elock/command", {
         action: "maintenance_on",
         deviceId: device.deviceId,
