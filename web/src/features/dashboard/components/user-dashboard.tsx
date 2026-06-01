@@ -6,6 +6,7 @@ import { MaintenanceChecklist } from "@/features/dashboard/components/user/maint
 import { EmergencyFab } from "@/features/dashboard/components/user/emergency-fab"
 import { JoinLockoutCard } from "@/features/dashboard/components/user/join-lockout-card"
 import { ActiveLockoutsPanel } from "@/features/dashboard/components/user/active-lockouts-panel"
+import { HardwareStatusList } from "@/features/dashboard/components/user/hardware-status-list"
 import { useAuth } from "@/context/auth-context"
 import { MOCK_USER_DASHBOARD_DATA } from "@/data/mock/user-dashboard"
 
@@ -39,8 +40,9 @@ export function UserDashboard() {
         <div className="lg:col-span-8">
           <MachineStatusCard machine={data.assignedMachine} />
         </div>
-        <div className="lg:col-span-4">
+        <div className="space-y-6 lg:col-span-4">
           <JoinLockoutCard invitation={data.lockoutInvitation} />
+          <HardwareStatusList loto={data.lotoStatus} />
         </div>
 
         {/* Bottom Row */}
