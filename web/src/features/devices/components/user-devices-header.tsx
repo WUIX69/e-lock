@@ -19,7 +19,7 @@ export const UserDevicesHeader = () => {
       <div className="flex items-center gap-2 rounded-2xl bg-accent px-5 py-3 text-accent-foreground shadow-sm">
         <Activity className="size-4" />
         <span className="text-[10px] font-black tracking-widest uppercase">
-          5 Devices Online
+          3 Devices Online
         </span>
       </div>
     </div>

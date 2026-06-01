@@ -6,7 +6,7 @@ import {
   LockoutInvitation,
   ActiveLockout,
 } from "@/types/user-dashboard"
-import { Bolt, Timer } from "lucide-react"
+import { Bolt } from "lucide-react"
 
 export const MOCK_ASSIGNED_MACHINE: AssignedMachine = {
   name: "Circuit Breaker Panel A",
@@ -28,12 +28,12 @@ export const MOCK_FAILSAFE_HARDWARE: FailSafeHardwareRow[] = [
     statusLabel: "READY",
     statusVariant: "ready",
   },
-  {
-    label: "Time Delay Relay",
-    icon: Timer,
-    statusLabel: "SYNCED",
-    statusVariant: "synced",
-  },
+  // {
+  //   label: "Time Delay Relay",
+  //   icon: Timer,
+  //   statusLabel: "SYNCED",
+  //   statusVariant: "synced",
+  // },
 ]
 
 export const MOCK_TELEMETRY_SAMPLES: TelemetrySample[] = Array.from(

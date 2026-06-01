@@ -55,7 +55,7 @@ export const UserTasksHeader = ({
           )}
           <button
             type="button"
-            className="flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 font-bold text-primary transition-all hover:bg-muted active:scale-95"
+            className="flex hidden items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 font-bold text-primary transition-all hover:bg-muted active:scale-95"
           >
             <Filter className="size-4" />
             Filter View

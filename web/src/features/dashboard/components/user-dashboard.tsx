@@ -6,7 +6,10 @@ import { MaintenanceChecklist } from "@/features/dashboard/components/user/maint
 import { EmergencyFab } from "@/features/dashboard/components/user/emergency-fab"
 import { JoinLockoutCard } from "@/features/dashboard/components/user/join-lockout-card"
 import { HardwareStatusList } from "@/features/dashboard/components/user/hardware-status-list"
-import { TasksRecords, TaskItem } from "@/features/dashboard/components/user/tasks-records"
+import {
+  TasksRecords,
+  TaskItem,
+} from "@/features/dashboard/components/user/tasks-records"
 import { Invitation } from "@/features/tasks/components/invitations-modal"
 import { useAuth } from "@/context/auth-context"
 import { MOCK_USER_DASHBOARD_DATA } from "@/data/mock/user-dashboard"
@@ -24,15 +27,15 @@ export function UserDashboard() {
 
   React.useEffect(() => {
     let active = true
-    Promise.all([
-      getMyTasksAction(),
-      getPendingInvitationsAction(),
-    ]).then(([tasksRes, invRes]) => {
-      if (!active) return
-      if (tasksRes.tasks) setTasks(tasksRes.tasks as TaskItem[])
-      if (invRes.invitations) setInvitations(invRes.invitations as Invitation[])
-      setIsLoading(false)
-    })
+    Promise.all([getMyTasksAction(), getPendingInvitationsAction()]).then(
+      ([tasksRes, invRes]) => {
+        if (!active) return
+        if (tasksRes.tasks) setTasks(tasksRes.tasks as TaskItem[])
+        if (invRes.invitations)
+          setInvitations(invRes.invitations as Invitation[])
+        setIsLoading(false)
+      }
+    )
     return () => {
       active = false
     }
@@ -76,10 +79,10 @@ export function UserDashboard() {
         </div>
 
         {/* Bottom Row */}
-        <div className="lg:col-span-7">
+        <div className="lg:col-span-12">
           <TasksRecords tasks={tasks} isLoading={isLoading} />
         </div>
-        <div className="lg:col-span-5">
+        <div className="hidden lg:col-span-5">
           <MaintenanceChecklist ticket={data.checklist} />
         </div>
       </div>
