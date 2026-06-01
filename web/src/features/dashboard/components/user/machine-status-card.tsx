@@ -83,7 +83,7 @@ export function MachineStatusCard({ machine }: { machine: AssignedMachine }) {
                 initiating LOTO sequence for monthly blade sharpening.
               </p>
             </div>
-            <button className="mt-4 flex items-center gap-2 text-xs font-black tracking-widest text-secondary-foreground uppercase transition-colors hover:underline">
+            <button className="mt-4 flex items-center gap-2 text-xs font-black tracking-widest text-sidebar-accent-foreground uppercase transition-colors hover:underline">
               View Maintenance Manual
               <ShieldCheck className="size-3" />
             </button>

@@ -5,18 +5,38 @@ import { MachineStatusCard } from "@/features/dashboard/components/user/machine-
 import { MaintenanceChecklist } from "@/features/dashboard/components/user/maintenance-checklist"
 import { EmergencyFab } from "@/features/dashboard/components/user/emergency-fab"
 import { JoinLockoutCard } from "@/features/dashboard/components/user/join-lockout-card"
-import { ActiveLockoutsPanel } from "@/features/dashboard/components/user/active-lockouts-panel"
 import { HardwareStatusList } from "@/features/dashboard/components/user/hardware-status-list"
+import { TasksRecords } from "@/features/dashboard/components/user/tasks-records"
 import { useAuth } from "@/context/auth-context"
 import { MOCK_USER_DASHBOARD_DATA } from "@/data/mock/user-dashboard"
+import {
+  getMyTasksAction,
+  getPendingInvitationsAction,
+} from "@/features/tasks/server/actions/tasks"
 
 export function UserDashboard() {
   const { currentUser } = useAuth()
+  const [tasks, setTasks] = React.useState<any[]>([])
+  const [invitations, setInvitations] = React.useState<any[]>([])
+  const [isLoading, setIsLoading] = React.useState(true)
+
+  const fetchData = React.useCallback(async () => {
+    setIsLoading(true)
+    const [tasksRes, invRes] = await Promise.all([
+      getMyTasksAction(),
+      getPendingInvitationsAction(),
+    ])
+    if (tasksRes.tasks) setTasks(tasksRes.tasks)
+    if (invRes.invitations) setInvitations(invRes.invitations)
+    setIsLoading(false)
+  }, [])
+
+  React.useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   if (!currentUser) return null
 
-  // In a real app, we'd fetch data based on currentUser.id
-  // For now we use the mock data
   const data = MOCK_USER_DASHBOARD_DATA
 
   return (
@@ -41,13 +61,16 @@ export function UserDashboard() {
           <MachineStatusCard machine={data.assignedMachine} />
         </div>
         <div className="space-y-6 lg:col-span-4">
-          <JoinLockoutCard invitation={data.lockoutInvitation} />
+          <JoinLockoutCard
+            invitations={invitations}
+            onRefresh={fetchData}
+          />
           <HardwareStatusList loto={data.lotoStatus} />
         </div>
 
         {/* Bottom Row */}
         <div className="lg:col-span-7">
-          <ActiveLockoutsPanel lockouts={data.myActiveLockouts} />
+          <TasksRecords tasks={tasks} isLoading={isLoading} />
         </div>
         <div className="lg:col-span-5">
           <MaintenanceChecklist ticket={data.checklist} />
